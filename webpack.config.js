@@ -2,6 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const ESLintPlugin = require('eslint-webpack-plugin')
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -45,7 +46,11 @@ const config = {
       title: 'Front-end Project Boilerplate Generator',
     }),
     isDevelopment && new ReactRefreshWebpackPlugin(),
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new ESLintPlugin({
+      extensions: ['js', 'jsx'],
+      fix: true
+    })
   ].filter(Boolean),
   resolve: {
     extensions: [
