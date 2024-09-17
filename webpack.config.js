@@ -1,17 +1,17 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const ESLintPlugin = require('eslint-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const config = {
   mode: isDevelopment ? 'development' : 'production',
-  entry: './src/index.js',
+  entry: './src/index.tsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].[contenthash].js'
+    filename: '[name].[contenthash].js',
   },
   optimization: {
     runtimeChunk: 'single',
@@ -20,25 +20,26 @@ const config = {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendors',
-          chunks: 'all'
-        }
-      }
+          chunks: 'all',
+        },
+      },
     },
-
   },
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.(js|ts)x?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
-            plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean),
+            plugins: [
+              isDevelopment && require.resolve('react-refresh/babel'),
+            ].filter(Boolean),
           },
-        }
-      }
-    ]
+        },
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -49,20 +50,17 @@ const config = {
     new CleanWebpackPlugin(),
     new ESLintPlugin({
       extensions: ['js', 'jsx'],
-      fix: true
-    })
+      fix: true,
+    }),
   ].filter(Boolean),
   resolve: {
-    extensions: [
-      '.js',
-      '.jsx',
-    ]
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
   },
   devServer: {
     static: './dist',
     port: 8080,
-    open: true
-  }
+    open: true,
+  },
 };
 
 module.exports = config;
