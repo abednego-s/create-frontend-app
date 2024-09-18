@@ -60,6 +60,7 @@ const config = {
     static: './dist',
     port: 8080,
     open: true,
+    historyApiFallback: true,
   },
 };
 
