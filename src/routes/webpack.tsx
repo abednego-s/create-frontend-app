@@ -25,10 +25,10 @@ export default function Webpack() {
   const files = buildProjectFiles({ ...params, bundler: 'webpack' });
 
   return (
-    <div style={{ display: 'flex' }}>
-      <div>
-        <h2>Library</h2>
-        <ul>
+    <div className="flex">
+      <div className="flex-grow">
+        <h2 className="mb-2 text-2xl font-semibold">Library</h2>
+        <ul className="mb-4">
           <li>
             <Radio id="react" name="lib" label="React" />
           </li>
@@ -36,8 +36,8 @@ export default function Webpack() {
             <Radio id="svelte" name="lib" label="Svelte" />
           </li>
         </ul>
-        <h2>UI Library</h2>
-        <ul>
+        <h2 className="mb-2 text-2xl font-semibold">UI library</h2>
+        <ul className="mb-4">
           <li>
             <Checkbox id="tailwind" name="ui" label="Tailwind" />
           </li>
@@ -45,8 +45,8 @@ export default function Webpack() {
             <Checkbox id="material" name="ui" label="Material UI" />
           </li>
         </ul>
-        <h2>Transpiler</h2>
-        <ul>
+        <h2 className="mb-2 text-2xl font-semibold">Transpiler</h2>
+        <ul className="mb-4">
           <li>
             <Checkbox id="babel" name="transpiler" label="Babel" />
           </li>
@@ -54,8 +54,8 @@ export default function Webpack() {
             <Checkbox id="ts" name="transpiler" label="Typescript" />
           </li>
         </ul>
-        <h2>Webpack Plugins</h2>
-        <ul>
+        <h2 className="mb-2 text-2xl font-semibold">Webpack Plugins</h2>
+        <ul className="mb-4">
           <li>
             <Checkbox
               id="html-webpack-plugin"

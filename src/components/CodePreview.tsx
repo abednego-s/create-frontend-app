@@ -11,16 +11,20 @@ export function CodePreview({ files }: CodePreviewProps) {
   }
 
   return (
-    <div style={{ display: 'flex' }}>
-      <ul>
+    <div className="flex border-2 rounded-md md:w-[700px]">
+      <ul className="p-4 border-r-2">
         {Object.keys(files).map((projectFile) => (
-          <li key={projectFile} onClick={() => handleClickFile(projectFile)}>
+          <li
+            key={projectFile}
+            onClick={() => handleClickFile(projectFile)}
+            className="block py-1 cursor-pointer"
+          >
             {projectFile}
           </li>
         ))}
       </ul>
-      <pre>
-        <code>{files[selectedFile]}</code>
+      <pre className="p-4">
+        <code className="text-wrap">{files[selectedFile]}</code>
       </pre>
     </div>
   );

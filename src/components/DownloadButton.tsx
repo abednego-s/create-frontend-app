@@ -18,5 +18,12 @@ export function DownloadButton({ files, children }: DownloadButtonProps) {
     }
   }
 
-  return <button onClick={handleClickDownload}>{children}</button>;
+  return (
+    <button
+      className="px-4 py-2 border-2 rounded-md"
+      onClick={handleClickDownload}
+    >
+      {children}
+    </button>
+  );
 }

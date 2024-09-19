@@ -13,7 +13,7 @@ export function Radio({ name, id, label }: InputProps) {
   }
 
   return (
-    <>
+    <div className="flex items-center">
       <input
         type="radio"
         name={name}
@@ -21,7 +21,9 @@ export function Radio({ name, id, label }: InputProps) {
         onChange={handleInputChange}
         checked={searchParams.get(name) === id}
       />
-      <label htmlFor={id}>{label}</label>
-    </>
+      <label htmlFor={id} className="ml-2">
+        {label}
+      </label>
+    </div>
   );
 }

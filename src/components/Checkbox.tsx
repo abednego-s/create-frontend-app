@@ -67,7 +67,7 @@ export function Checkbox({ name, id, label }: InputProps) {
   }
 
   return (
-    <>
+    <div className="flex items-center">
       <input
         type="checkbox"
         name={name}
@@ -75,7 +75,9 @@ export function Checkbox({ name, id, label }: InputProps) {
         onChange={handleInputClick}
         checked={isChecked}
       />
-      <label htmlFor={id}>{label}</label>
-    </>
+      <label htmlFor={id} className="ml-2">
+        {label}
+      </label>
+    </div>
   );
 }
