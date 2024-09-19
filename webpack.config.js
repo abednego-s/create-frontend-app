@@ -12,6 +12,7 @@ const config = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].[contenthash].js',
+    clean: true,
   },
   optimization: {
     runtimeChunk: 'single',
@@ -39,6 +40,10 @@ const config = {
           },
         },
       },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
+      },
     ],
   },
   plugins: [
@@ -49,7 +54,7 @@ const config = {
     isDevelopment && new ReactRefreshWebpackPlugin(),
     new CleanWebpackPlugin(),
     new ESLintPlugin({
-      extensions: ['js', 'jsx'],
+      extensions: ['ts', 'tsx'],
       fix: true,
     }),
   ].filter(Boolean),

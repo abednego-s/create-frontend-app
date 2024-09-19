@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Root from './routes/root';
 import Webpack from './routes/webpack';
+import './style.css';
 
 const domNode = document.getElementById('root') as HTMLElement;
 const root = createRoot(domNode);
