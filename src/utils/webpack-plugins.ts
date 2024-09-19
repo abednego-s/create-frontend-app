@@ -4,7 +4,7 @@ export const webpackPlugins = {
       "const HTMLWebpackPlugin = require('html-webpack-plugin')",
     pluginEntry: 'new HTMLWebpackPlugin()',
   },
-  'html-bundle-analyzer': {
+  'webpack-bundle-analyzer': {
     importDeclaration:
       "const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin",
     pluginEntry: `new BundleAnalyzerPlugin()`,

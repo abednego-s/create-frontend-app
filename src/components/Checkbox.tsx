@@ -7,10 +7,9 @@ export function Checkbox({ name, id, label }: InputProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    const value = searchParams.get(name);
-    if (value) {
-      return setChecked(value.split(',').includes(id));
-    }
+    const param = searchParams.get(name);
+    const isActive = param ? param.split(',').includes(id) : false;
+    return setChecked(isActive);
   }, [id, name, searchParams]);
 
   function handleInputClick() {

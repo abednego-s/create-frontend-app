@@ -5,19 +5,23 @@ import { Radio } from '../components/Radio';
 import { CodePreview } from '../components/CodePreview';
 import type { Options } from '../types';
 
+const multipleOptionParams = ['transpiler', 'plugins'];
+
 export default function Webpack() {
   const [searchParams] = useSearchParams();
 
-  const obj = Array.from(searchParams).reduce((prev, current) => {
+  const params = Array.from(searchParams).reduce((prev, current) => {
     const [key, value] = current;
+
     prev = {
       ...prev,
-      [key]: value,
+      [key]: multipleOptionParams.includes(key) ? value.split(',') : value,
     };
+
     return prev;
   }, {} as Options);
 
-  const files = buildProjectFiles({ ...obj, bundler: 'webpack' });
+  const files = buildProjectFiles({ ...params, bundler: 'webpack' });
 
   return (
     <div style={{ display: 'flex' }}>
@@ -53,7 +57,7 @@ export default function Webpack() {
         <ul>
           <li>
             <Checkbox
-              id="html-webpack-plugins"
+              id="html-webpack-plugin"
               name="plugins"
               label="HTML Webpack Plugins"
             />
@@ -70,13 +74,6 @@ export default function Webpack() {
               id="mini-css-extract-plugin"
               name="plugins"
               label="MiniCSSExtractPlugin"
-            />
-          </li>
-          <li>
-            <Checkbox
-              id="copy-webpack-plugin"
-              name="plugins"
-              label="CopyWebpackPlugin"
             />
           </li>
           <li>

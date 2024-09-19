@@ -35,6 +35,24 @@ export function buildPackageJson(options: Options) {
         'webpack-cli': '^5.1.4',
       },
     };
+
+    if (options.plugins) {
+      const webpackPlugins = options.plugins.reduce((prev, current) => {
+        prev = {
+          ...prev,
+          [current]: 'latest',
+        };
+        return prev;
+      }, {});
+
+      packageJson = {
+        ...packageJson,
+        devDependencies: {
+          ...packageJson.devDependencies,
+          ...webpackPlugins,
+        },
+      };
+    }
   }
 
   if (options.lib === 'react') {
@@ -48,7 +66,6 @@ export function buildPackageJson(options: Options) {
         ...packageJson.dependencies,
         react: '^18.3.1',
         'react-dom': '^18.3.1',
-        'react-refresh': '^0.14.2',
       },
       devDependencies: {
         ...packageJson.devDependencies,
