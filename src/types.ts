@@ -1,6 +1,7 @@
 import { Configuration as WebpackConfiguration } from 'webpack';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { webpackPlugins } from './utils/webpack-plugins';
+import { ReactNode } from 'react';
 
 export type InputProps = {
   name: string;
@@ -46,4 +47,13 @@ export type ProjectFilesNames =
 export type ProjectFiles = {
   // eslint-disable-next-line no-unused-vars
   [key in ProjectFilesNames]?: string;
+};
+
+export type CodePreviewProps = {
+  files: ProjectFiles;
+};
+
+export type DownloadButtonProps = {
+  files: ProjectFiles;
+  children: ReactNode;
 };

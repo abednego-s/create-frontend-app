@@ -1,9 +1,5 @@
 import { useState } from 'react';
-import type { ProjectFiles } from '../types';
-
-export type CodePreviewProps = {
-  files: ProjectFiles;
-};
+import type { CodePreviewProps, ProjectFiles } from '../types';
 
 export function CodePreview({ files }: CodePreviewProps) {
   const [selectedFile, setSelectedFile] = useState<keyof ProjectFiles>(

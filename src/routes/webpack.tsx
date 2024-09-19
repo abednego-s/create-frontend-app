@@ -3,6 +3,7 @@ import { buildProjectFiles } from '../utils/build-project-files';
 import { Checkbox } from '../components/Checkbox';
 import { Radio } from '../components/Radio';
 import { CodePreview } from '../components/CodePreview';
+import { DownloadButton } from '../components/DownloadButton';
 import type { Options } from '../types';
 
 const multipleOptionParams = ['transpiler', 'plugins'];
@@ -84,6 +85,7 @@ export default function Webpack() {
             />
           </li>
         </ul>
+        <DownloadButton files={files}>Download</DownloadButton>
       </div>
       <CodePreview files={files} />
     </div>

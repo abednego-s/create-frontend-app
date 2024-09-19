@@ -1,0 +1,22 @@
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+import type { DownloadButtonProps } from '../types';
+
+export function DownloadButton({ files, children }: DownloadButtonProps) {
+  async function handleClickDownload() {
+    const zip = new JSZip();
+
+    for (const [key, value] of Object.entries(files)) {
+      zip.file(key, value);
+    }
+
+    try {
+      const blob = await zip.generateAsync({ type: 'blob' });
+      saveAs(blob, 'hello.zip');
+    } catch (err) {
+      console.error('error:', err);
+    }
+  }
+
+  return <button onClick={handleClickDownload}>{children}</button>;
+}
