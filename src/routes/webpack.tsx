@@ -51,7 +51,7 @@ export default function Webpack() {
             <Checkbox id="tailwind" name="ui" label="Tailwind" />
           </li>
           <li>
-            <Checkbox id="material" name="ui" label="Material UI" />
+            <Checkbox id="material-ui" name="ui" label="Material UI" />
           </li>
         </ul>
         <h2 className="mb-2 text-lg font-semibold">Styling</h2>

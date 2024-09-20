@@ -122,6 +122,18 @@ export function buildPackageJson(options: Options) {
     };
   }
 
+  if (options.ui?.includes('material-ui')) {
+    packageJson = {
+      ...packageJson,
+      dependencies: {
+        ...packageJson.dependencies,
+        '@mui/material': 'latest',
+        '@emotion/react': 'latest',
+        '@emotion/styled': 'latest',
+      },
+    };
+  }
+
   if (
     options.styling?.includes('css') ||
     options.styling?.includes('css-module')
