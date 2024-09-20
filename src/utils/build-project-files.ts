@@ -10,77 +10,47 @@ import { buildTailwindConfig } from './build-tailwind-config';
 import { buildPostCssConfig } from './build-postcss-config';
 import { buildTypescriptConfig } from './build-ts-config';
 import { buildStylesCss } from './build-styles-css';
-import type { Options, ProjectFiles } from '../types';
+import type { Options, ProjectFileNames } from '../types';
 
 export function buildProjectFiles(options: Options) {
-  let projectFiles: ProjectFiles = {
-    '.gitignore': buildGitIgnore(),
-    'package.json': buildPackageJson(options),
-    'src/index.js': buildEntryPoint(options),
-    'README.md': buildReadme(options),
-  };
+  const projectFiles = new Map<ProjectFileNames, string>();
+
+  projectFiles.set('.gitignore', buildGitIgnore());
+  projectFiles.set('package.json', buildPackageJson(options));
+  projectFiles.set('src/index.js', buildEntryPoint(options));
+  projectFiles.set('README.md', buildReadme(options));
 
   if (options.bundler === 'webpack') {
-    projectFiles = {
-      ...projectFiles,
-      'webpack.config.json': buildWebpackConfig(options),
-    };
+    projectFiles.set('webpack.config.json', buildWebpackConfig(options));
   }
 
   if (options.transpiler?.includes('babel')) {
-    projectFiles = {
-      ...projectFiles,
-      '.babelrc': buildBabelConfig(options),
-    };
+    projectFiles.set('.babelrc', buildBabelConfig(options));
   }
 
   if (options.transpiler?.includes('ts')) {
-    projectFiles = {
-      ...projectFiles,
-      'tsconfig.json': buildTypescriptConfig(),
-    };
+    projectFiles.delete('src/index.js');
+    projectFiles.set('tsconfig.json', buildTypescriptConfig());
+    projectFiles.set('src/index.ts', buildEntryPoint(options));
   }
 
   if (options.lib === 'react') {
-    projectFiles = {
-      ...projectFiles,
-      'src/index.html': buildHtml(options),
-    };
+    projectFiles.set('src/index.html', buildHtml(options));
+
     if (options.transpiler?.includes('ts')) {
-      projectFiles = Object.entries(projectFiles).reduce((prev, current) => {
-        const [key, value] = current;
-        if (key !== 'src/index.js') {
-          prev = {
-            ...prev,
-            [key]: value,
-            'src/index.ts': buildEntryPoint(options),
-            'src/App.tsx': buildReactMainApp(options),
-          };
-        }
-        return prev;
-      }, {});
+      projectFiles.set('src/App.tsx', buildReactMainApp(options));
     } else {
-      projectFiles = {
-        ...projectFiles,
-        'src/index.js': buildEntryPoint(options),
-        'src/App.jsx': buildReactMainApp(options),
-      };
+      projectFiles.set('src/App.jsx', buildReactMainApp(options));
     }
   }
 
   if (options.ui?.includes('tailwind')) {
-    projectFiles = {
-      ...projectFiles,
-      'tailwind.config.js': buildTailwindConfig(options),
-      'postcss.config.js': buildPostCssConfig(),
-    };
+    projectFiles.set('tailwind.config.js', buildTailwindConfig(options));
+    projectFiles.set('postcss.config.js', buildPostCssConfig());
   }
 
   if (options.styling?.includes('css')) {
-    projectFiles = {
-      ...projectFiles,
-      'src/styles.css': buildStylesCss(),
-    };
+    projectFiles.set('src/styles.css', buildStylesCss());
   }
 
   return projectFiles;

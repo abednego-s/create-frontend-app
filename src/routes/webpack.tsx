@@ -22,21 +22,21 @@ export default function Webpack() {
     return prev;
   }, {} as Options);
 
-  let files = buildProjectFiles({ ...params, bundler: 'webpack' });
-  files = Object.keys(files)
+  const projectFiles = buildProjectFiles({ ...params, bundler: 'webpack' });
+  const files = Array.from(projectFiles.keys())
     .sort()
-    .reduce((prev, current) => {
+    .reduce<ProjectFiles>((prev, current) => {
       prev = {
         ...prev,
-        [current]: files[current as keyof ProjectFiles],
+        [current]: projectFiles.get(current) as string,
       };
       return prev;
-    }, {} as ProjectFiles);
+    }, {});
 
   return (
     <div className="flex">
       <div className="flex-grow">
-        <h2 className="mb-2 text-2xl font-semibold">Library</h2>
+        <h2 className="mb-2 text-lg font-semibold">Library</h2>
         <ul className="mb-4">
           <li>
             <Radio id="react" name="lib" label="React" />
@@ -45,7 +45,7 @@ export default function Webpack() {
             <Radio id="svelte" name="lib" label="Svelte" />
           </li>
         </ul>
-        <h2 className="mb-2 text-2xl font-semibold">UI library</h2>
+        <h2 className="mb-2 text-lg font-semibold">UI library</h2>
         <ul className="mb-4">
           <li>
             <Checkbox id="tailwind" name="ui" label="Tailwind" />
@@ -54,7 +54,7 @@ export default function Webpack() {
             <Checkbox id="material" name="ui" label="Material UI" />
           </li>
         </ul>
-        <h2 className="mb-2 text-2xl font-semibold">Styling</h2>
+        <h2 className="mb-2 text-lg font-semibold">Styling</h2>
         <ul className="mb-4">
           <li>
             <Checkbox id="css" name="styling" label="CSS" />
@@ -63,7 +63,16 @@ export default function Webpack() {
             <Checkbox id="css-module" name="styling" label="CSS Module" />
           </li>
         </ul>
-        <h2 className="mb-2 text-2xl font-semibold">Image</h2>
+        <h2 className="mb-2 text-lg font-semibold">Transpiler</h2>
+        <ul className="mb-4">
+          <li>
+            <Checkbox id="babel" name="transpiler" label="Babel" />
+          </li>
+          <li>
+            <Checkbox id="ts" name="transpiler" label="Typescript" />
+          </li>
+        </ul>
+        <h2 className="mb-2 text-lg font-semibold">Image</h2>
         <ul className="mb-4">
           <li>
             <Checkbox id="svg" name="image" label="SVG" />
@@ -78,16 +87,7 @@ export default function Webpack() {
             <Checkbox id="gif" name="image" label="GIF" />
           </li>
         </ul>
-        <h2 className="mb-2 text-2xl font-semibold">Transpiler</h2>
-        <ul className="mb-4">
-          <li>
-            <Checkbox id="babel" name="transpiler" label="Babel" />
-          </li>
-          <li>
-            <Checkbox id="ts" name="transpiler" label="Typescript" />
-          </li>
-        </ul>
-        <h2 className="mb-2 text-2xl font-semibold">Webpack Plugins</h2>
+        <h2 className="mb-2 text-lg font-semibold">Webpack Plugins</h2>
         <ul className="mb-4">
           <li>
             <Checkbox

@@ -31,7 +31,7 @@ interface Configuration extends WebpackConfiguration {
 
 export type WebpackConfig = Configuration;
 
-export type ProjectFilesNames =
+export type ProjectFileNames =
   | '.babelrc'
   | '.gitignore'
   | 'package.json'
@@ -47,7 +47,4 @@ export type ProjectFilesNames =
   | 'tsconfig.json'
   | 'webpack.config.json';
 
-export type ProjectFiles = {
-  // eslint-disable-next-line no-unused-vars
-  [K in ProjectFilesNames]?: string;
-};
+export type ProjectFiles = { [K: string]: string };

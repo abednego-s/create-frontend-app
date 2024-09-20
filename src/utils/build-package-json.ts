@@ -117,6 +117,7 @@ export function buildPackageJson(options: Options) {
         tailwindcss: 'latest',
         autoprefixer: 'latest',
         postcss: 'latest',
+        'postcss-loader': 'latest',
       },
     };
   }
