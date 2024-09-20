@@ -6,7 +6,7 @@ import { CodePreview } from '../components/CodePreview';
 import { DownloadButton } from '../components/DownloadButton';
 import type { Options, ProjectFiles } from '../types';
 
-const multipleOptionParams = ['transpiler', 'plugins', 'styling'];
+const multipleOptionParams = ['transpiler', 'plugins', 'styling', 'image'];
 
 export default function Webpack() {
   const [searchParams] = useSearchParams();
@@ -61,6 +61,21 @@ export default function Webpack() {
           </li>
           <li>
             <Checkbox id="css-module" name="styling" label="CSS Module" />
+          </li>
+        </ul>
+        <h2 className="mb-2 text-2xl font-semibold">Image</h2>
+        <ul className="mb-4">
+          <li>
+            <Checkbox id="svg" name="image" label="SVG" />
+          </li>
+          <li>
+            <Checkbox id="png" name="image" label="PNG" />
+          </li>
+          <li>
+            <Checkbox id="jpe?g" name="image" label="JPG" />
+          </li>
+          <li>
+            <Checkbox id="gif" name="image" label="GIF" />
           </li>
         </ul>
         <h2 className="mb-2 text-2xl font-semibold">Transpiler</h2>

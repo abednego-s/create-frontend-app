@@ -135,6 +135,16 @@ export function buildPackageJson(options: Options) {
     };
   }
 
+  if (options.image) {
+    packageJson = {
+      ...packageJson,
+      devDependencies: {
+        ...packageJson.devDependencies,
+        'file-loader': '^6.2.0',
+      },
+    };
+  }
+
   type Dependencies = typeof packageJson.dependencies;
   type DevDependencies = typeof packageJson.devDependencies;
 

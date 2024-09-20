@@ -6,6 +6,7 @@ export type Bundler = 'webpack' | 'parcel' | 'esbuild';
 export type Library = 'react' | 'vue' | 'svelte';
 export type WebpackPlugins = keyof typeof webpackPlugins;
 export type UI = 'tailwind' | 'material-ui';
+export type Image = 'svg' | 'png' | 'jpg' | 'gif';
 export type Styling = 'css' | 'css-module';
 export type Testing = 'jest' | 'mocha' | 'chai';
 export type Transpiler = 'babel' | 'ts';
@@ -16,6 +17,7 @@ export type Options = {
   lib?: Library;
   plugins?: WebpackPlugins[];
   ui?: UI[];
+  image: Image[];
   styling: Styling[];
   testing?: Testing[];
   transpiler?: Transpiler[];

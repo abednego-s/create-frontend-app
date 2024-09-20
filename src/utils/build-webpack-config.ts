@@ -19,7 +19,8 @@ function buildConfig(
   plugins?: Options['plugins'],
   lib?: Options['lib'],
   transpiler?: Options['transpiler'],
-  styling?: Options['styling']
+  styling?: Options['styling'],
+  image?: Options['image']
 ) {
   const config: WebpackConfig = {
     entry: './src/index.js',
@@ -113,7 +114,7 @@ function buildConfig(
         rules: [],
       };
     }
-    config.module?.rules?.push({
+    config.module.rules?.push({
       test: /\.css$/,
       use: [
         'style-loader',
@@ -123,6 +124,23 @@ function buildConfig(
             importLoaders: 1,
             modules: true,
           },
+        },
+      ],
+    });
+  }
+
+  if (image) {
+    if (!config['module']) {
+      config.module = {
+        rules: [],
+      };
+    }
+
+    config.module.rules?.push({
+      test: `[code]/\\.(${image.join('|')})$/i[/code]`,
+      use: [
+        {
+          loader: 'file-loader',
         },
       ],
     });
@@ -144,7 +162,8 @@ export function buildWebpackConfig(options?: WebpackBuildConfigOptions) {
         options.plugins,
         options.lib,
         options.transpiler,
-        options.styling
+        options.styling,
+        options.image
       ) + '\n\n';
   } else {
     output += '\n' + buildConfig() + '\n\n';
