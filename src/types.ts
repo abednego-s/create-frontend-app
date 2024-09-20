@@ -1,18 +1,12 @@
 import { Configuration as WebpackConfiguration } from 'webpack';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { webpackPlugins } from './utils/webpack-plugins';
-import { ReactNode } from 'react';
-
-export type InputProps = {
-  name: string;
-  id: string;
-  label: string;
-};
 
 export type Bundler = 'webpack' | 'parcel' | 'esbuild';
 export type Library = 'react' | 'vue' | 'svelte';
 export type WebpackPlugins = keyof typeof webpackPlugins;
-export type UI = 'tailwind' | 'material';
+export type UI = 'tailwind' | 'material-ui';
+export type Styling = 'css' | 'css-module';
 export type Testing = 'jest' | 'mocha' | 'chai';
 export type Transpiler = 'babel' | 'ts';
 
@@ -22,6 +16,7 @@ export type Options = {
   lib?: Library;
   plugins?: WebpackPlugins[];
   ui?: UI[];
+  styling: Styling[];
   testing?: Testing[];
   transpiler?: Transpiler[];
 };
@@ -37,23 +32,20 @@ export type WebpackConfig = Configuration;
 export type ProjectFilesNames =
   | '.babelrc'
   | '.gitignore'
-  | 'webpack.config.json'
+  | 'package.json'
+  | 'postcss.config.js'
+  | 'README.md'
+  | 'src/App.jsx'
+  | 'src/App.tsx'
   | 'src/index.js'
   | 'src/index.ts'
-  | 'package.json'
-  | 'README.md'
-  | 'tailwind.config.js';
+  | 'src/index.html'
+  | 'src/styles.css'
+  | 'tailwind.config.js'
+  | 'tsconfig.json'
+  | 'webpack.config.json';
 
 export type ProjectFiles = {
   // eslint-disable-next-line no-unused-vars
-  [key in ProjectFilesNames]?: string;
-};
-
-export type CodePreviewProps = {
-  files: ProjectFiles;
-};
-
-export type DownloadButtonProps = {
-  files: ProjectFiles;
-  children: ReactNode;
+  [K in ProjectFilesNames]?: string;
 };

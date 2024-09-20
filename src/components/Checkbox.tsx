@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import type { InputProps } from '../types';
 
-export function Checkbox({ name, id, label }: InputProps) {
+export type CheckboxProps = {
+  name: string;
+  id: string;
+  label: string;
+};
+
+export function Checkbox({ name, id, label }: CheckboxProps) {
   const [isChecked, setChecked] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 

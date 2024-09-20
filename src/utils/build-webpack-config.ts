@@ -18,7 +18,8 @@ function buildImports(plugins: Options['plugins']) {
 function buildConfig(
   plugins?: Options['plugins'],
   lib?: Options['lib'],
-  transpiler?: Options['transpiler']
+  transpiler?: Options['transpiler'],
+  styling?: Options['styling']
 ) {
   const config: WebpackConfig = {
     entry: './src/index.js',
@@ -27,6 +28,10 @@ function buildConfig(
       filename: 'bundle.js',
     },
   };
+
+  if (transpiler?.includes('ts')) {
+    config.entry = './src/index.ts';
+  }
 
   // adding plugins
   if (plugins && plugins.length > 0) {
@@ -53,7 +58,9 @@ function buildConfig(
     if (transpiler?.includes('babel')) {
       config.module.rules?.push({
         test: /\.(js|jsx)$/,
-        use: 'babel-loader',
+        use: {
+          loader: 'babel-loader',
+        },
         exclude: /node_modules/,
       });
 
@@ -67,14 +74,58 @@ function buildConfig(
         exclude: /node_modules/,
       });
 
-      config.resolve.extensions = ['.js', '.jsx', '.ts', '.tsx'];
+      config.resolve.extensions = ['.ts', '.tsx'];
     }
 
     config.devServer = {
-      static: {
-        directory: './dist',
-      },
+      port: 3000,
+      open: true,
     };
+  }
+
+  if (plugins?.includes('mini-css-extract-plugin')) {
+    if (!config['module']) {
+      config.module = {
+        rules: [],
+      };
+    }
+    config.module.rules?.push({
+      test: /\.css$/i,
+      use: ['[code]MiniCssExtractPlugin.loader[/code]', 'css-loader'],
+    });
+  }
+
+  if (styling?.includes('css')) {
+    if (!config['module']) {
+      config.module = {
+        rules: [],
+      };
+    }
+    config.module.rules?.push({
+      test: /\.css$/,
+      use: ['style-loader', 'css-loader'],
+    });
+  }
+
+  if (styling?.includes('css-module')) {
+    if (!config['module']) {
+      config.module = {
+        rules: [],
+      };
+    }
+    config.module?.rules?.push({
+      test: /\.css$/,
+      use: [
+        'style-loader',
+        {
+          loader: 'css-loader',
+          options: {
+            importLoaders: 1,
+            modules: true,
+          },
+        },
+      ],
+    });
   }
 
   return `const config = ${objectLiteralToString(config)}`;
@@ -82,14 +133,19 @@ function buildConfig(
 
 export function buildWebpackConfig(options?: WebpackBuildConfigOptions) {
   let output =
-    "const path = require('path);\nconst webpack = require('webpack');\n";
+    "const path = require('path');\nconst webpack = require('webpack');\n";
   if (options) {
     output += buildImports(options.plugins) + '\n';
   }
 
   if (options) {
     output +=
-      buildConfig(options.plugins, options.lib, options.transpiler) + '\n\n';
+      buildConfig(
+        options.plugins,
+        options.lib,
+        options.transpiler,
+        options.styling
+      ) + '\n\n';
   } else {
     output += '\n' + buildConfig() + '\n\n';
   }

@@ -4,9 +4,9 @@ import { Checkbox } from '../components/Checkbox';
 import { Radio } from '../components/Radio';
 import { CodePreview } from '../components/CodePreview';
 import { DownloadButton } from '../components/DownloadButton';
-import type { Options } from '../types';
+import type { Options, ProjectFiles } from '../types';
 
-const multipleOptionParams = ['transpiler', 'plugins'];
+const multipleOptionParams = ['transpiler', 'plugins', 'styling'];
 
 export default function Webpack() {
   const [searchParams] = useSearchParams();
@@ -22,7 +22,16 @@ export default function Webpack() {
     return prev;
   }, {} as Options);
 
-  const files = buildProjectFiles({ ...params, bundler: 'webpack' });
+  let files = buildProjectFiles({ ...params, bundler: 'webpack' });
+  files = Object.keys(files)
+    .sort()
+    .reduce((prev, current) => {
+      prev = {
+        ...prev,
+        [current]: files[current as keyof ProjectFiles],
+      };
+      return prev;
+    }, {} as ProjectFiles);
 
   return (
     <div className="flex">
@@ -43,6 +52,15 @@ export default function Webpack() {
           </li>
           <li>
             <Checkbox id="material" name="ui" label="Material UI" />
+          </li>
+        </ul>
+        <h2 className="mb-2 text-2xl font-semibold">Styling</h2>
+        <ul className="mb-4">
+          <li>
+            <Checkbox id="css" name="styling" label="CSS" />
+          </li>
+          <li>
+            <Checkbox id="css-module" name="styling" label="CSS Module" />
           </li>
         </ul>
         <h2 className="mb-2 text-2xl font-semibold">Transpiler</h2>

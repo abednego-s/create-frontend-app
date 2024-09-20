@@ -1,6 +1,12 @@
+import type { ReactNode } from 'react';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
-import type { DownloadButtonProps } from '../types';
+import type { ProjectFiles } from '../types';
+
+type DownloadButtonProps = {
+  files: ProjectFiles;
+  children: ReactNode;
+};
 
 export function DownloadButton({ files, children }: DownloadButtonProps) {
   async function handleClickDownload() {

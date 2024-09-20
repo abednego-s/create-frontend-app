@@ -1,19 +1,19 @@
 import type { Options } from '../types';
 
-let packageJson = {
-  name: 'empty-project',
-  version: '1.0.0',
-  description: '',
-  main: 'index.js',
-  keyword: [],
-  author: '',
-  license: 'ISC',
-  scripts: {},
-  dependencies: {},
-  devDependencies: {},
-};
-
 export function buildPackageJson(options: Options) {
+  let packageJson = {
+    name: 'empty-project',
+    version: '1.0.0',
+    description: '',
+    main: 'dist/index.js',
+    keyword: [],
+    author: '',
+    license: 'ISC',
+    scripts: {},
+    dependencies: {},
+    devDependencies: {},
+  };
+
   if (options.name) {
     packageJson = {
       ...packageJson,
@@ -69,13 +69,31 @@ export function buildPackageJson(options: Options) {
       },
       devDependencies: {
         ...packageJson.devDependencies,
-        '@babel/preset-react': '^7.24.7',
-        'babel-loader': '^9.1.3',
-        '@babel/core': '^7.25.2',
-        '@babel/preset-env': '^7.25.4',
         'webpack-dev-server': '^5.1.0',
       },
     };
+  }
+
+  if (options.transpiler?.includes('babel')) {
+    packageJson = {
+      ...packageJson,
+      devDependencies: {
+        ...packageJson.devDependencies,
+        'babel-loader': '^9.1.3',
+        '@babel/core': '^7.25.2',
+      },
+    };
+
+    if (options.lib === 'react') {
+      packageJson = {
+        ...packageJson,
+        devDependencies: {
+          ...packageJson.devDependencies,
+          '@babel/preset-env': '^7.25.4',
+          '@babel/preset-react': '^7.24.7',
+        },
+      };
+    }
   }
 
   if (options.transpiler?.includes('ts')) {
@@ -90,6 +108,62 @@ export function buildPackageJson(options: Options) {
       },
     };
   }
+
+  if (options.ui?.includes('tailwind')) {
+    packageJson = {
+      ...packageJson,
+      devDependencies: {
+        ...packageJson.devDependencies,
+        tailwindcss: 'latest',
+        autoprefixer: 'latest',
+        postcss: 'latest',
+      },
+    };
+  }
+
+  if (
+    options.styling?.includes('css') ||
+    options.styling?.includes('css-module')
+  ) {
+    packageJson = {
+      ...packageJson,
+      devDependencies: {
+        ...packageJson.devDependencies,
+        'css-loader': '^7.1.2',
+        'style-loader': '^4.0.0',
+      },
+    };
+  }
+
+  type Dependencies = typeof packageJson.dependencies;
+  type DevDependencies = typeof packageJson.devDependencies;
+
+  const dependencies = Object.keys(packageJson.dependencies)
+    .sort()
+    .reduce((prev, current) => {
+      prev = {
+        ...prev,
+        [current]: packageJson.dependencies[current as keyof Dependencies],
+      };
+      return prev;
+    }, {});
+
+  const devDependencies = Object.keys(packageJson.devDependencies)
+    .sort()
+    .reduce((prev, current) => {
+      prev = {
+        ...prev,
+        [current]:
+          packageJson.devDependencies[current as keyof DevDependencies],
+      };
+      return prev;
+    }, {});
+
+  packageJson = {
+    ...packageJson,
+    dependencies,
+    devDependencies,
+  };
 
   return JSON.stringify(packageJson, null, 2);
 }

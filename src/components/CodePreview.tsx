@@ -1,5 +1,9 @@
 import { useState } from 'react';
-import type { CodePreviewProps, ProjectFiles } from '../types';
+import type { ProjectFiles } from '../types';
+
+type CodePreviewProps = {
+  files: ProjectFiles;
+};
 
 export function CodePreview({ files }: CodePreviewProps) {
   const [selectedFile, setSelectedFile] = useState<keyof ProjectFiles>(
@@ -24,7 +28,7 @@ export function CodePreview({ files }: CodePreviewProps) {
         ))}
       </ul>
       <pre className="p-4">
-        <code className="text-wrap">{files[selectedFile]}</code>
+        <code className="text-sm text-wrap">{files[selectedFile]}</code>
       </pre>
     </div>
   );

@@ -1,7 +1,12 @@
 import { useSearchParams } from 'react-router-dom';
-import type { InputProps } from '../types';
 
-export function Radio({ name, id, label }: InputProps) {
+type RadioProps = {
+  name: string;
+  id: string;
+  label: string;
+};
+
+export function Radio({ name, id, label }: RadioProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   function handleInputChange() {
