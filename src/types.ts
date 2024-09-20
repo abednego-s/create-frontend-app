@@ -10,6 +10,7 @@ export type Image = 'svg' | 'png' | 'jpg' | 'gif';
 export type Styling = 'css' | 'css-module';
 export type Testing = 'jest' | 'mocha' | 'chai';
 export type Transpiler = 'babel' | 'ts';
+export type Optimization = 'split-vendors';
 
 export type Options = {
   name?: string;
@@ -21,6 +22,7 @@ export type Options = {
   styling: Styling[];
   testing?: Testing[];
   transpiler?: Transpiler[];
+  optimization: Optimization[];
 };
 
 export type WebpackBuildConfigOptions = Omit<Options, 'name' | 'bundler'>;

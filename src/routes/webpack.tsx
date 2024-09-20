@@ -118,6 +118,16 @@ export default function Webpack() {
             />
           </li>
         </ul>
+        <h2 className="mb-2 text-lg font-semibold">Optimization</h2>
+        <ul className="mb-4">
+          <li>
+            <Checkbox
+              id="split-vendors"
+              name="optimization"
+              label="Code split vendors"
+            />
+          </li>
+        </ul>
         <DownloadButton files={files}>Download</DownloadButton>
       </div>
       <CodePreview files={files} />

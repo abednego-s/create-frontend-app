@@ -20,7 +20,8 @@ function buildConfig(
   lib?: Options['lib'],
   transpiler?: Options['transpiler'],
   styling?: Options['styling'],
-  image?: Options['image']
+  image?: Options['image'],
+  optimization?: Options['optimization']
 ) {
   const config: WebpackConfig = {
     entry: './src/index.js',
@@ -158,6 +159,25 @@ function buildConfig(
     });
   }
 
+  if (optimization?.includes('split-vendors')) {
+    config.output = {
+      ...config.output,
+      filename: '[name].[contenthash].js',
+    };
+    config.optimization = {
+      runtimeChunk: 'single',
+      splitChunks: {
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+          },
+        },
+      },
+    };
+  }
+
   return `const config = ${objectLiteralToString(config)}`;
 }
 
@@ -175,7 +195,8 @@ export function buildWebpackConfig(options?: WebpackBuildConfigOptions) {
         options.lib,
         options.transpiler,
         options.styling,
-        options.image
+        options.image,
+        options.optimization
       ) + '\n\n';
   } else {
     output += '\n' + buildConfig() + '\n\n';
