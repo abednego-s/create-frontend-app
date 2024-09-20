@@ -56,7 +56,7 @@ function buildConfig(
       config.resolve = {};
     }
 
-    if (transpiler?.includes('babel')) {
+    if (transpiler?.includes('babel') && !transpiler.includes('ts')) {
       config.module.rules?.push({
         test: /\.(js|jsx)$/,
         use: {
@@ -68,11 +68,23 @@ function buildConfig(
       config.resolve.extensions = ['.js', '.jsx'];
     }
 
-    if (transpiler?.includes('ts')) {
+    if (transpiler?.includes('ts') && !transpiler.includes('babel')) {
       config.module.rules?.push({
         test: /\.ts(x)?$/,
         loader: 'ts-loader',
         exclude: /node_modules/,
+      });
+
+      config.resolve.extensions = ['.ts', '.tsx', '.js'];
+    }
+
+    if (transpiler?.includes('ts') && transpiler.includes('babel')) {
+      config.module.rules?.push({
+        test: /\.(js|ts)x?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+        },
       });
 
       config.resolve.extensions = ['.ts', '.tsx'];
