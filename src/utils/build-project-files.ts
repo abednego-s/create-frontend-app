@@ -29,7 +29,7 @@ export function buildProjectFiles(options: Options) {
   projectFiles.set('README.md', buildReadme(options));
 
   if (options.bundler === 'webpack') {
-    projectFiles.set('webpack.config.json', buildWebpackConfig(options));
+    projectFiles.set('webpack.config.js', buildWebpackConfig(options));
   }
 
   if (options.transpiler?.includes('babel')) {
