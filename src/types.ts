@@ -7,8 +7,8 @@ export type Library = 'react' | 'vue' | 'svelte';
 export type WebpackPlugins = keyof typeof webpackPlugins;
 export type UI = 'tailwind' | 'material-ui';
 export type Image = 'svg' | 'png' | 'jpg' | 'gif';
-export type Styling = 'css' | 'css-module';
-export type Testing = 'jest' | 'mocha' | 'chai';
+export type Styling = 'css' | 'css-module' | 'scss' | 'less';
+export type Testing = 'jest' | 'vitest';
 export type Transpiler = 'babel' | 'ts';
 export type Optimization = 'split-vendors';
 
@@ -36,6 +36,9 @@ export type WebpackConfig = Configuration;
 export type ProjectFileNames =
   | '.babelrc'
   | '.gitignore'
+  | '__tests__/test.js'
+  | '__tests__/test.ts'
+  | 'jest.config.js'
   | 'package.json'
   | 'postcss.config.js'
   | 'README.md'

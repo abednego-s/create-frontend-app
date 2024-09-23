@@ -79,8 +79,8 @@ export function buildPackageJson(options: Options) {
       ...packageJson,
       devDependencies: {
         ...packageJson.devDependencies,
-        'babel-loader': '^9.1.3',
         '@babel/core': '^7.25.2',
+        '@babel/preset-env': '^7.25.4',
       },
     };
 
@@ -89,7 +89,7 @@ export function buildPackageJson(options: Options) {
         ...packageJson,
         devDependencies: {
           ...packageJson.devDependencies,
-          '@babel/preset-env': '^7.25.4',
+          'babel-loader': '^9.1.3',
           '@babel/preset-react': '^7.24.7',
         },
       };
@@ -134,10 +134,7 @@ export function buildPackageJson(options: Options) {
     };
   }
 
-  if (
-    options.styling?.includes('css') ||
-    options.styling?.includes('css-module')
-  ) {
+  if (options.styling) {
     packageJson = {
       ...packageJson,
       devDependencies: {
@@ -158,15 +155,50 @@ export function buildPackageJson(options: Options) {
     };
   }
 
-  type Dependencies = typeof packageJson.dependencies;
-  type DevDependencies = typeof packageJson.devDependencies;
+  if (options.testing?.includes('jest')) {
+    packageJson = {
+      ...packageJson,
+      scripts: {
+        ...packageJson.scripts,
+        test: 'jest',
+      },
+      devDependencies: {
+        ...packageJson.devDependencies,
+        jest: 'latest',
+      },
+    };
+
+    if (options.transpiler?.includes('babel')) {
+      packageJson = {
+        ...packageJson,
+        devDependencies: {
+          ...packageJson.devDependencies,
+          'babel-jest': 'latest',
+        },
+      };
+    }
+
+    if (options.transpiler?.includes('ts')) {
+      packageJson = {
+        ...packageJson,
+        devDependencies: {
+          ...packageJson.devDependencies,
+          'ts-jest': 'latest',
+          '@types/jest': 'latest',
+        },
+      };
+    }
+  }
 
   const dependencies = Object.keys(packageJson.dependencies)
     .sort()
     .reduce((prev, current) => {
       prev = {
         ...prev,
-        [current]: packageJson.dependencies[current as keyof Dependencies],
+        [current]:
+          packageJson.dependencies[
+            current as keyof typeof packageJson.dependencies
+          ],
       };
       return prev;
     }, {});
@@ -177,7 +209,9 @@ export function buildPackageJson(options: Options) {
       prev = {
         ...prev,
         [current]:
-          packageJson.devDependencies[current as keyof DevDependencies],
+          packageJson.devDependencies[
+            current as keyof typeof packageJson.devDependencies
+          ],
       };
       return prev;
     }, {});

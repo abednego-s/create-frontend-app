@@ -10,6 +10,8 @@ import { buildTailwindConfig } from './build-tailwind-config';
 import { buildPostCssConfig } from './build-postcss-config';
 import { buildTypescriptConfig } from './build-ts-config';
 import { buildStylesCss } from './build-styles-css';
+import { buildJestTest } from './build-jest-test';
+import { buildJestConfig } from './build-jest-config';
 import type { Options, ProjectFileNames } from '../types';
 
 export function buildProjectFiles(options: Options) {
@@ -51,6 +53,15 @@ export function buildProjectFiles(options: Options) {
 
   if (options.styling?.includes('css')) {
     projectFiles.set('src/styles.css', buildStylesCss());
+  }
+
+  if (options.testing?.includes('jest')) {
+    projectFiles.set('jest.config.js', buildJestConfig(options));
+    if (options.transpiler?.includes('ts')) {
+      projectFiles.set('__tests__/test.ts', buildJestTest());
+    } else {
+      projectFiles.set('__tests__/test.js', buildJestTest());
+    }
   }
 
   return projectFiles;
