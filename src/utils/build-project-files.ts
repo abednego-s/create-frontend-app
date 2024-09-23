@@ -16,6 +16,8 @@ import { buildEslintIgnore } from './build-eslint-ignore';
 import { buildEslintConfig } from './build-eslint-config';
 import { buildPrettierIgnore } from './build-prettier-ignore';
 import { buildPrettierConfig } from './build-prettier-config';
+import { buildViteConfig } from './build-vite-config';
+import { buildViteTest } from './build-vite-test';
 import type { Options, ProjectFileNames } from '../types';
 
 export function buildProjectFiles(options: Options) {
@@ -61,10 +63,21 @@ export function buildProjectFiles(options: Options) {
 
   if (options.testing?.includes('jest')) {
     projectFiles.set('jest.config.js', buildJestConfig(options));
+
     if (options.transpiler?.includes('ts')) {
       projectFiles.set('__tests__/test.ts', buildJestTest());
     } else {
       projectFiles.set('__tests__/test.js', buildJestTest());
+    }
+  }
+
+  if (options.testing?.includes('vitest')) {
+    projectFiles.set('vite.config.js', buildViteConfig(options));
+
+    if (options.transpiler?.includes('ts')) {
+      projectFiles.set('__tests__/test.ts', buildViteTest());
+    } else {
+      projectFiles.set('__tests__/test.js', buildViteTest());
     }
   }
 

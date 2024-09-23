@@ -58,6 +58,7 @@ export type ProjectFileNames =
   | 'src/styles.css'
   | 'tailwind.config.js'
   | 'tsconfig.json'
+  | 'vite.config.js'
   | 'webpack.config.json';
 
 export type ProjectFiles = { [K: string]: string };

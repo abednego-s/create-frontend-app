@@ -213,6 +213,31 @@ export function buildPackageJson(options: Options) {
     }
   }
 
+  if (options.testing?.includes('vitest')) {
+    packageJson = {
+      ...packageJson,
+      scripts: {
+        ...packageJson.scripts,
+        test: 'vitest',
+      },
+      devDependencies: {
+        ...packageJson.devDependencies,
+        vitest: 'latest',
+      },
+    };
+
+    if (options.lib === 'react') {
+      packageJson = {
+        ...packageJson,
+        devDependencies: {
+          ...packageJson.devDependencies,
+          jsdom: 'latest',
+          '@vitejs/plugin-react': 'latest',
+        },
+      };
+    }
+  }
+
   if (options.linting) {
     let exts = ['js'];
 
