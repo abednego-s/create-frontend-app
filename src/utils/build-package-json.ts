@@ -213,14 +213,44 @@ export function buildPackageJson(options: Options) {
     }
   }
 
-  if (options.linting?.includes('eslint')) {
-    packageJson = {
-      ...packageJson,
-      devDependencies: {
-        ...packageJson.devDependencies,
-        eslint: 'latest',
-      },
-    };
+  if (options.linting) {
+    let exts = ['js'];
+
+    if (options.transpiler?.includes('babel')) {
+      exts = [...exts, 'jsx'];
+    }
+
+    if (options.transpiler?.includes('ts')) {
+      exts = ['ts'];
+      if (options.transpiler?.includes('babel')) {
+        exts = [...exts, 'tsx'];
+      }
+    }
+
+    if (options.linting.includes('eslint')) {
+      packageJson = {
+        ...packageJson,
+        scripts: {
+          ...packageJson.scripts,
+          lint: `eslint 'src/**/*.{${exts.join(',')}}'`,
+          'lint:fix': `eslint --fix 'src/**/*.{${exts.join(',')}}}'`,
+        },
+        devDependencies: {
+          ...packageJson.devDependencies,
+          eslint: 'latest',
+        },
+      };
+    }
+
+    if (options.linting.includes('prettier')) {
+      packageJson = {
+        ...packageJson,
+        scripts: {
+          ...packageJson.scripts,
+          format: `prettier --write 'src/**/*.{${exts.join(',')}}'`,
+        },
+      };
+    }
   }
 
   if (options.linting?.includes('prettier')) {
