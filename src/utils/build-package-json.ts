@@ -38,10 +38,13 @@ export function buildPackageJson(options: Options) {
 
     if (options.plugins) {
       const webpackPlugins = options.plugins.reduce((prev, current) => {
-        prev = {
-          ...prev,
-          [current]: 'latest',
-        };
+        if (current !== 'HotModuleReplacementPlugin') {
+          prev = {
+            ...prev,
+            [current]: 'latest',
+          };
+        }
+
         return prev;
       }, {});
 
