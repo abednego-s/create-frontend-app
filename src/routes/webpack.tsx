@@ -111,6 +111,13 @@ export default function Webpack() {
         <ul className="mb-4">
           <li>
             <Checkbox
+              id="HotModuleReplacementPlugin"
+              name="plugins"
+              label="Hot Module Replacement"
+            />
+          </li>
+          <li>
+            <Checkbox
               id="html-webpack-plugin"
               name="plugins"
               label="HTML Webpack Plugins"

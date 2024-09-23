@@ -27,4 +27,9 @@ export const webpackPlugins = {
     importDeclaration: "const Dotenv = require('dotenv-webpack')",
     pluginEntry: 'new Dotenv()',
   },
+  HotModuleReplacementPlugin: {
+    importDeclaration:
+      "const { HotModuleReplacementPlugin } = require('webpack')",
+    pluginEntry: 'new HotModuleReplacementPlugin()',
+  },
 };
