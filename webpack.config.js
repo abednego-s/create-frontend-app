@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const { HotModuleReplacementPlugin } = require('webpack');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -47,6 +48,7 @@ const config = {
     ],
   },
   plugins: [
+    new HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       template: './src/index.html',
       title: 'Front-end Project Boilerplate Generator',
