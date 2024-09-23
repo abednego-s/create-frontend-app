@@ -115,10 +115,24 @@ function buildConfig(
         rules: [],
       };
     }
-    config.module.rules?.push({
+
+    let loader: {
+      test: RegExp;
+      use: string[];
+      exclude?: RegExp;
+    } = {
       test: /\.css$/,
       use: ['style-loader', 'css-loader'],
-    });
+    };
+
+    if (styling.includes('css-module')) {
+      loader = {
+        ...loader,
+        exclude: /\.module\.css$/,
+      };
+    }
+
+    config.module.rules?.push(loader);
   }
 
   if (styling?.includes('css-module')) {
@@ -127,7 +141,21 @@ function buildConfig(
         rules: [],
       };
     }
-    config.module.rules?.push({
+
+    let loader: {
+      test: RegExp;
+      use: (
+        | string
+        | {
+            loader: string;
+            options: {
+              importLoaders: number;
+              modules: boolean;
+            };
+          }
+      )[];
+      include?: RegExp;
+    } = {
       test: /\.css$/,
       use: [
         'style-loader',
@@ -139,6 +167,39 @@ function buildConfig(
           },
         },
       ],
+    };
+
+    if (styling.includes('css')) {
+      loader = {
+        ...loader,
+        include: /\.module\.css$/,
+      };
+    }
+
+    config.module.rules?.push(loader);
+  }
+
+  if (styling?.includes('less')) {
+    if (!config['module']) {
+      config.module = {
+        rules: [],
+      };
+    }
+    config.module?.rules?.push({
+      test: /\.less$/,
+      use: ['style-loader', 'css-loader', 'less-loader'],
+    });
+  }
+
+  if (styling?.includes('scss')) {
+    if (!config['module']) {
+      config.module = {
+        rules: [],
+      };
+    }
+    config.module?.rules?.push({
+      test: /\.scss$/,
+      use: ['style-loader', 'css-loader', 'sass-loader'],
     });
   }
 

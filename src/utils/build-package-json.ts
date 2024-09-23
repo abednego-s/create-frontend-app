@@ -143,6 +143,26 @@ export function buildPackageJson(options: Options) {
         'style-loader': '^4.0.0',
       },
     };
+
+    if (options.styling.includes('less')) {
+      packageJson = {
+        ...packageJson,
+        devDependencies: {
+          ...packageJson.devDependencies,
+          'less-loader': 'latest',
+        },
+      };
+    }
+
+    if (options.styling.includes('scss')) {
+      packageJson = {
+        ...packageJson,
+        devDependencies: {
+          ...packageJson.devDependencies,
+          'sass-loader': 'latest',
+        },
+      };
+    }
   }
 
   if (options.image) {

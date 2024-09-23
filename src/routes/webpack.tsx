@@ -6,13 +6,18 @@ import { CodePreview } from '../components/CodePreview';
 import { DownloadButton } from '../components/DownloadButton';
 import type { Options, ProjectFiles } from '../types';
 
-const multipleOptionParams = ['transpiler', 'plugins', 'styling', 'image'];
+const multipleOptionParams: Array<keyof Options> = [
+  'transpiler',
+  'plugins',
+  'styling',
+  'image',
+];
 
 export default function Webpack() {
   const [searchParams] = useSearchParams();
 
   const params = Array.from(searchParams).reduce((prev, current) => {
-    const [key, value] = current;
+    const [key, value] = current as [keyof Options, string];
 
     prev = {
       ...prev,
@@ -60,7 +65,22 @@ export default function Webpack() {
             <Checkbox id="css" name="styling" label="CSS" />
           </li>
           <li>
+            <Checkbox id="scss" name="styling" label="SASS" />
+          </li>
+          <li>
+            <Checkbox id="less" name="styling" label="Less" />
+          </li>
+          <li>
             <Checkbox id="css-module" name="styling" label="CSS Module" />
+          </li>
+        </ul>
+        <h2 className="mb-2 text-lg font-semibold">Testing Framework</h2>
+        <ul className="mb-4">
+          <li>
+            <Checkbox id="jest" name="testing" label="Jest" />
+          </li>
+          <li>
+            <Checkbox id="vitest" name="testing" label="Vitest" />
           </li>
         </ul>
         <h2 className="mb-2 text-lg font-semibold">Transpiler</h2>
