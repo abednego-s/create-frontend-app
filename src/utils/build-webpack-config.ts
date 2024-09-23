@@ -6,6 +6,17 @@ import type {
   WebpackBuildConfigOptions,
 } from '../types';
 
+type BuildConfig = Pick<
+  Options,
+  | 'plugins'
+  | 'lib'
+  | 'transpiler'
+  | 'styling'
+  | 'image'
+  | 'optimization'
+  | 'font'
+>;
+
 function buildImports(plugins: Options['plugins']) {
   let output = '';
   plugins?.forEach((plugin) => {
@@ -15,14 +26,7 @@ function buildImports(plugins: Options['plugins']) {
   return output;
 }
 
-function buildConfig(
-  plugins?: Options['plugins'],
-  lib?: Options['lib'],
-  transpiler?: Options['transpiler'],
-  styling?: Options['styling'],
-  image?: Options['image'],
-  optimization?: Options['optimization']
-) {
+function buildConfig(options?: BuildConfig) {
   const config: WebpackConfig = {
     entry: './src/index.js',
     output: {
@@ -31,212 +35,237 @@ function buildConfig(
     },
   };
 
-  if (transpiler?.includes('ts')) {
-    config.entry = './src/index.ts';
-  }
+  if (options) {
+    const { plugins, lib, transpiler, styling, image, optimization, font } =
+      options;
 
-  // adding plugins
-  if (plugins && plugins.length > 0) {
-    config.plugins = [];
-    plugins.forEach((plugin) => {
-      config.plugins?.push(
-        `[code]${webpackPlugins[plugin].pluginEntry}[/code]` as ''
-      );
-    });
-  }
-
-  // adding loaders
-  if (lib === 'react') {
-    if (!config['module']) {
-      config.module = {
-        rules: [],
-      };
+    if (transpiler?.includes('ts')) {
+      config.entry = './src/index.ts';
     }
 
-    if (!config['resolve']) {
-      config.resolve = {};
-    }
-
-    if (transpiler?.includes('babel') && !transpiler.includes('ts')) {
-      config.module.rules?.push({
-        test: /\.(js|jsx)$/,
-        use: {
-          loader: 'babel-loader',
-        },
-        exclude: /node_modules/,
+    // adding plugins
+    if (plugins && plugins.length > 0) {
+      config.plugins = [];
+      plugins.forEach((plugin) => {
+        config.plugins?.push(
+          `[code]${webpackPlugins[plugin].pluginEntry}[/code]` as ''
+        );
       });
-
-      config.resolve.extensions = ['.js', '.jsx'];
     }
 
-    if (transpiler?.includes('ts') && !transpiler.includes('babel')) {
+    // adding loaders
+    if (lib === 'react') {
+      if (!config['module']) {
+        config.module = {
+          rules: [],
+        };
+      }
+
+      if (!config['resolve']) {
+        config.resolve = {};
+      }
+
+      if (transpiler?.includes('babel') && !transpiler.includes('ts')) {
+        config.module.rules?.push({
+          test: /\.(js|jsx)$/,
+          use: {
+            loader: 'babel-loader',
+          },
+          exclude: /node_modules/,
+        });
+
+        config.resolve.extensions = ['.js', '.jsx'];
+      }
+
+      if (transpiler?.includes('ts') && !transpiler.includes('babel')) {
+        config.module.rules?.push({
+          test: /\.ts(x)?$/,
+          loader: 'ts-loader',
+          exclude: /node_modules/,
+        });
+
+        config.resolve.extensions = ['.ts', '.tsx', '.js'];
+      }
+
+      if (transpiler?.includes('ts') && transpiler.includes('babel')) {
+        config.module.rules?.push({
+          test: /\.(js|ts)x?$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+          },
+        });
+
+        config.resolve.extensions = ['.ts', '.tsx'];
+      }
+
+      config.devServer = {
+        port: 3000,
+        open: true,
+      };
+    }
+
+    if (plugins?.includes('mini-css-extract-plugin')) {
+      if (!config['module']) {
+        config.module = {
+          rules: [],
+        };
+      }
       config.module.rules?.push({
-        test: /\.ts(x)?$/,
-        loader: 'ts-loader',
-        exclude: /node_modules/,
+        test: /\.css$/i,
+        use: ['[code]MiniCssExtractPlugin.loader[/code]', 'css-loader'],
       });
-
-      config.resolve.extensions = ['.ts', '.tsx', '.js'];
     }
 
-    if (transpiler?.includes('ts') && transpiler.includes('babel')) {
-      config.module.rules?.push({
-        test: /\.(js|ts)x?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-        },
-      });
+    if (styling?.includes('css')) {
+      if (!config['module']) {
+        config.module = {
+          rules: [],
+        };
+      }
 
-      config.resolve.extensions = ['.ts', '.tsx'];
-    }
-
-    config.devServer = {
-      port: 3000,
-      open: true,
-    };
-  }
-
-  if (plugins?.includes('mini-css-extract-plugin')) {
-    if (!config['module']) {
-      config.module = {
-        rules: [],
+      let loader: {
+        test: RegExp;
+        use: string[];
+        exclude?: RegExp;
+      } = {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
       };
-    }
-    config.module.rules?.push({
-      test: /\.css$/i,
-      use: ['[code]MiniCssExtractPlugin.loader[/code]', 'css-loader'],
-    });
-  }
 
-  if (styling?.includes('css')) {
-    if (!config['module']) {
-      config.module = {
-        rules: [],
-      };
+      if (styling.includes('css-module')) {
+        loader = {
+          ...loader,
+          exclude: /\.module\.css$/,
+        };
+      }
+
+      config.module.rules?.push(loader);
     }
 
-    let loader: {
-      test: RegExp;
-      use: string[];
-      exclude?: RegExp;
-    } = {
-      test: /\.css$/,
-      use: ['style-loader', 'css-loader'],
-    };
+    if (styling?.includes('css-module')) {
+      if (!config['module']) {
+        config.module = {
+          rules: [],
+        };
+      }
 
-    if (styling.includes('css-module')) {
-      loader = {
-        ...loader,
-        exclude: /\.module\.css$/,
-      };
-    }
-
-    config.module.rules?.push(loader);
-  }
-
-  if (styling?.includes('css-module')) {
-    if (!config['module']) {
-      config.module = {
-        rules: [],
-      };
-    }
-
-    let loader: {
-      test: RegExp;
-      use: (
-        | string
-        | {
-            loader: string;
+      let loader: {
+        test: RegExp;
+        use: (
+          | string
+          | {
+              loader: string;
+              options: {
+                importLoaders: number;
+                modules: boolean;
+              };
+            }
+        )[];
+        include?: RegExp;
+      } = {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
             options: {
-              importLoaders: number;
-              modules: boolean;
-            };
-          }
-      )[];
-      include?: RegExp;
-    } = {
-      test: /\.css$/,
-      use: [
-        'style-loader',
-        {
-          loader: 'css-loader',
-          options: {
-            importLoaders: 1,
-            modules: true,
+              importLoaders: 1,
+              modules: true,
+            },
+          },
+        ],
+      };
+
+      if (styling.includes('css')) {
+        loader = {
+          ...loader,
+          include: /\.module\.css$/,
+        };
+      }
+
+      config.module.rules?.push(loader);
+    }
+
+    if (styling?.includes('less')) {
+      if (!config['module']) {
+        config.module = {
+          rules: [],
+        };
+      }
+      config.module?.rules?.push({
+        test: /\.less$/,
+        use: ['style-loader', 'css-loader', 'less-loader'],
+      });
+    }
+
+    if (styling?.includes('scss')) {
+      if (!config['module']) {
+        config.module = {
+          rules: [],
+        };
+      }
+      config.module?.rules?.push({
+        test: /\.scss$/,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      });
+    }
+
+    if (image) {
+      if (!config['module']) {
+        config.module = {
+          rules: [],
+        };
+      }
+
+      config.module.rules?.push({
+        test: `[code]/\\.(${image.join('|')})$/i[/code]`,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      });
+    }
+
+    if (font) {
+      if (!config['module']) {
+        config.module = {
+          rules: [],
+        };
+      }
+      config.module.rules?.push({
+        test: `[code]/\\.(${font.join('|')})$/i[/code]`,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[hash].[ext]',
+              outputPath: 'fonts/',
+            },
+          },
+        ],
+      });
+    }
+
+    if (optimization?.includes('split-vendors')) {
+      config.output = {
+        ...config.output,
+        filename: '[name].[contenthash].js',
+      };
+      config.optimization = {
+        runtimeChunk: 'single',
+        splitChunks: {
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+            },
           },
         },
-      ],
-    };
-
-    if (styling.includes('css')) {
-      loader = {
-        ...loader,
-        include: /\.module\.css$/,
       };
     }
-
-    config.module.rules?.push(loader);
-  }
-
-  if (styling?.includes('less')) {
-    if (!config['module']) {
-      config.module = {
-        rules: [],
-      };
-    }
-    config.module?.rules?.push({
-      test: /\.less$/,
-      use: ['style-loader', 'css-loader', 'less-loader'],
-    });
-  }
-
-  if (styling?.includes('scss')) {
-    if (!config['module']) {
-      config.module = {
-        rules: [],
-      };
-    }
-    config.module?.rules?.push({
-      test: /\.scss$/,
-      use: ['style-loader', 'css-loader', 'sass-loader'],
-    });
-  }
-
-  if (image) {
-    if (!config['module']) {
-      config.module = {
-        rules: [],
-      };
-    }
-
-    config.module.rules?.push({
-      test: `[code]/\\.(${image.join('|')})$/i[/code]`,
-      use: [
-        {
-          loader: 'file-loader',
-        },
-      ],
-    });
-  }
-
-  if (optimization?.includes('split-vendors')) {
-    config.output = {
-      ...config.output,
-      filename: '[name].[contenthash].js',
-    };
-    config.optimization = {
-      runtimeChunk: 'single',
-      splitChunks: {
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-          },
-        },
-      },
-    };
   }
 
   return `const config = ${objectLiteralToString(config)}`;
@@ -250,15 +279,7 @@ export function buildWebpackConfig(options?: WebpackBuildConfigOptions) {
   }
 
   if (options) {
-    output +=
-      buildConfig(
-        options.plugins,
-        options.lib,
-        options.transpiler,
-        options.styling,
-        options.image,
-        options.optimization
-      ) + '\n\n';
+    output += buildConfig(options) + '\n\n';
   } else {
     output += '\n' + buildConfig() + '\n\n';
   }

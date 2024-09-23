@@ -11,6 +11,7 @@ const multipleOptionParams: Array<keyof Options> = [
   'plugins',
   'styling',
   'image',
+  'font',
 ];
 
 export default function Webpack() {
@@ -105,6 +106,21 @@ export default function Webpack() {
           </li>
           <li>
             <Checkbox id="gif" name="image" label="GIF" />
+          </li>
+        </ul>
+        <h2 className="mb-2 text-lg font-semibold">Fonts</h2>
+        <ul className="mb-4">
+          <li>
+            <Checkbox id="ttf" name="font" label="ttf" />
+          </li>
+          <li>
+            <Checkbox id="eot" name="font" label="eot" />
+          </li>
+          <li>
+            <Checkbox id="woff" name="font" label="woff" />
+          </li>
+          <li>
+            <Checkbox id="woff2" name="font" label="woff2" />
           </li>
         </ul>
         <h2 className="mb-2 text-lg font-semibold">Webpack Plugins</h2>

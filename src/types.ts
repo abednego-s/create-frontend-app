@@ -11,6 +11,7 @@ export type Styling = 'css' | 'css-module' | 'scss' | 'less';
 export type Testing = 'jest' | 'vitest';
 export type Transpiler = 'babel' | 'ts';
 export type Optimization = 'split-vendors';
+export type Font = 'ttf' | 'eot' | 'woff' | 'woff2';
 
 export type Options = {
   name?: string;
@@ -23,6 +24,7 @@ export type Options = {
   testing?: Testing[];
   transpiler?: Transpiler[];
   optimization: Optimization[];
+  font: Font[];
 };
 
 export type WebpackBuildConfigOptions = Omit<Options, 'name' | 'bundler'>;
