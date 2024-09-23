@@ -171,6 +171,15 @@ export default function Webpack() {
             />
           </li>
         </ul>
+        <h2 className="mb-2 text-lg font-semibold">Linting</h2>
+        <ul className="mb-4">
+          <li>
+            <Checkbox id="eslint" name="linting" label="ESLint" />
+          </li>
+          <li>
+            <Checkbox id="prettier" name="linting" label="Prettier" />
+          </li>
+        </ul>
         <DownloadButton files={files}>Download</DownloadButton>
       </div>
       <CodePreview files={files} />

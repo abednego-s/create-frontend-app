@@ -12,6 +12,7 @@ export type Testing = 'jest' | 'vitest';
 export type Transpiler = 'babel' | 'ts';
 export type Optimization = 'split-vendors';
 export type Font = 'ttf' | 'eot' | 'woff' | 'woff2';
+export type Linting = 'eslint' | 'prettier';
 
 export type Options = {
   name?: string;
@@ -23,8 +24,9 @@ export type Options = {
   styling: Styling[];
   testing?: Testing[];
   transpiler?: Transpiler[];
-  optimization: Optimization[];
-  font: Font[];
+  optimization?: Optimization[];
+  font?: Font[];
+  linting?: Linting[];
 };
 
 export type WebpackBuildConfigOptions = Omit<Options, 'name' | 'bundler'>;
@@ -38,6 +40,10 @@ export type WebpackConfig = Configuration;
 export type ProjectFileNames =
   | '.babelrc'
   | '.gitignore'
+  | '.eslintignore'
+  | '.eslintrc.json'
+  | '.prettierignore'
+  | '.prettierrc'
   | '__tests__/test.js'
   | '__tests__/test.ts'
   | 'jest.config.js'
@@ -55,3 +61,48 @@ export type ProjectFileNames =
   | 'webpack.config.json';
 
 export type ProjectFiles = { [K: string]: string };
+
+export type ESLintConfig = {
+  env?: ESLintConfigEnv;
+  extends?: string[];
+  parser?: string;
+  parserOptions?: ESLintConfigParserOptions;
+  plugins?: string[];
+  rules?: ESLintConfigRules;
+  settings?: ESLintConfigSettings;
+};
+
+export type ESLintConfigEnv = {
+  browser: boolean;
+  node: boolean;
+  es2021: boolean;
+};
+
+export type ESLintConfigParserOptions = {
+  ecmaFeatures?: ESLintConfigEcmaFeatures;
+  ecmaVersion?: string;
+  sourceType?: string;
+};
+
+export type ESLintConfigEcmaFeatures = {
+  jsx?: boolean;
+};
+
+export type KnownESLintRuleProperties =
+  | 'prettier/prettier'
+  | 'react/prop-types'
+  | 'react/jsx-uses-react'
+  | 'react/react-in-jsx-scope'
+  | 'no-unused-vars'
+  | '@typescript-eslint/no-require-imports';
+
+export type ESLintConfigRules = {
+  // eslint-disable-next-line no-unused-vars
+  [K in KnownESLintRuleProperties]?: 'warn' | 'off' | 'error';
+};
+
+export type ESLintConfigSettings = {
+  react: {
+    version: string;
+  };
+};

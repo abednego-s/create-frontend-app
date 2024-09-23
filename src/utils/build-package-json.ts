@@ -213,6 +213,26 @@ export function buildPackageJson(options: Options) {
     }
   }
 
+  if (options.linting?.includes('eslint')) {
+    packageJson = {
+      ...packageJson,
+      devDependencies: {
+        ...packageJson.devDependencies,
+        eslint: 'latest',
+      },
+    };
+  }
+
+  if (options.linting?.includes('prettier')) {
+    packageJson = {
+      ...packageJson,
+      devDependencies: {
+        ...packageJson.devDependencies,
+        prettier: 'latest',
+      },
+    };
+  }
+
   const dependencies = Object.keys(packageJson.dependencies)
     .sort()
     .reduce((prev, current) => {

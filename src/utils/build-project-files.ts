@@ -12,6 +12,10 @@ import { buildTypescriptConfig } from './build-ts-config';
 import { buildStylesCss } from './build-styles-css';
 import { buildJestTest } from './build-jest-test';
 import { buildJestConfig } from './build-jest-config';
+import { buildEslintIgnore } from './build-eslint-ignore';
+import { buildEslintConfig } from './build-eslint-config';
+import { buildPrettierIgnore } from './build-prettier-ignore';
+import { buildPrettierConfig } from './build-prettier-config';
 import type { Options, ProjectFileNames } from '../types';
 
 export function buildProjectFiles(options: Options) {
@@ -62,6 +66,16 @@ export function buildProjectFiles(options: Options) {
     } else {
       projectFiles.set('__tests__/test.js', buildJestTest());
     }
+  }
+
+  if (options.linting?.includes('eslint')) {
+    projectFiles.set('.eslintignore', buildEslintIgnore());
+    projectFiles.set('.eslintrc.json', buildEslintConfig(options));
+  }
+
+  if (options.linting?.includes('prettier')) {
+    projectFiles.set('.prettierignore', buildPrettierIgnore());
+    projectFiles.set('.prettierrc', buildPrettierConfig());
   }
 
   return projectFiles;
