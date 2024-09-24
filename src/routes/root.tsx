@@ -1,4 +1,4 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 
 export default function Root() {
   return (
@@ -12,19 +12,43 @@ export default function Root() {
         <nav className="flex justify-center mb-10">
           <ul className="flex">
             <li className="mr-2">
-              <Link to="/" className="px-4 py-2 border-2">
+              <NavLink
+                to="/"
+                className={({ isActive }) =>
+                  [
+                    isActive ? 'border-slate-800' : '',
+                    'border-2 px-4 py-2',
+                  ].join(' ')
+                }
+              >
                 Webpack
-              </Link>
+              </NavLink>
             </li>
             <li className="mr-2">
-              <Link to="/parcel" className="px-4 py-2 border-2">
+              <NavLink
+                to="/parcel"
+                className={({ isActive }) =>
+                  [
+                    isActive ? 'border-slate-800' : '',
+                    'border-2 px-4 py-2',
+                  ].join(' ')
+                }
+              >
                 Parcel
-              </Link>
+              </NavLink>
             </li>
             <li>
-              <Link to="/esbuild" className="px-4 py-2 border-2">
+              <NavLink
+                to="/esbuild"
+                className={({ isActive }) =>
+                  [
+                    isActive ? 'border-slate-800' : '',
+                    'border-2 px-4 py-2',
+                  ].join(' ')
+                }
+              >
                 ESBuild
-              </Link>
+              </NavLink>
             </li>
           </ul>
         </nav>
