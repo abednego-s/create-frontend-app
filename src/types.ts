@@ -51,6 +51,7 @@ export type ProjectFileNames =
   | 'postcss.config.js'
   | 'README.md'
   | 'src/App.jsx'
+  | 'src/App.svelte'
   | 'src/App.tsx'
   | 'src/index.js'
   | 'src/index.ts'

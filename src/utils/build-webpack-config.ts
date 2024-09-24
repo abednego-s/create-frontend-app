@@ -17,11 +17,15 @@ type BuildConfig = Pick<
   | 'font'
 >;
 
-function buildImports(plugins: Options['plugins']) {
+function buildImports(options: WebpackBuildConfigOptions) {
   let output = '';
-  plugins?.forEach((plugin) => {
+  options.plugins?.forEach((plugin) => {
     output += webpackPlugins[plugin].importDeclaration + ';' + '\n';
   });
+
+  if (options.lib === 'svelte') {
+    output += "const sveltePreprocess = require('svelte-preprocess');\n";
+  }
 
   return output;
 }
@@ -50,6 +54,18 @@ function buildConfig(options?: BuildConfig) {
         config.plugins?.push(
           `[code]${webpackPlugins[plugin].pluginEntry}[/code]` as ''
         );
+      });
+    }
+
+    if (plugins?.includes('mini-css-extract-plugin')) {
+      if (!config['module']) {
+        config.module = {
+          rules: [],
+        };
+      }
+      config.module.rules?.push({
+        test: /\.css$/i,
+        use: ['[code]MiniCssExtractPlugin.loader[/code]', 'css-loader'],
       });
     }
 
@@ -105,18 +121,63 @@ function buildConfig(options?: BuildConfig) {
       };
     }
 
-    if (plugins?.includes('mini-css-extract-plugin')) {
+    if (options.lib === 'svelte') {
       if (!config['module']) {
         config.module = {
           rules: [],
         };
       }
+
+      if (!config['resolve']) {
+        config.resolve = {};
+      }
+
+      const extensions = ['.mjs', '.js', '.svelte'];
+
+      if (transpiler?.includes('babel')) {
+        config.module.rules?.push({
+          test: /\.(js|mjs)$/,
+          use: {
+            loader: 'babel-loader',
+          },
+          exclude: /node_modules/,
+        });
+      }
+
+      if (transpiler?.includes('ts')) {
+        config.module.rules?.push({
+          test: /\.ts?$/,
+          loader: 'ts-loader',
+          exclude: /node_modules/,
+        });
+
+        extensions.push('.ts');
+      }
+
       config.module.rules?.push({
-        test: /\.css$/i,
-        use: ['[code]MiniCssExtractPlugin.loader[/code]', 'css-loader'],
+        test: /\.svelte$/,
+        use: {
+          loader: 'svelte-loader',
+          options: {
+            preprocess: '[code]sveltePreprocess()[/code]',
+          },
+        },
       });
+
+      config.resolve.alias = {
+        svelte: "[code]path.resolve('node_modules', 'svelte')[/code]",
+      };
+
+      config.resolve.extensions = extensions;
+      config.resolve.mainFields = ['svelte', 'browser', 'module', 'main'];
+
+      config.devServer = {
+        port: 3000,
+        open: true,
+      };
     }
 
+    // add styling
     if (styling?.includes('css')) {
       if (!config['module']) {
         config.module = {
@@ -211,6 +272,7 @@ function buildConfig(options?: BuildConfig) {
       });
     }
 
+    // add image
     if (image) {
       if (!config['module']) {
         config.module = {
@@ -228,6 +290,7 @@ function buildConfig(options?: BuildConfig) {
       });
     }
 
+    // add font
     if (font) {
       if (!config['module']) {
         config.module = {
@@ -248,6 +311,7 @@ function buildConfig(options?: BuildConfig) {
       });
     }
 
+    // add optimization
     if (optimization?.includes('split-vendors')) {
       config.output = {
         ...config.output,
@@ -258,7 +322,7 @@ function buildConfig(options?: BuildConfig) {
         splitChunks: {
           cacheGroups: {
             vendor: {
-              test: /[\\/]node_modules[\\/]/,
+              test: '[code]/[\\/]node_modules[\\/]/[/code]',
               name: 'vendors',
               chunks: 'all',
             },
@@ -275,7 +339,7 @@ export function buildWebpackConfig(options?: WebpackBuildConfigOptions) {
   let output =
     "const path = require('path');\nconst webpack = require('webpack');\n";
   if (options) {
-    output += buildImports(options.plugins) + '\n';
+    output += buildImports(options) + '\n';
   }
 
   if (options) {

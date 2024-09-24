@@ -18,6 +18,7 @@ import { buildPrettierIgnore } from './build-prettier-ignore';
 import { buildPrettierConfig } from './build-prettier-config';
 import { buildViteConfig } from './build-vite-config';
 import { buildViteTest } from './build-vite-test';
+import { buildSvelteMainApp } from './build-svelte-main-app';
 import type { Options, ProjectFileNames } from '../types';
 
 export function buildProjectFiles(options: Options) {
@@ -49,6 +50,16 @@ export function buildProjectFiles(options: Options) {
       projectFiles.set('src/App.tsx', buildReactMainApp(options));
     } else {
       projectFiles.set('src/App.jsx', buildReactMainApp(options));
+    }
+  }
+
+  if (options.lib === 'svelte') {
+    projectFiles.set('src/index.html', buildHtml(options));
+    projectFiles.set('src/App.svelte', buildSvelteMainApp());
+    if (options.transpiler?.includes('ts')) {
+      projectFiles.set('src/index.ts', buildEntryPoint(options));
+    } else {
+      projectFiles.set('src/index.js', buildEntryPoint(options));
     }
   }
 

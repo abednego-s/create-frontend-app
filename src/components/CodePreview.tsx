@@ -15,6 +15,7 @@ const extensionLang: Record<string, string> = {
   json: 'json',
   jsx: 'jsx',
   prettierrc: 'json',
+  svelte: 'cshtml',
   ts: 'typescript',
   tsx: 'tsx',
 };

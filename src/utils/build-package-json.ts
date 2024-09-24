@@ -76,6 +76,18 @@ export function buildPackageJson(options: Options) {
     };
   }
 
+  if (options.lib === 'svelte') {
+    packageJson = {
+      ...packageJson,
+      devDependencies: {
+        ...packageJson.devDependencies,
+        svelte: '^4.2.19',
+        'svelte-loader': '^3.2.3',
+        'svelte-preprocess': '^6.0.2',
+      },
+    };
+  }
+
   if (options.transpiler?.includes('babel')) {
     packageJson = {
       ...packageJson,

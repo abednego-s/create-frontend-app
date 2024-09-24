@@ -24,5 +24,15 @@ export function buildEntryPoint(options: Options) {
     output += 'const root = createRoot(domNode);\n\nroot.render(<App />);';
   }
 
+  if (options.lib === 'svelte') {
+    output = `import App from './src/App.svelte';
+
+const app = new App({
+  target: document.body,
+});
+
+export default app;`;
+  }
+
   return output;
 }
