@@ -60,21 +60,6 @@ export default function Webpack() {
             <Checkbox id="material-ui" name="ui" label="Material UI" />
           </li>
         </ul>
-        <h2 className="mb-2 text-lg font-semibold">Styling</h2>
-        <ul className="mb-4">
-          <li>
-            <Checkbox id="css" name="styling" label="CSS" />
-          </li>
-          <li>
-            <Checkbox id="scss" name="styling" label="SASS" />
-          </li>
-          <li>
-            <Checkbox id="less" name="styling" label="Less" />
-          </li>
-          <li>
-            <Checkbox id="css-module" name="styling" label="CSS Module" />
-          </li>
-        </ul>
         <h2 className="mb-2 text-lg font-semibold">Testing Framework</h2>
         <ul className="mb-4">
           <li>
@@ -91,6 +76,21 @@ export default function Webpack() {
           </li>
           <li>
             <Checkbox id="ts" name="transpiler" label="Typescript" />
+          </li>
+        </ul>
+        <h2 className="mb-2 text-lg font-semibold">Styling</h2>
+        <ul className="mb-4">
+          <li>
+            <Checkbox id="css" name="styling" label="CSS" />
+          </li>
+          <li>
+            <Checkbox id="scss" name="styling" label="SASS" />
+          </li>
+          <li>
+            <Checkbox id="less" name="styling" label="Less" />
+          </li>
+          <li>
+            <Checkbox id="css-module" name="styling" label="CSS Module" />
           </li>
         </ul>
         <h2 className="mb-2 text-lg font-semibold">Image</h2>
@@ -121,6 +121,25 @@ export default function Webpack() {
           </li>
           <li>
             <Checkbox id="woff2" name="font" label="woff2" />
+          </li>
+        </ul>
+        <h2 className="mb-2 text-lg font-semibold">Linting</h2>
+        <ul className="mb-4">
+          <li>
+            <Checkbox id="eslint" name="linting" label="ESLint" />
+          </li>
+          <li>
+            <Checkbox id="prettier" name="linting" label="Prettier" />
+          </li>
+        </ul>
+        <h2 className="mb-2 text-lg font-semibold">Optimization</h2>
+        <ul className="mb-4">
+          <li>
+            <Checkbox
+              id="split-vendors"
+              name="optimization"
+              label="Code split vendors"
+            />
           </li>
         </ul>
         <h2 className="mb-2 text-lg font-semibold">Webpack Plugins</h2>
@@ -159,25 +178,6 @@ export default function Webpack() {
               name="plugins"
               label="CleanWebpackPlugin"
             />
-          </li>
-        </ul>
-        <h2 className="mb-2 text-lg font-semibold">Optimization</h2>
-        <ul className="mb-4">
-          <li>
-            <Checkbox
-              id="split-vendors"
-              name="optimization"
-              label="Code split vendors"
-            />
-          </li>
-        </ul>
-        <h2 className="mb-2 text-lg font-semibold">Linting</h2>
-        <ul className="mb-4">
-          <li>
-            <Checkbox id="eslint" name="linting" label="ESLint" />
-          </li>
-          <li>
-            <Checkbox id="prettier" name="linting" label="Prettier" />
           </li>
         </ul>
         <DownloadButton files={files}>Download</DownloadButton>

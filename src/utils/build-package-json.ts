@@ -26,8 +26,7 @@ export function buildPackageJson(options: Options) {
       ...packageJson,
       scripts: {
         ...packageJson.scripts,
-        'build:dev': 'webpack --mode development',
-        'build:prod': 'webpack --mode production',
+        build: 'webpack --mode production',
       },
       devDependencies: {
         ...packageJson.devDependencies,
