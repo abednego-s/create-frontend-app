@@ -54,7 +54,20 @@ export default function Root() {
         </nav>
         <Outlet />
       </main>
-      <footer>Footer</footer>
+      <footer className="mt-10 bg-gray-300">
+        <div className="flex max-w-screen-lg py-10 mx-auto ">
+          <ul className="flex">
+            <li className="mr-10">
+              <a href="https://x.com/abednego_s">Twitter</a>
+            </li>
+            <li>
+              <a href="https://github.com/abednego-s/create-frontend-app">
+                Github
+              </a>
+            </li>
+          </ul>
+        </div>
+      </footer>
     </>
   );
 }
