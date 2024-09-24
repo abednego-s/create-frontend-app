@@ -1,6 +1,6 @@
 import Prism from 'prismjs';
-import 'prismjs/themes/prism-okaidia.css';
 import { useEffect } from 'react';
+import 'prismjs/themes/prism-okaidia.css';
 
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-typescript';
@@ -24,7 +24,7 @@ export function CodeBlock({ code, language }: CodeBlockProps) {
 
   return (
     <pre className="w-full p-4 !m-0 !rounded-none">
-      <code className={`text-sm text-wrap language-${language}`}>{code}</code>
+      <code className={`!text-sm text-wrap language-${language}`}>{code}</code>
     </pre>
   );
 }

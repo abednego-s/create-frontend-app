@@ -61,7 +61,7 @@ export type ProjectFileNames =
   | 'vite.config.js'
   | 'webpack.config.js';
 
-export type ProjectFiles = { [K: string]: string };
+export type ProjectFiles = Record<ProjectFileNames, string>;
 
 export type ESLintConfig = {
   env?: ESLintConfigEnv;

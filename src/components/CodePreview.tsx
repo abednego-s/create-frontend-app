@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CodeBlock } from './CodeBlock';
-import type { ProjectFiles } from '../types';
+import type { ProjectFiles, ProjectFileNames } from '../types';
 
 type CodePreviewProps = {
   files: ProjectFiles;
@@ -14,18 +14,19 @@ const extensionLang: Record<string, string> = {
   js: 'javascript',
   json: 'json',
   jsx: 'jsx',
+  prettierrc: 'json',
   ts: 'typescript',
   tsx: 'tsx',
 };
 
 export function CodePreview({ files }: CodePreviewProps) {
   const [selectedFile, setSelectedFile] =
-    useState<keyof ProjectFiles>('webpack.config.js');
+    useState<ProjectFileNames>('webpack.config.js');
 
   const [language, setLanguage] = useState('javascript');
 
-  function handleClickFile(file: string) {
-    setSelectedFile(file as keyof ProjectFiles);
+  function handleClickFile(file: ProjectFileNames) {
+    setSelectedFile(file);
     const extension = file.split('.').at(-1);
     if (extension) {
       const lang = extensionLang[extension] || 'bash';
@@ -36,7 +37,7 @@ export function CodePreview({ files }: CodePreviewProps) {
   return (
     <div className="flex rounded-md w-[760px] h-[650px] overflow-hidden">
       <ul className="pt-4 bg-black">
-        {Object.keys(files).map((projectFile) => (
+        {(Object.keys(files) as ProjectFileNames[]).map((projectFile) => (
           <li
             key={projectFile}
             onClick={() => handleClickFile(projectFile)}

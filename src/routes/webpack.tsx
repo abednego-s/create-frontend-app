@@ -31,13 +31,13 @@ export default function Webpack() {
   const projectFiles = buildProjectFiles({ ...params, bundler: 'webpack' });
   const files = Array.from(projectFiles.keys())
     .sort()
-    .reduce<ProjectFiles>((prev, current) => {
+    .reduce((prev, current) => {
       prev = {
         ...prev,
         [current]: projectFiles.get(current) as string,
       };
       return prev;
-    }, {});
+    }, {} as ProjectFiles);
 
   return (
     <div className="flex">
