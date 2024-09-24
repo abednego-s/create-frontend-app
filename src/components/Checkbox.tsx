@@ -80,7 +80,7 @@ export function Checkbox({ name, id, label }: CheckboxProps) {
         onChange={handleInputClick}
         checked={isChecked}
       />
-      <label htmlFor={id} className="ml-2">
+      <label htmlFor={id} className="ml-2 text-sm">
         {label}
       </label>
     </div>

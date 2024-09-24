@@ -26,7 +26,7 @@ export function Radio({ name, id, label }: RadioProps) {
         onChange={handleInputChange}
         checked={searchParams.get(name) === id}
       />
-      <label htmlFor={id} className="ml-2">
+      <label htmlFor={id} className="ml-2 text-sm">
         {label}
       </label>
     </div>

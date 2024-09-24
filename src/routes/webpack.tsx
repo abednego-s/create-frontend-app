@@ -1,9 +1,8 @@
 import { useSearchParams } from 'react-router-dom';
-import { buildProjectFiles } from '../utils/build-project-files';
-import { Checkbox } from '../components/Checkbox';
-import { Radio } from '../components/Radio';
 import { CodePreview } from '../components/CodePreview';
 import { DownloadButton } from '../components/DownloadButton';
+import { Sidebar } from '../components/Sidebar';
+import { buildProjectFiles } from '../utils/build-project-files';
 import type { Options, ProjectFiles } from '../types';
 
 const multipleOptionParams: Array<keyof Options> = [
@@ -41,148 +40,15 @@ export default function Webpack() {
 
   return (
     <div className="flex">
-      <div className="flex-grow">
-        <h2 className="mb-2 text-lg font-semibold">Library</h2>
-        <ul className="mb-4">
-          <li>
-            <Radio id="react" name="lib" label="React" />
-          </li>
-          <li>
-            <Radio id="svelte" name="lib" label="Svelte" />
-          </li>
-        </ul>
-        <h2 className="mb-2 text-lg font-semibold">UI library</h2>
-        <ul className="mb-4">
-          <li>
-            <Checkbox id="tailwind" name="ui" label="Tailwind" />
-          </li>
-          <li>
-            <Checkbox id="material-ui" name="ui" label="Material UI" />
-          </li>
-        </ul>
-        <h2 className="mb-2 text-lg font-semibold">Testing Framework</h2>
-        <ul className="mb-4">
-          <li>
-            <Checkbox id="jest" name="testing" label="Jest" />
-          </li>
-          <li>
-            <Checkbox id="vitest" name="testing" label="Vitest" />
-          </li>
-        </ul>
-        <h2 className="mb-2 text-lg font-semibold">Transpiler</h2>
-        <ul className="mb-4">
-          <li>
-            <Checkbox id="babel" name="transpiler" label="Babel" />
-          </li>
-          <li>
-            <Checkbox id="ts" name="transpiler" label="Typescript" />
-          </li>
-        </ul>
-        <h2 className="mb-2 text-lg font-semibold">Styling</h2>
-        <ul className="mb-4">
-          <li>
-            <Checkbox id="css" name="styling" label="CSS" />
-          </li>
-          <li>
-            <Checkbox id="scss" name="styling" label="SASS" />
-          </li>
-          <li>
-            <Checkbox id="less" name="styling" label="Less" />
-          </li>
-          <li>
-            <Checkbox id="css-module" name="styling" label="CSS Module" />
-          </li>
-        </ul>
-        <h2 className="mb-2 text-lg font-semibold">Image</h2>
-        <ul className="mb-4">
-          <li>
-            <Checkbox id="svg" name="image" label="SVG" />
-          </li>
-          <li>
-            <Checkbox id="png" name="image" label="PNG" />
-          </li>
-          <li>
-            <Checkbox id="jpe?g" name="image" label="JPG" />
-          </li>
-          <li>
-            <Checkbox id="gif" name="image" label="GIF" />
-          </li>
-        </ul>
-        <h2 className="mb-2 text-lg font-semibold">Fonts</h2>
-        <ul className="mb-4">
-          <li>
-            <Checkbox id="ttf" name="font" label="ttf" />
-          </li>
-          <li>
-            <Checkbox id="eot" name="font" label="eot" />
-          </li>
-          <li>
-            <Checkbox id="woff" name="font" label="woff" />
-          </li>
-          <li>
-            <Checkbox id="woff2" name="font" label="woff2" />
-          </li>
-        </ul>
-        <h2 className="mb-2 text-lg font-semibold">Linting</h2>
-        <ul className="mb-4">
-          <li>
-            <Checkbox id="eslint" name="linting" label="ESLint" />
-          </li>
-          <li>
-            <Checkbox id="prettier" name="linting" label="Prettier" />
-          </li>
-        </ul>
-        <h2 className="mb-2 text-lg font-semibold">Optimization</h2>
-        <ul className="mb-4">
-          <li>
-            <Checkbox
-              id="split-vendors"
-              name="optimization"
-              label="Code split vendors"
-            />
-          </li>
-        </ul>
-        <h2 className="mb-2 text-lg font-semibold">Webpack Plugins</h2>
-        <ul className="mb-4">
-          <li>
-            <Checkbox
-              id="HotModuleReplacementPlugin"
-              name="plugins"
-              label="Hot Module Replacement"
-            />
-          </li>
-          <li>
-            <Checkbox
-              id="html-webpack-plugin"
-              name="plugins"
-              label="HTML Webpack Plugins"
-            />
-          </li>
-          <li>
-            <Checkbox
-              id="webpack-bundle-analyzer"
-              name="plugins"
-              label="Webpack Bundle Analyzer"
-            />
-          </li>
-          <li>
-            <Checkbox
-              id="mini-css-extract-plugin"
-              name="plugins"
-              label="MiniCSSExtractPlugin"
-            />
-          </li>
-          <li>
-            <Checkbox
-              id="clean-webpack-plugin"
-              name="plugins"
-              label="CleanWebpackPlugin"
-            />
-          </li>
-        </ul>
-        <DownloadButton files={files}>Download</DownloadButton>
+      <div className="flex-grow pr-10">
+        <div className="mb-10">
+          <Sidebar />
+        </div>
+        <DownloadButton files={files}>Download Zip</DownloadButton>
       </div>
-      <CodePreview files={files} />
+      <div className="w-[750px]">
+        <CodePreview files={files} />
+      </div>
     </div>
   );
 }

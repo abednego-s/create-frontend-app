@@ -5,7 +5,7 @@ export function buildPackageJson(options: Options) {
     name: 'empty-project',
     version: '1.0.0',
     description: '',
-    main: 'dist/index.js',
+    main: 'dist/bundle.js',
     keyword: [],
     author: '',
     license: 'ISC',

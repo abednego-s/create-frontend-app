@@ -35,7 +35,7 @@ export function CodePreview({ files }: CodePreviewProps) {
   }
 
   return (
-    <div className="flex rounded-md w-[760px] h-[650px] overflow-hidden">
+    <div className="flex overflow-hidden rounded-md h-[650px]">
       <ul className="pt-4 bg-black">
         {(Object.keys(files) as ProjectFileNames[]).map((projectFile) => (
           <li

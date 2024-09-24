@@ -26,7 +26,7 @@ export function DownloadButton({ files, children }: DownloadButtonProps) {
 
   return (
     <button
-      className="px-4 py-2 border-2 rounded-md"
+      className="w-full px-4 py-2 border-2 rounded-md"
       onClick={handleClickDownload}
     >
       {children}
