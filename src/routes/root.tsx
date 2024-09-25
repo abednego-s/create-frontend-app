@@ -1,4 +1,7 @@
 import { Outlet, NavLink } from 'react-router-dom';
+import webpackLogo from '../../assets/webpack.svg';
+import parcelLogo from '../../assets/parcel.svg';
+import esbuildLogo from '../../assets/esbuild.svg';
 
 export default function Root() {
   return (
@@ -17,11 +20,12 @@ export default function Root() {
                 className={({ isActive }) =>
                   [
                     isActive ? 'border-slate-800' : '',
-                    'border-2 px-4 py-2',
+                    'border-2 px-4 py-2 flex',
                   ].join(' ')
                 }
               >
-                Webpack
+                <img src={webpackLogo} width={25} className="mr-2" />
+                <span>Webpack</span>
               </NavLink>
             </li>
             <li className="mr-2">
@@ -30,11 +34,12 @@ export default function Root() {
                 className={({ isActive }) =>
                   [
                     isActive ? 'border-slate-800' : '',
-                    'border-2 px-4 py-2',
+                    'border-2 px-4 py-2 flex',
                   ].join(' ')
                 }
               >
-                Parcel
+                <img src={parcelLogo} width={25} className="mr-2" />
+                <span>Parcel</span>
               </NavLink>
             </li>
             <li>
@@ -43,11 +48,12 @@ export default function Root() {
                 className={({ isActive }) =>
                   [
                     isActive ? 'border-slate-800' : '',
-                    'border-2 px-4 py-2',
+                    'border-2 px-4 py-2 flex',
                   ].join(' ')
                 }
               >
-                ESBuild
+                <img src={esbuildLogo} width={25} className="mr-2" />
+                <span>ESBuild</span>
               </NavLink>
             </li>
           </ul>

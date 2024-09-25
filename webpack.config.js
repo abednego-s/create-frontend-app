@@ -45,6 +45,18 @@ const config = {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
+      {
+        test: /\.(svg)$/i,
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 8192,
+          },
+        },
+        generator: {
+          filename: 'images/[name].[hash][ext]',
+        },
+      },
     ],
   },
   plugins: [
