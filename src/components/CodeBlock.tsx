@@ -12,12 +12,12 @@ import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-markdown';
 import 'prismjs/components/prism-cshtml';
 
-type CodeBlockProps = {
+export type CodeBlockProps = {
   code: string;
   language: string;
 };
 
-export function CodeBlock({ code, language }: CodeBlockProps) {
+export function CodeBlock({ code, language }: Readonly<CodeBlockProps>) {
   useEffect(() => {
     Prism.highlightAll();
   }, [code]);

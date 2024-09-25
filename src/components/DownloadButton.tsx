@@ -3,12 +3,15 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import type { ProjectFiles } from '../types';
 
-type DownloadButtonProps = {
+export type DownloadButtonProps = {
   files: ProjectFiles;
   children: ReactNode;
 };
 
-export function DownloadButton({ files, children }: DownloadButtonProps) {
+export function DownloadButton({
+  files,
+  children,
+}: Readonly<DownloadButtonProps>) {
   async function handleClickDownload() {
     const zip = new JSZip();
 

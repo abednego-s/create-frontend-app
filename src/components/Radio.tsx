@@ -1,12 +1,12 @@
 import { useSearchParams } from 'react-router-dom';
 
-type RadioProps = {
+export type RadioProps = {
   name: string;
   id: string;
   label: string;
 };
 
-export function Radio({ name, id, label }: RadioProps) {
+export function Radio({ name, id, label }: Readonly<RadioProps>) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   function handleInputChange() {
