@@ -27,6 +27,10 @@ function buildImports(options: WebpackBuildConfigOptions) {
     output += "const sveltePreprocess = require('svelte-preprocess');\n";
   }
 
+  if (options.lib === 'vue') {
+    output += "const { VueLoaderPlugin } = require('vue-loader');\n";
+  }
+
   return output;
 }
 
@@ -170,6 +174,42 @@ function buildConfig(options?: BuildConfig) {
 
       config.resolve.extensions = extensions;
       config.resolve.mainFields = ['svelte', 'browser', 'module', 'main'];
+
+      config.devServer = {
+        port: 3000,
+        open: true,
+      };
+    }
+
+    if (options.lib === 'vue') {
+      if (!config['module']) {
+        config.module = {
+          rules: [],
+        };
+      }
+
+      if (!config['resolve']) {
+        config.resolve = {};
+      }
+
+      const extensions = ['*', '.js', '.vue', '.json'];
+
+      config.module.rules?.push({
+        test: /\.vue$/,
+        loader: 'vue-loader',
+      });
+
+      if (!config['plugins']) {
+        config.plugins = [];
+      }
+
+      config.plugins?.push('[code]new VueLoaderPlugin()[/code]' as '');
+
+      config.resolve.alias = {
+        vue$: 'vue/dist/vue.esm.js',
+      };
+
+      config.resolve.extensions = extensions;
 
       config.devServer = {
         port: 3000,

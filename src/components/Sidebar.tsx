@@ -9,6 +9,7 @@ const menus = [
     items: [
       { id: 'react', label: 'React' },
       { id: 'svelte', label: 'Svelte' },
+      { id: 'vue', label: 'Vue' },
     ],
     canMultiple: false,
   },

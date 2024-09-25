@@ -25,13 +25,22 @@ export function buildEntryPoint(options: Options) {
   }
 
   if (options.lib === 'svelte') {
-    output = `import App from './src/App.svelte';
+    output = `import App from './App.svelte';
 
 const app = new App({
-  target: document.body,
+  target: document.getElementById('root'),
 });
 
 export default app;`;
+  }
+
+  if (options.lib === 'vue') {
+    output = `import Vue from 'vue';
+import App from './App.vue';
+
+new Vue({
+  render: h => h(App),
+}).$mount('#root');`;
   }
 
   return output;

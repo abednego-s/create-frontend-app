@@ -18,6 +18,7 @@ const extensionLang: Record<string, string> = {
   svelte: 'cshtml',
   ts: 'typescript',
   tsx: 'tsx',
+  vue: 'cshtml',
 };
 
 export function CodePreview({ files }: CodePreviewProps) {

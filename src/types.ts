@@ -53,6 +53,7 @@ export type ProjectFileNames =
   | 'src/App.jsx'
   | 'src/App.svelte'
   | 'src/App.tsx'
+  | 'src/App.vue'
   | 'src/index.js'
   | 'src/index.ts'
   | 'src/index.html'

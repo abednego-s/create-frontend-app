@@ -93,6 +93,26 @@ export function buildPackageJson(options: Options) {
     };
   }
 
+  if (options.lib === 'vue') {
+    packageJson = {
+      ...packageJson,
+      scripts: {
+        ...packageJson.scripts,
+        dev: 'webpack serve --mode development',
+      },
+      dependencies: {
+        ...packageJson.dependencies,
+        vue: '^3.5.8',
+      },
+      devDependencies: {
+        ...packageJson.devDependencies,
+        'vue-loader': '^17.4.2',
+        'vue-template-compiler': '^2.7.16',
+        'webpack-dev-server': '^5.1.0',
+      },
+    };
+  }
+
   if (options.transpiler?.includes('babel')) {
     packageJson = {
       ...packageJson,
