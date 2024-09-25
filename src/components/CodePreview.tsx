@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { CodeBlock } from './CodeBlock';
 import type { ProjectFiles, ProjectFileNames } from '../types';
 
-type CodePreviewProps = {
+export type CodePreviewProps = {
   files: ProjectFiles;
 };
 
@@ -21,7 +21,7 @@ const extensionLang: Record<string, string> = {
   vue: 'cshtml',
 };
 
-export function CodePreview({ files }: CodePreviewProps) {
+export function CodePreview({ files }: Readonly<CodePreviewProps>) {
   const [selectedFile, setSelectedFile] =
     useState<ProjectFileNames>('webpack.config.js');
 
@@ -42,10 +42,11 @@ export function CodePreview({ files }: CodePreviewProps) {
         {(Object.keys(files) as ProjectFileNames[]).map((projectFile) => (
           <li
             key={projectFile}
-            onClick={() => handleClickFile(projectFile)}
             className={`block px-4 py-1 text-gray-400 cursor-pointer hover:bg-stone-800 ${selectedFile === projectFile ? 'bg-stone-800' : ''}`}
           >
-            {projectFile}
+            <button onClick={() => handleClickFile(projectFile)}>
+              {projectFile}
+            </button>
           </li>
         ))}
       </ul>

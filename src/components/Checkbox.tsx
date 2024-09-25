@@ -7,18 +7,18 @@ export type CheckboxProps = {
   label: string;
 };
 
-export function Checkbox({ name, id, label }: CheckboxProps) {
-  const [isChecked, setChecked] = useState(false);
+export function Checkbox({ name, id, label }: Readonly<CheckboxProps>) {
+  const [isChecked, setIsChecked] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     const param = searchParams.get(name);
     const isActive = param ? param.split(',').includes(id) : false;
-    return setChecked(isActive);
+    return setIsChecked(isActive);
   }, [id, name, searchParams]);
 
   function handleInputClick() {
-    setChecked(!isChecked);
+    setIsChecked(!isChecked);
 
     let queryParams = Array.from(searchParams).reduce<Record<string, string>>(
       (prev, current) => {
@@ -55,17 +55,14 @@ export function Checkbox({ name, id, label }: CheckboxProps) {
         );
       }
     } else {
-      if (queryParams[name]) {
-        queryParams = {
-          ...queryParams,
-          [name]: [...queryParams[name].split(','), id].join(','),
-        };
-      } else {
-        queryParams = {
-          ...queryParams,
-          [name]: id,
-        };
-      }
+      const value = queryParams[name]
+        ? [...queryParams[name].split(','), id].join(',')
+        : id;
+
+      queryParams = {
+        ...queryParams,
+        [name]: value,
+      };
     }
 
     setSearchParams(queryParams);

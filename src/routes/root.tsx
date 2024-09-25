@@ -24,7 +24,12 @@ export default function Root() {
                   ].join(' ')
                 }
               >
-                <img src={webpackLogo} width={25} className="mr-2" />
+                <img
+                  alt="webpack"
+                  src={webpackLogo}
+                  width={25}
+                  className="mr-2"
+                />
                 <span>Webpack</span>
               </NavLink>
             </li>
@@ -38,7 +43,12 @@ export default function Root() {
                   ].join(' ')
                 }
               >
-                <img src={parcelLogo} width={25} className="mr-2" />
+                <img
+                  alt="parcel"
+                  src={parcelLogo}
+                  width={25}
+                  className="mr-2"
+                />
                 <span>Parcel</span>
               </NavLink>
             </li>
@@ -52,7 +62,12 @@ export default function Root() {
                   ].join(' ')
                 }
               >
-                <img src={esbuildLogo} width={25} className="mr-2" />
+                <img
+                  alt="esbuild"
+                  src={esbuildLogo}
+                  width={25}
+                  className="mr-2"
+                />
                 <span>ESBuild</span>
               </NavLink>
             </li>
