@@ -1,4 +1,4 @@
-import { Configuration as WebpackConfiguration } from 'webpack';
+import { Configuration as WebpackConfiguration, RuleSetRule } from 'webpack';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { webpackPlugins } from './utils/webpack-plugins';
 
@@ -20,8 +20,8 @@ export type Options = {
   lib?: Library;
   plugins?: WebpackPlugins[];
   ui?: UI[];
-  image: Image[];
-  styling: Styling[];
+  image?: Image[];
+  styling?: Styling[];
   testing?: Testing[];
   transpiler?: Transpiler[];
   optimization?: Optimization[];
@@ -36,6 +36,8 @@ interface Configuration extends WebpackConfiguration {
 }
 
 export type WebpackConfig = Configuration;
+
+export type WebpackRuleSetRule = RuleSetRule;
 
 export type ProjectFileNames =
   | '.babelrc'

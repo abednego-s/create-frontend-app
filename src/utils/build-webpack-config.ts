@@ -123,7 +123,7 @@ function svelte(this: WebpackConfig, transpiler: BuildConfig['transpiler']) {
         loader: 'svelte-loader',
         options: {
           preprocess: useTypescript
-            ? '[code]sveltePreprocess({ typescript: true, })[/code]'
+            ? '[code]sveltePreprocess({ typescript: true })[/code]'
             : '[code]sveltePreprocess()[/code]',
         },
       },
@@ -166,6 +166,198 @@ function svelte(this: WebpackConfig, transpiler: BuildConfig['transpiler']) {
   };
 }
 
+// eslint-disable-next-line no-unused-vars
+function vue(this: WebpackConfig) {
+  this.module = {
+    ...this.module,
+  };
+
+  if (!this.module.rules) {
+    this.module.rules = [];
+  }
+
+  this.resolve = {
+    ...this.resolve,
+  };
+
+  const extensions = ['*', '.js', '.vue', '.json'];
+
+  this.module.rules?.push({
+    test: /\.vue$/,
+    loader: 'vue-loader',
+  });
+
+  if (!this.plugins) {
+    this.plugins = [];
+  }
+
+  this.plugins?.push('[code]new VueLoaderPlugin()[/code]' as '');
+
+  this.resolve.alias = {
+    vue$: 'vue/dist/vue.esm.js',
+  };
+
+  this.resolve.extensions = extensions;
+}
+
+function css(
+  this: WebpackConfig,
+  styling: BuildConfig['styling'],
+  plugins: BuildConfig['plugins']
+) {
+  this.module = {
+    ...this.module,
+  };
+
+  if (!this.module.rules) {
+    this.module.rules = [];
+  }
+
+  let use = ['style-loader', 'css-loader'];
+
+  if (plugins?.includes('mini-css-extract-plugin')) {
+    use = ['[code]MiniCssExtractPlugin.loader[/code]', 'css-loader'];
+  }
+
+  if (styling?.includes('css-module')) {
+    this.module.rules.push({
+      test: /\.css$/,
+      exclude: /\.module\.css$/,
+      use,
+    });
+  } else {
+    this.module.rules.push({
+      test: /\.css$/,
+      use,
+    });
+  }
+}
+
+function cssModule(this: WebpackConfig, plugins: BuildConfig['plugins']) {
+  this.module = {
+    ...this.module,
+  };
+
+  if (!this.module.rules) {
+    this.module.rules = [];
+  }
+
+  let styleLoader = 'style-loader';
+
+  if (plugins?.includes('mini-css-extract-plugin')) {
+    styleLoader = '[code]MiniCssExtractPlugin.loader[/code]';
+  }
+
+  this.module.rules.push({
+    test: /\.module\.css$/,
+    use: [
+      styleLoader,
+      {
+        loader: 'css-loader',
+        options: {
+          modules: {
+            localIdentName: '[name]__[local]___[hash:base64:5]',
+          },
+        },
+      },
+    ],
+  });
+}
+
+// eslint-disable-next-line no-unused-vars
+function less(this: WebpackConfig) {
+  this.module = {
+    ...this.module,
+  };
+
+  if (!this.module.rules) {
+    this.module.rules = [];
+  }
+
+  this.module.rules.push({
+    test: /\.less$/,
+    use: ['style-loader', 'css-loader', 'less-loader'],
+  });
+}
+
+// eslint-disable-next-line no-unused-vars
+function scss(this: WebpackConfig) {
+  this.module = {
+    ...this.module,
+  };
+
+  if (!this.module.rules) {
+    this.module.rules = [];
+  }
+
+  this.module?.rules?.push({
+    test: /\.scss$/,
+    use: ['style-loader', 'css-loader', 'sass-loader'],
+  });
+}
+
+function imageLoader(this: WebpackConfig, image: string[]) {
+  this.module = {
+    ...this.module,
+  };
+
+  if (!this.module.rules) {
+    this.module.rules = [];
+  }
+
+  this.module.rules.push({
+    test: `[code]/\\.(${image.join('|')})$/i[/code]`,
+    use: [
+      {
+        loader: 'file-loader',
+      },
+    ],
+  });
+}
+
+function fontLoader(this: WebpackConfig, font: string[]) {
+  this.module = {
+    ...this.module,
+  };
+
+  if (!this.module.rules) {
+    this.module.rules = [];
+  }
+
+  this.module.rules?.push({
+    test: `[code]/\\.(${font.join('|')})$/i[/code]`,
+    use: [
+      {
+        loader: 'file-loader',
+        options: {
+          name: '[name].[hash].[ext]',
+          outputPath: 'fonts/',
+        },
+      },
+    ],
+  });
+}
+
+// eslint-disable-next-line no-unused-vars
+function bundleOptimizer(this: WebpackConfig) {
+  this.output = {
+    ...this.output,
+    filename: '[name].[contenthash].js',
+  };
+  this.optimization = {
+    runtimeChunk: 'single',
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: '[code]/[\\/]node_modules[\\/]/[/code]',
+          name: 'vendors',
+          chunks: 'all',
+        },
+      },
+    },
+  };
+}
+
 function buildConfig(options?: BuildConfig) {
   const config: WebpackConfig = {
     entry: './src/index.js',
@@ -181,8 +373,6 @@ function buildConfig(options?: BuildConfig) {
 
     setEntryPoint.call(config, transpiler);
 
-    registerPlugins.call(config, plugins);
-
     if (lib === 'react') {
       react.call(config, transpiler);
     }
@@ -191,212 +381,46 @@ function buildConfig(options?: BuildConfig) {
       svelte.call(config, transpiler);
     }
 
+    if (lib === 'vue') {
+      vue.call(config);
+    }
+
+    if (styling?.includes('css')) {
+      css.call(config, styling, plugins);
+    }
+
+    if (styling?.includes('css-module')) {
+      cssModule.call(config, plugins);
+    }
+
+    if (styling?.includes('less')) {
+      less.call(config);
+    }
+
+    if (styling?.includes('scss')) {
+      scss.call(config);
+    }
+
+    if (image) {
+      imageLoader.call(config, image);
+    }
+
+    if (font) {
+      fontLoader.call(config, font);
+    }
+
+    if (optimization?.includes('split-vendors')) {
+      bundleOptimizer.call(config);
+    }
+
+    if (plugins) {
+      registerPlugins.call(config, plugins);
+    }
+
     if (lib) {
       config.devServer = {
         port: 3000,
         open: true,
-      };
-    }
-
-    if (plugins?.includes('mini-css-extract-plugin')) {
-      if (!config['module']) {
-        config.module = {
-          rules: [],
-        };
-      }
-      config.module.rules?.push({
-        test: /\.css$/i,
-        use: ['[code]MiniCssExtractPlugin.loader[/code]', 'css-loader'],
-      });
-    }
-
-    if (lib === 'vue') {
-      if (!config['module']) {
-        config.module = {
-          rules: [],
-        };
-      }
-
-      if (!config['resolve']) {
-        config.resolve = {};
-      }
-
-      const extensions = ['*', '.js', '.vue', '.json'];
-
-      config.module.rules?.push({
-        test: /\.vue$/,
-        loader: 'vue-loader',
-      });
-
-      if (!config['plugins']) {
-        config.plugins = [];
-      }
-
-      config.plugins?.push('[code]new VueLoaderPlugin()[/code]' as '');
-
-      config.resolve.alias = {
-        vue$: 'vue/dist/vue.esm.js',
-      };
-
-      config.resolve.extensions = extensions;
-
-      config.devServer = {
-        port: 3000,
-        open: true,
-      };
-    }
-
-    // add styling
-    if (styling?.includes('css')) {
-      if (!config['module']) {
-        config.module = {
-          rules: [],
-        };
-      }
-
-      let loader: {
-        test: RegExp;
-        use: string[];
-        exclude?: RegExp;
-      } = {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
-      };
-
-      if (styling.includes('css-module')) {
-        loader = {
-          ...loader,
-          exclude: /\.module\.css$/,
-        };
-      }
-
-      config.module.rules?.push(loader);
-    }
-
-    if (styling?.includes('css-module')) {
-      if (!config['module']) {
-        config.module = {
-          rules: [],
-        };
-      }
-
-      let loader: {
-        test: RegExp;
-        use: (
-          | string
-          | {
-              loader: string;
-              options: {
-                importLoaders: number;
-                modules: boolean;
-              };
-            }
-        )[];
-        include?: RegExp;
-      } = {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1,
-              modules: true,
-            },
-          },
-        ],
-      };
-
-      if (styling.includes('css')) {
-        loader = {
-          ...loader,
-          include: /\.module\.css$/,
-        };
-      }
-
-      config.module.rules?.push(loader);
-    }
-
-    if (styling?.includes('less')) {
-      if (!config['module']) {
-        config.module = {
-          rules: [],
-        };
-      }
-      config.module?.rules?.push({
-        test: /\.less$/,
-        use: ['style-loader', 'css-loader', 'less-loader'],
-      });
-    }
-
-    if (styling?.includes('scss')) {
-      if (!config['module']) {
-        config.module = {
-          rules: [],
-        };
-      }
-      config.module?.rules?.push({
-        test: /\.scss$/,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
-      });
-    }
-
-    // add image
-    if (image) {
-      if (!config['module']) {
-        config.module = {
-          rules: [],
-        };
-      }
-
-      config.module.rules?.push({
-        test: `[code]/\\.(${image.join('|')})$/i[/code]`,
-        use: [
-          {
-            loader: 'file-loader',
-          },
-        ],
-      });
-    }
-
-    // add font
-    if (font) {
-      if (!config['module']) {
-        config.module = {
-          rules: [],
-        };
-      }
-      config.module.rules?.push({
-        test: `[code]/\\.(${font.join('|')})$/i[/code]`,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[name].[hash].[ext]',
-              outputPath: 'fonts/',
-            },
-          },
-        ],
-      });
-    }
-
-    // add optimization
-    if (optimization?.includes('split-vendors')) {
-      config.output = {
-        ...config.output,
-        filename: '[name].[contenthash].js',
-      };
-      config.optimization = {
-        runtimeChunk: 'single',
-        splitChunks: {
-          cacheGroups: {
-            vendor: {
-              test: '[code]/[\\/]node_modules[\\/]/[/code]',
-              name: 'vendors',
-              chunks: 'all',
-            },
-          },
-        },
       };
     }
   }

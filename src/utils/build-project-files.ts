@@ -40,7 +40,7 @@ export function buildProjectFiles(options: Options) {
 
   if (options.transpiler?.includes('ts')) {
     projectFiles.delete('src/index.js');
-    projectFiles.set('tsconfig.json', buildTypescriptConfig());
+    projectFiles.set('tsconfig.json', buildTypescriptConfig(options));
     projectFiles.set('src/index.ts', buildEntryPoint(options));
   }
 
