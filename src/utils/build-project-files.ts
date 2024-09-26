@@ -56,7 +56,8 @@ export function buildProjectFiles(options: Options) {
 
   if (options.lib === 'svelte') {
     projectFiles.set('src/index.html', buildHtml());
-    projectFiles.set('src/App.svelte', buildSvelteMainApp());
+    projectFiles.set('src/App.svelte', buildSvelteMainApp(options));
+
     if (options.transpiler?.includes('ts')) {
       projectFiles.set('src/index.ts', buildEntryPoint(options));
     } else {
@@ -67,6 +68,7 @@ export function buildProjectFiles(options: Options) {
   if (options.lib === 'vue') {
     projectFiles.set('src/index.html', buildHtml());
     projectFiles.set('src/App.vue', buildVueMainApp());
+
     if (options.transpiler?.includes('ts')) {
       projectFiles.set('src/index.ts', buildEntryPoint(options));
     } else {

@@ -1,7 +1,5 @@
 export function buildHtml() {
-  let output = '<!DOCTYPE html>';
-
-  output += `
+  const output = `<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
