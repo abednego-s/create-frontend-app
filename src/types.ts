@@ -109,3 +109,14 @@ export type ESLintConfigSettings = {
     version: string;
   };
 };
+
+export type BuildConfig = Pick<
+  Options,
+  | 'plugins'
+  | 'lib'
+  | 'transpiler'
+  | 'styling'
+  | 'image'
+  | 'optimization'
+  | 'font'
+>;

@@ -1,21 +1,10 @@
 import { objectLiteralToString } from '../utils/object-literals-to-string';
 import { webpackPlugins } from '../utils/webpack-plugins';
 import type {
-  Options,
+  BuildConfig,
   WebpackConfig,
   WebpackBuildConfigOptions,
 } from '../types';
-
-type BuildConfig = Pick<
-  Options,
-  | 'plugins'
-  | 'lib'
-  | 'transpiler'
-  | 'styling'
-  | 'image'
-  | 'optimization'
-  | 'font'
->;
 
 function buildImports(options: WebpackBuildConfigOptions) {
   let output = '';
@@ -34,6 +23,149 @@ function buildImports(options: WebpackBuildConfigOptions) {
   return output;
 }
 
+function setEntryPoint(
+  this: WebpackConfig,
+  transpiler: BuildConfig['transpiler']
+) {
+  if (transpiler?.includes('ts')) {
+    this.entry = './src/index.ts';
+  }
+}
+
+function registerPlugins(this: WebpackConfig, plugins: BuildConfig['plugins']) {
+  this.plugins = plugins?.map(
+    (plugin) => `[code]${webpackPlugins[plugin].pluginEntry}[/code]` as ''
+  );
+}
+
+function react(this: WebpackConfig, transpiler: BuildConfig['transpiler']) {
+  const useBabel = transpiler ? transpiler.includes('babel') : false;
+  const useTypescript = transpiler ? transpiler.includes('ts') : false;
+
+  this.module = {
+    ...this.module,
+  };
+
+  this.resolve = {
+    ...this.resolve,
+  };
+
+  if (useBabel && !useTypescript) {
+    const rule = {
+      test: /\.(js|jsx)$/,
+      use: {
+        loader: 'babel-loader',
+      },
+      exclude: /node_modules/,
+    };
+
+    this.module.rules = this.module.rules
+      ? [...this.module.rules, rule]
+      : [rule];
+
+    this.resolve.extensions = ['.js', '.jsx'];
+  }
+
+  if (useTypescript && !useBabel) {
+    const rule = {
+      test: /\.ts(x)?$/,
+      loader: 'ts-loader',
+      exclude: /node_modules/,
+    };
+
+    this.module.rules = this.module.rules
+      ? [...this.module.rules, rule]
+      : [rule];
+
+    this.resolve.extensions = ['.ts', '.tsx', '.js'];
+  }
+
+  if (useBabel && useTypescript) {
+    const rule = {
+      test: /\.(js|ts)x?$/,
+      exclude: /node_modules/,
+      use: {
+        loader: 'babel-loader',
+      },
+    };
+
+    this.module.rules = this.module.rules
+      ? [...this.module.rules, rule]
+      : [rule];
+
+    this.resolve.extensions = ['.ts', '.tsx', '.js'];
+  }
+}
+
+function svelte(this: WebpackConfig, transpiler: BuildConfig['transpiler']) {
+  const useBabel = transpiler ? transpiler.includes('babel') : false;
+  const useTypescript = transpiler ? transpiler.includes('ts') : false;
+
+  this.module = {
+    ...this.module,
+  };
+
+  if (!this.module.rules) {
+    this.module.rules = [];
+  }
+
+  this.resolve = {
+    ...this.resolve,
+  };
+
+  const extensions = ['.mjs', '.js', '.svelte'];
+
+  this.module.rules = [
+    ...this.module.rules,
+    {
+      test: /\.svelte$/,
+      use: {
+        loader: 'svelte-loader',
+        options: {
+          preprocess: useTypescript
+            ? '[code]sveltePreprocess({ typescript: true, })[/code]'
+            : '[code]sveltePreprocess()[/code]',
+        },
+      },
+    },
+  ];
+
+  if (useBabel) {
+    this.module.rules = [
+      ...this.module.rules,
+      {
+        test: /\.(js|mjs)$/,
+        use: {
+          loader: 'babel-loader',
+        },
+        exclude: /node_modules/,
+      },
+    ];
+  }
+
+  if (useTypescript) {
+    this.module.rules = [
+      ...this.module.rules,
+      {
+        test: /\.ts?$/,
+        loader: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ];
+    extensions.push('.ts');
+  }
+
+  this.resolve = {
+    ...this.resolve,
+    alias: {
+      ...this.resolve.alias,
+      svelte: "[code]path.resolve('node_modules', 'svelte')[/code]",
+    },
+    extensions,
+    mainFields: ['svelte', 'browser', 'module', 'main'],
+  };
+}
+
 function buildConfig(options?: BuildConfig) {
   const config: WebpackConfig = {
     entry: './src/index.js',
@@ -47,18 +179,23 @@ function buildConfig(options?: BuildConfig) {
     const { plugins, lib, transpiler, styling, image, optimization, font } =
       options;
 
-    if (transpiler?.includes('ts')) {
-      config.entry = './src/index.ts';
+    setEntryPoint.call(config, transpiler);
+
+    registerPlugins.call(config, plugins);
+
+    if (lib === 'react') {
+      react.call(config, transpiler);
     }
 
-    // adding plugins
-    if (plugins && plugins.length > 0) {
-      config.plugins = [];
-      plugins.forEach((plugin) => {
-        config.plugins?.push(
-          `[code]${webpackPlugins[plugin].pluginEntry}[/code]` as ''
-        );
-      });
+    if (lib === 'svelte') {
+      svelte.call(config, transpiler);
+    }
+
+    if (lib) {
+      config.devServer = {
+        port: 3000,
+        open: true,
+      };
     }
 
     if (plugins?.includes('mini-css-extract-plugin')) {
@@ -73,115 +210,7 @@ function buildConfig(options?: BuildConfig) {
       });
     }
 
-    // adding loaders
-    if (lib === 'react') {
-      if (!config['module']) {
-        config.module = {
-          rules: [],
-        };
-      }
-
-      if (!config['resolve']) {
-        config.resolve = {};
-      }
-
-      if (transpiler?.includes('babel') && !transpiler.includes('ts')) {
-        config.module.rules?.push({
-          test: /\.(js|jsx)$/,
-          use: {
-            loader: 'babel-loader',
-          },
-          exclude: /node_modules/,
-        });
-
-        config.resolve.extensions = ['.js', '.jsx'];
-      }
-
-      if (transpiler?.includes('ts') && !transpiler.includes('babel')) {
-        config.module.rules?.push({
-          test: /\.ts(x)?$/,
-          loader: 'ts-loader',
-          exclude: /node_modules/,
-        });
-
-        config.resolve.extensions = ['.ts', '.tsx', '.js'];
-      }
-
-      if (transpiler?.includes('ts') && transpiler.includes('babel')) {
-        config.module.rules?.push({
-          test: /\.(js|ts)x?$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-          },
-        });
-
-        config.resolve.extensions = ['.ts', '.tsx'];
-      }
-
-      config.devServer = {
-        port: 3000,
-        open: true,
-      };
-    }
-
-    if (options.lib === 'svelte') {
-      if (!config['module']) {
-        config.module = {
-          rules: [],
-        };
-      }
-
-      if (!config['resolve']) {
-        config.resolve = {};
-      }
-
-      const extensions = ['.mjs', '.js', '.svelte'];
-
-      if (transpiler?.includes('babel')) {
-        config.module.rules?.push({
-          test: /\.(js|mjs)$/,
-          use: {
-            loader: 'babel-loader',
-          },
-          exclude: /node_modules/,
-        });
-      }
-
-      if (transpiler?.includes('ts')) {
-        config.module.rules?.push({
-          test: /\.ts?$/,
-          loader: 'ts-loader',
-          exclude: /node_modules/,
-        });
-
-        extensions.push('.ts');
-      }
-
-      config.module.rules?.push({
-        test: /\.svelte$/,
-        use: {
-          loader: 'svelte-loader',
-          options: {
-            preprocess: '[code]sveltePreprocess()[/code]',
-          },
-        },
-      });
-
-      config.resolve.alias = {
-        svelte: "[code]path.resolve('node_modules', 'svelte')[/code]",
-      };
-
-      config.resolve.extensions = extensions;
-      config.resolve.mainFields = ['svelte', 'browser', 'module', 'main'];
-
-      config.devServer = {
-        port: 3000,
-        open: true,
-      };
-    }
-
-    if (options.lib === 'vue') {
+    if (lib === 'vue') {
       if (!config['module']) {
         config.module = {
           rules: [],
