@@ -23,6 +23,21 @@ import { buildVueMainApp } from './build-vue-main-app';
 import type { Options, ProjectFileNames } from '../types';
 
 export function buildProjectFiles(options: Options) {
+  const config = {
+    isTypeScript: options.transpiler?.includes('ts'),
+    isWebpack: options.bundler === 'webpack',
+    isBabel: options.transpiler?.includes('babel'),
+    isReact: options.lib === 'react',
+    isSvelte: options.lib === 'svelte',
+    isVue: options.lib === 'vue',
+    hasTailwind: options.ui?.includes('tailwind'),
+    hasCSS: options.styling?.includes('css'),
+    hasJest: options.testing?.includes('jest'),
+    hasVitest: options.testing?.includes('vitest'),
+    hasESLint: options.linting?.includes('eslint'),
+    hasPrettier: options.linting?.includes('prettier'),
+  };
+
   const projectFiles = new Map<ProjectFileNames, string>();
 
   projectFiles.set('.gitignore', buildGitIgnore());
@@ -30,21 +45,21 @@ export function buildProjectFiles(options: Options) {
   projectFiles.set('src/index.js', buildEntryPoint(options));
   projectFiles.set('README.md', buildReadme(options));
 
-  if (options.bundler === 'webpack') {
+  if (config.isWebpack) {
     projectFiles.set('webpack.config.js', buildWebpackConfig(options));
   }
 
-  if (options.transpiler?.includes('babel')) {
+  if (config.isBabel) {
     projectFiles.set('.babelrc', buildBabelConfig(options));
   }
 
-  if (options.transpiler?.includes('ts')) {
+  if (config.isTypeScript) {
     projectFiles.delete('src/index.js');
     projectFiles.set('tsconfig.json', buildTypescriptConfig(options));
     projectFiles.set('src/index.ts', buildEntryPoint(options));
   }
 
-  if (options.lib === 'react') {
+  if (config.isReact) {
     projectFiles.set('src/index.html', buildHtml());
 
     if (options.transpiler?.includes('ts')) {
@@ -54,7 +69,7 @@ export function buildProjectFiles(options: Options) {
     }
   }
 
-  if (options.lib === 'svelte') {
+  if (config.isSvelte) {
     projectFiles.set('src/index.html', buildHtml());
     projectFiles.set('src/App.svelte', buildSvelteMainApp(options));
 
@@ -65,7 +80,7 @@ export function buildProjectFiles(options: Options) {
     }
   }
 
-  if (options.lib === 'vue') {
+  if (config.isVue) {
     projectFiles.set('src/index.html', buildHtml());
     projectFiles.set('src/App.vue', buildVueMainApp());
 
@@ -76,26 +91,26 @@ export function buildProjectFiles(options: Options) {
     }
   }
 
-  if (options.ui?.includes('tailwind')) {
+  if (config.hasTailwind) {
     projectFiles.set('tailwind.config.js', buildTailwindConfig(options));
     projectFiles.set('postcss.config.js', buildPostCssConfig());
   }
 
-  if (options.styling?.includes('css')) {
+  if (config.hasCSS) {
     projectFiles.set('src/styles.css', buildStylesCss());
   }
 
-  if (options.testing?.includes('jest')) {
+  if (config.hasJest) {
     projectFiles.set('jest.config.js', buildJestConfig(options));
 
-    if (options.transpiler?.includes('ts')) {
+    if (config.isTypeScript) {
       projectFiles.set('__tests__/test.ts', buildJestTest());
     } else {
       projectFiles.set('__tests__/test.js', buildJestTest());
     }
   }
 
-  if (options.testing?.includes('vitest')) {
+  if (config.hasVitest) {
     projectFiles.set('vite.config.js', buildViteConfig(options));
 
     if (options.transpiler?.includes('ts')) {
@@ -105,12 +120,12 @@ export function buildProjectFiles(options: Options) {
     }
   }
 
-  if (options.linting?.includes('eslint')) {
+  if (config.hasESLint) {
     projectFiles.set('.eslintignore', buildEslintIgnore());
     projectFiles.set('.eslintrc.json', buildEslintConfig(options));
   }
 
-  if (options.linting?.includes('prettier')) {
+  if (config.hasPrettier) {
     projectFiles.set('.prettierignore', buildPrettierIgnore());
     projectFiles.set('.prettierrc', buildPrettierConfig());
   }
