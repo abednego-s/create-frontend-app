@@ -1,6 +1,5 @@
-import { Checkbox } from './Checkbox';
 import { Collapsible } from './Collapsible';
-import { Radio } from './Radio';
+import { MenuItems } from './MenuItems';
 
 const menus = [
   {
@@ -11,7 +10,7 @@ const menus = [
       { id: 'svelte', label: 'Svelte' },
       { id: 'vue', label: 'Vue' },
     ],
-    canMultiple: false,
+    isMultiple: false,
   },
   {
     label: 'UI Library',
@@ -20,7 +19,7 @@ const menus = [
       { id: 'tailwind', label: 'Tailwind' },
       { id: 'material-ui', label: 'Material UI' },
     ],
-    canMultiple: true,
+    isMultiple: true,
   },
   {
     label: 'Testing Framework',
@@ -29,7 +28,7 @@ const menus = [
       { id: 'jest', label: 'Jest' },
       { id: 'vitest', label: 'Vitest' },
     ],
-    canMultiple: true,
+    isMultiple: true,
   },
   {
     label: 'Transpiler',
@@ -38,7 +37,7 @@ const menus = [
       { id: 'babel', label: 'Babel' },
       { id: 'ts', label: 'Typescript' },
     ],
-    canMultiple: true,
+    isMultiple: true,
   },
   {
     label: 'Styling',
@@ -49,7 +48,7 @@ const menus = [
       { id: 'less', label: 'LESS' },
       { id: 'css-module', label: 'CSS Module' },
     ],
-    canMultiple: true,
+    isMultiple: true,
   },
   {
     label: 'Image',
@@ -60,7 +59,7 @@ const menus = [
       { id: 'jpe?g', label: 'JPG' },
       { id: 'gif', label: 'GIF' },
     ],
-    canMultiple: true,
+    isMultiple: true,
   },
   {
     label: 'Fonts',
@@ -71,7 +70,7 @@ const menus = [
       { id: 'woff', label: 'WOFF' },
       { id: 'woff2', label: 'WOFF2' },
     ],
-    canMultiple: true,
+    isMultiple: true,
   },
   {
     label: 'Linting',
@@ -80,13 +79,13 @@ const menus = [
       { id: 'eslint', label: 'ESLint' },
       { id: 'prettier', label: 'Prettier' },
     ],
-    canMultiple: true,
+    isMultiple: true,
   },
   {
     label: 'Optimization',
     name: 'optimization',
     items: [{ id: 'split-vendors', label: 'Code split vendors' }],
-    canMultiple: true,
+    isMultiple: true,
   },
   {
     label: 'Webpack Plugins',
@@ -98,7 +97,7 @@ const menus = [
       { id: 'mini-css-extract-plugin', label: 'MiniCSSExtractPlugin' },
       { id: 'clean-webpack-plugin', label: 'CleanWebpackPlugin' },
     ],
-    canMultiple: true,
+    isMultiple: true,
   },
 ];
 
@@ -108,23 +107,15 @@ export function Sidebar() {
       {menus.map((menu) => {
         return (
           <Collapsible key={menu.name} trigger={menu.label}>
-            <ul className="mb-4">
-              {menu.canMultiple
-                ? menu.items.map((item) => (
-                    <li key={item.id}>
-                      <Checkbox
-                        id={item.id}
-                        name={menu.name}
-                        label={item.label}
-                      />
-                    </li>
-                  ))
-                : menu.items.map((item) => (
-                    <li key={item.id}>
-                      <Radio id={item.id} name={menu.name} label={item.label} />
-                    </li>
-                  ))}
-            </ul>
+            <nav>
+              <ul className="mb-4">
+                <MenuItems
+                  items={menu.items}
+                  name={menu.name}
+                  isMultiple={menu.isMultiple}
+                />
+              </ul>
+            </nav>
           </Collapsible>
         );
       })}

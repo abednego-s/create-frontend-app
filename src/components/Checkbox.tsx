@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 export type CheckboxProps = {
@@ -7,15 +7,22 @@ export type CheckboxProps = {
   label: string;
 };
 
-export function Checkbox({ name, id, label }: Readonly<CheckboxProps>) {
+export function Checkbox({ name, id, label }: CheckboxProps) {
   const [isChecked, setIsChecked] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  useEffect(() => {
+  const checkActiveStatus = useCallback(() => {
     const param = searchParams.get(name);
-    const isActive = param ? param.split(',').includes(id) : false;
-    return setIsChecked(isActive);
+    if (!param) {
+      setIsChecked(false);
+      return;
+    }
+    const paramSet = new Set(param.split(','));
+    const isActive = paramSet.has(id);
+    setIsChecked(isActive);
   }, [id, name, searchParams]);
+
+  useEffect(checkActiveStatus, [checkActiveStatus]);
 
   function handleInputClick() {
     setIsChecked(!isChecked);
