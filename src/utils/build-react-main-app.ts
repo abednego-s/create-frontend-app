@@ -1,21 +1,19 @@
 import type { Options } from '../types';
 
 export function buildReactMainApp(options: Options) {
-  let output = '';
+  let importStatement = '';
 
   if (options.styling?.includes('css')) {
-    output += "import './src/styles.css'\n\n";
+    importStatement += "import './src/styles.css'\n\n";
   }
 
-  output += `const App = () => {
+  const output = `${importStatement}const App = () => {
   return (
     <div>
       <h1>Hello, React with Webpack!</h1>
     </div>
   );
-};
-
-export default App;`;
+}`;
 
   return output;
 }

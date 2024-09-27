@@ -1,13 +1,8 @@
-import type { Options } from '../types';
+import type { Options, ViteConfig } from '../types';
 import { objectLiteralToString } from './object-literals-to-string';
 
 export function buildViteConfig(options: Options) {
-  let config: {
-    plugins?: string[];
-    test?: {
-      environment: string;
-    };
-  } = {};
+  let config: ViteConfig = {};
 
   if (options.lib === 'react') {
     config = {
@@ -20,9 +15,10 @@ export function buildViteConfig(options: Options) {
     };
   }
 
-  const output = `import { defineConfig } from 'vite'
+  const template = `import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig(${objectLiteralToString(config)})`;
-  return output;
+
+  return template;
 }

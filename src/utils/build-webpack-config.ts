@@ -430,18 +430,18 @@ function buildConfig(options?: BuildConfig) {
 }
 
 export function buildWebpackConfig(options?: WebpackBuildConfigOptions) {
-  let output =
+  let template =
     "const path = require('path');\nconst webpack = require('webpack');\n";
   if (options) {
-    output += buildImports(options) + '\n';
+    template += buildImports(options) + '\n';
   }
 
   if (options) {
-    output += buildConfig(options) + '\n\n';
+    template += buildConfig(options) + '\n\n';
   } else {
-    output += '\n' + buildConfig() + '\n\n';
+    template += '\n' + buildConfig() + '\n\n';
   }
 
-  output += 'module.exports = config;';
-  return output;
+  template += 'module.exports = config;';
+  return template;
 }

@@ -1,7 +1,17 @@
 import type { Options } from '../types';
 
 export function buildReadme(options: Options) {
-  let output = `# empty-project
+  let runLocal = '';
+
+  if (options.lib) {
+    runLocal = `\nTo run locally:
+
+\`\`\`sh
+npm run dev
+\`\`\` \n`;
+  }
+
+  const output = `# empty-project
   
 Empty project.
 
@@ -12,29 +22,11 @@ First install dependencies:
 \`\`\`sh
 npm install
 \`\`\`
-  `;
-
-  if (options.lib === 'react') {
-    output += `
-To run locally:
-
-\`\`\`sh
-npm run dev
-\`\`\`
-    `;
-  }
-
-  output += `
+${runLocal}
 To create a production build:
 
 \`\`\`sh
-npm run build:prod
-\`\`\`
-
-To create a development build:
-
-\`\`\`sh
-npm run build:dev
+npm run build
 \`\`\``;
 
   return output;

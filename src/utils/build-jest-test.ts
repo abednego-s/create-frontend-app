@@ -1,3 +1,7 @@
 export function buildJestTest() {
-  return `test('adds 1 + 2 to equal 3', () => {\n  expect(1+2).toBe(3);\n});`;
+  const template = `test('adds 1 + 2 to equal 3', () => {
+  expect(1+2).toBe(3);
+});`;
+
+  return template;
 }
