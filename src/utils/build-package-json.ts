@@ -66,7 +66,10 @@ export function buildPackageJson(options: Options) {
     new MaterialUiStrategy().apply(packageJson);
   }
 
-  if (options.styling?.includes('css')) {
+  if (
+    options.styling?.includes('css') ||
+    options.styling?.includes('css-module')
+  ) {
     new CssStrategy().apply(packageJson);
   }
 
