@@ -7,22 +7,23 @@ import type {
 } from '../types';
 
 function buildImports(options: WebpackBuildConfigOptions) {
-  let output = '';
-  options.plugins?.forEach((plugin) => {
-    output += webpackPlugins[plugin].importDeclaration + ';' + '\n';
-  });
+  const pluginImports =
+    options.plugins
+      ?.map((plugin) => `${webpackPlugins[plugin].importDeclaration};`)
+      .join('\n') || '';
+
+  let output = pluginImports;
 
   if (options.lib === 'svelte') {
-    output += "const sveltePreprocess = require('svelte-preprocess');\n";
+    output += "\nconst sveltePreprocess = require('svelte-preprocess');\n";
   }
 
   if (options.lib === 'vue') {
-    output += "const { VueLoaderPlugin } = require('vue-loader');\n";
+    output += "\nconst { VueLoaderPlugin } = require('vue-loader');\n";
   }
 
   return output;
 }
-
 function setEntryPoint(
   this: WebpackConfig,
   transpiler: BuildConfig['transpiler']

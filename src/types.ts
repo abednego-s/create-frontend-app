@@ -122,3 +122,31 @@ export type BuildConfig = Pick<
   | 'optimization'
   | 'font'
 >;
+
+export type PackageConfig = {
+  name?: string;
+  version: string;
+  description?: string;
+  main?: string;
+  scripts?: Record<string, string>;
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
+  optionalDependencies?: Record<string, string>;
+  engines?: Record<string, string>;
+  browserslist?: string[];
+  keywords?: string[];
+  author?: string;
+  license?: string;
+  repository?: string;
+  bugs?: string;
+  homepage?: string;
+  config?: Record<string, unknown>;
+  workspaces?: string[];
+  private?: boolean;
+};
+
+export interface ConfigurationStrategy {
+  // eslint-disable-next-line no-unused-vars
+  apply(packageJson: PackageConfig): void;
+}
