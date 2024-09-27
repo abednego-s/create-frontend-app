@@ -164,6 +164,13 @@ export type TSConfig = {
   exclude: string[];
 };
 
+export type ViteConfig = {
+  plugins?: string[];
+  test?: {
+    environment: string;
+  };
+};
+
 export interface ConfigurationStrategy {
   // eslint-disable-next-line no-unused-vars
   apply(packageJson: PackageConfig): void;
