@@ -6,13 +6,10 @@ export type RadioProps = {
   label: string;
 };
 
-export function Radio({ name, id, label }: Readonly<RadioProps>) {
+export function Radio({ name, id, label }: RadioProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   function handleInputChange() {
-    if (id === 'react') {
-      searchParams.set('transpiler', 'babel');
-    }
     searchParams.set(name, id);
     setSearchParams(searchParams);
   }
