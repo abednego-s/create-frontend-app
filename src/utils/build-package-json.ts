@@ -1,5 +1,6 @@
 import type { Options, PackageConfig } from '../types';
 import { BabelStrategy } from './strategies/babel-strategy';
+import { CssStrategy } from './strategies/css-strategy';
 import { EsLintStrategy } from './strategies/eslint-strategy';
 import { FileLoaderStrategy } from './strategies/file-loader-strategy';
 import { JestStrategy } from './strategies/jest-strategy';
@@ -63,6 +64,10 @@ export function buildPackageJson(options: Options) {
 
   if (options.ui?.includes('material-ui')) {
     new MaterialUiStrategy().apply(packageJson);
+  }
+
+  if (options.styling?.includes('css')) {
+    new CssStrategy().apply(packageJson);
   }
 
   if (options.styling?.includes('less')) {
