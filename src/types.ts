@@ -146,6 +146,24 @@ export type PackageConfig = {
   private?: boolean;
 };
 
+export type TSConfig = {
+  compilerOptions: {
+    target: string;
+    module: string;
+    moduleResolution: string;
+    strict: boolean;
+    esModuleInterop: boolean;
+    skipLibCheck: boolean;
+    forceConsistentCasingInFileNames: boolean;
+    noImplicitAny: boolean;
+    jsx?: string;
+    allowSyntheticDefaultImports?: boolean;
+    types?: string[];
+  };
+  include: string[];
+  exclude: string[];
+};
+
 export interface ConfigurationStrategy {
   // eslint-disable-next-line no-unused-vars
   apply(packageJson: PackageConfig): void;

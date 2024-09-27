@@ -1,36 +1,26 @@
-import type { Options } from '../types';
-
-type TSConfig = typeof tsConfig & {
-  compilerOptions: typeof tsConfig.compilerOptions & {
-    allowSyntheticDefaultImports?: boolean;
-    jsx?: string;
-    types?: string[];
-  };
-};
-
-const tsConfig = {
-  compilerOptions: {
-    target: 'ES6',
-    module: 'ES6',
-    moduleResolution: 'node',
-    strict: true,
-    esModuleInterop: true,
-    skipLibCheck: true,
-  },
-  include: ['src/**/*'],
-  exclude: ['node_modules'],
-};
+import type { Options, TSConfig } from '../types';
 
 export function buildTypescriptConfig(options: Options) {
   let config: TSConfig = {
-    ...tsConfig,
+    compilerOptions: {
+      target: 'ES2015',
+      module: 'ES6',
+      moduleResolution: 'node',
+      strict: true,
+      esModuleInterop: true,
+      skipLibCheck: true,
+      forceConsistentCasingInFileNames: true,
+      noImplicitAny: true,
+    },
+    include: ['src/**/*'],
+    exclude: ['node_modules'],
   };
 
   if (options.lib === 'react') {
     config = {
-      ...tsConfig,
+      ...config,
       compilerOptions: {
-        ...tsConfig.compilerOptions,
+        ...config.compilerOptions,
         jsx: 'react-jsx',
       },
     };
