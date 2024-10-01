@@ -5,6 +5,14 @@ import type {
   WebpackConfig,
   WebpackBuildConfigOptions,
 } from '../types';
+import { ReactStrategy } from './strategies/react-strategy';
+import { SvelteStrategy } from './strategies/svelte-strategy';
+import { VueStrategy } from './strategies/vue-strategy';
+import { CssStrategy } from './strategies/css-strategy';
+import { LessStrategy } from './strategies/less-strategy';
+import { SassStrategy } from './strategies/sass-strategy';
+import { FileLoaderStrategy } from './strategies/file-loader-strategy';
+import { CssModuleStrategy } from './strategies/css-module-strategy';
 
 function buildImports(options: WebpackBuildConfigOptions) {
   const pluginImports =
@@ -24,14 +32,6 @@ function buildImports(options: WebpackBuildConfigOptions) {
 
   return output;
 }
-function setEntryPoint(
-  this: WebpackConfig,
-  transpiler: BuildConfig['transpiler']
-) {
-  if (transpiler?.includes('ts')) {
-    this.entry = './src/index.ts';
-  }
-}
 
 function registerPlugins(this: WebpackConfig, plugins: BuildConfig['plugins']) {
   this.plugins = plugins?.map(
@@ -39,308 +39,8 @@ function registerPlugins(this: WebpackConfig, plugins: BuildConfig['plugins']) {
   );
 }
 
-function react(this: WebpackConfig, transpiler: BuildConfig['transpiler']) {
-  const useBabel = transpiler ? transpiler.includes('babel') : false;
-  const useTypescript = transpiler ? transpiler.includes('ts') : false;
-
-  this.module = {
-    ...this.module,
-  };
-
-  this.resolve = {
-    ...this.resolve,
-  };
-
-  if (useBabel && !useTypescript) {
-    const rule = {
-      test: /\.(js|jsx)$/,
-      use: {
-        loader: 'babel-loader',
-      },
-      exclude: /node_modules/,
-    };
-
-    this.module.rules = this.module.rules
-      ? [...this.module.rules, rule]
-      : [rule];
-
-    this.resolve.extensions = ['.js', '.jsx'];
-  }
-
-  if (useTypescript && !useBabel) {
-    const rule = {
-      test: /\.ts(x)?$/,
-      loader: 'ts-loader',
-      exclude: /node_modules/,
-    };
-
-    this.module.rules = this.module.rules
-      ? [...this.module.rules, rule]
-      : [rule];
-
-    this.resolve.extensions = ['.ts', '.tsx', '.js'];
-  }
-
-  if (useBabel && useTypescript) {
-    const rule = {
-      test: /\.(js|ts)x?$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
-      },
-    };
-
-    this.module.rules = this.module.rules
-      ? [...this.module.rules, rule]
-      : [rule];
-
-    this.resolve.extensions = ['.ts', '.tsx', '.js'];
-  }
-}
-
-function svelte(this: WebpackConfig, transpiler: BuildConfig['transpiler']) {
-  const useBabel = transpiler ? transpiler.includes('babel') : false;
-  const useTypescript = transpiler ? transpiler.includes('ts') : false;
-
-  this.module = {
-    ...this.module,
-  };
-
-  if (!this.module.rules) {
-    this.module.rules = [];
-  }
-
-  this.resolve = {
-    ...this.resolve,
-  };
-
-  const extensions = ['.mjs', '.js', '.svelte'];
-
-  this.module.rules = [
-    ...this.module.rules,
-    {
-      test: /\.svelte$/,
-      use: {
-        loader: 'svelte-loader',
-        options: {
-          preprocess: useTypescript
-            ? '[code]sveltePreprocess({ typescript: true })[/code]'
-            : '[code]sveltePreprocess()[/code]',
-        },
-      },
-    },
-  ];
-
-  if (useBabel) {
-    this.module.rules = [
-      ...this.module.rules,
-      {
-        test: /\.(js|mjs)$/,
-        use: {
-          loader: 'babel-loader',
-        },
-        exclude: /node_modules/,
-      },
-    ];
-  }
-
-  if (useTypescript) {
-    this.module.rules = [
-      ...this.module.rules,
-      {
-        test: /\.ts?$/,
-        loader: 'ts-loader',
-        exclude: /node_modules/,
-      },
-    ];
-    extensions.push('.ts');
-  }
-
-  this.resolve = {
-    ...this.resolve,
-    alias: {
-      ...this.resolve.alias,
-      svelte: "[code]path.resolve('node_modules', 'svelte')[/code]",
-    },
-    extensions,
-    mainFields: ['svelte', 'browser', 'module', 'main'],
-  };
-}
-
 // eslint-disable-next-line no-unused-vars
-function vue(this: WebpackConfig) {
-  this.module = {
-    ...this.module,
-  };
-
-  if (!this.module.rules) {
-    this.module.rules = [];
-  }
-
-  this.resolve = {
-    ...this.resolve,
-  };
-
-  const extensions = ['*', '.js', '.vue', '.json'];
-
-  this.module.rules?.push({
-    test: /\.vue$/,
-    loader: 'vue-loader',
-  });
-
-  if (!this.plugins) {
-    this.plugins = [];
-  }
-
-  this.plugins?.push('[code]new VueLoaderPlugin()[/code]' as '');
-
-  this.resolve.alias = {
-    vue$: 'vue/dist/vue.esm.js',
-  };
-
-  this.resolve.extensions = extensions;
-}
-
-function css(
-  this: WebpackConfig,
-  styling: BuildConfig['styling'],
-  plugins: BuildConfig['plugins']
-) {
-  this.module = {
-    ...this.module,
-  };
-
-  if (!this.module.rules) {
-    this.module.rules = [];
-  }
-
-  let use = ['style-loader', 'css-loader'];
-
-  if (plugins?.includes('mini-css-extract-plugin')) {
-    use = ['[code]MiniCssExtractPlugin.loader[/code]', 'css-loader'];
-  }
-
-  if (styling?.includes('css-module')) {
-    this.module.rules.push({
-      test: /\.css$/,
-      exclude: /\.module\.css$/,
-      use,
-    });
-  } else {
-    this.module.rules.push({
-      test: /\.css$/,
-      use,
-    });
-  }
-}
-
-function cssModule(this: WebpackConfig, plugins: BuildConfig['plugins']) {
-  this.module = {
-    ...this.module,
-  };
-
-  if (!this.module.rules) {
-    this.module.rules = [];
-  }
-
-  let styleLoader = 'style-loader';
-
-  if (plugins?.includes('mini-css-extract-plugin')) {
-    styleLoader = '[code]MiniCssExtractPlugin.loader[/code]';
-  }
-
-  this.module.rules.push({
-    test: /\.module\.css$/,
-    use: [
-      styleLoader,
-      {
-        loader: 'css-loader',
-        options: {
-          modules: {
-            localIdentName: '[name]__[local]___[hash:base64:5]',
-          },
-        },
-      },
-    ],
-  });
-}
-
-// eslint-disable-next-line no-unused-vars
-function less(this: WebpackConfig) {
-  this.module = {
-    ...this.module,
-  };
-
-  if (!this.module.rules) {
-    this.module.rules = [];
-  }
-
-  this.module.rules.push({
-    test: /\.less$/,
-    use: ['style-loader', 'css-loader', 'less-loader'],
-  });
-}
-
-// eslint-disable-next-line no-unused-vars
-function scss(this: WebpackConfig) {
-  this.module = {
-    ...this.module,
-  };
-
-  if (!this.module.rules) {
-    this.module.rules = [];
-  }
-
-  this.module?.rules?.push({
-    test: /\.scss$/,
-    use: ['style-loader', 'css-loader', 'sass-loader'],
-  });
-}
-
-function imageLoader(this: WebpackConfig, image: string[]) {
-  this.module = {
-    ...this.module,
-  };
-
-  if (!this.module.rules) {
-    this.module.rules = [];
-  }
-
-  this.module.rules.push({
-    test: `[code]/\\.(${image.join('|')})$/i[/code]`,
-    use: [
-      {
-        loader: 'file-loader',
-      },
-    ],
-  });
-}
-
-function fontLoader(this: WebpackConfig, font: string[]) {
-  this.module = {
-    ...this.module,
-  };
-
-  if (!this.module.rules) {
-    this.module.rules = [];
-  }
-
-  this.module.rules?.push({
-    test: `[code]/\\.(${font.join('|')})$/i[/code]`,
-    use: [
-      {
-        loader: 'file-loader',
-        options: {
-          name: '[name].[hash].[ext]',
-          outputPath: 'fonts/',
-        },
-      },
-    ],
-  });
-}
-
-// eslint-disable-next-line no-unused-vars
-function bundleOptimizer(this: WebpackConfig) {
+function optimizer(this: WebpackConfig) {
   this.output = {
     ...this.output,
     filename: '[name].[contenthash].js',
@@ -372,46 +72,50 @@ function buildConfig(options?: BuildConfig) {
     const { plugins, lib, transpiler, styling, image, optimization, font } =
       options;
 
-    setEntryPoint.call(config, transpiler);
+    if (transpiler?.includes('ts')) {
+      config.entry = './src/index.ts';
+    }
 
     if (lib === 'react') {
-      react.call(config, transpiler);
+      new ReactStrategy(options.transpiler).applyWebpackConfig(config);
     }
 
     if (lib === 'svelte') {
-      svelte.call(config, transpiler);
+      new SvelteStrategy(options.transpiler).applyWebpackConfig(config);
     }
 
     if (lib === 'vue') {
-      vue.call(config);
+      new VueStrategy().applyWebpackConfig(config);
     }
 
     if (styling?.includes('css')) {
-      css.call(config, styling, plugins);
+      new CssStrategy(options.plugins, options.styling).applyWebpackConfig(
+        config
+      );
     }
 
     if (styling?.includes('css-module')) {
-      cssModule.call(config, plugins);
+      new CssModuleStrategy(options.plugins).applyWebpackConfig(config);
     }
 
     if (styling?.includes('less')) {
-      less.call(config);
+      new LessStrategy().applyWebpackConfig(config);
     }
 
     if (styling?.includes('scss')) {
-      scss.call(config);
+      new SassStrategy().applyWebpackConfig(config);
     }
 
     if (image) {
-      imageLoader.call(config, image);
+      new FileLoaderStrategy(image).applyWebpackConfig(config);
     }
 
     if (font) {
-      fontLoader.call(config, font);
+      new FileLoaderStrategy(font).applyWebpackConfig(config);
     }
 
     if (optimization?.includes('split-vendors')) {
-      bundleOptimizer.call(config);
+      optimizer.call(config);
     }
 
     if (plugins) {

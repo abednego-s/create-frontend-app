@@ -11,7 +11,7 @@ export class BabelStrategy implements ConfigurationStrategy {
     private bundler: Options['bundler']
   ) {}
 
-  apply(packageJson: PackageConfig) {
+  applyPackageConfig(packageJson: PackageConfig) {
     packageJson.devDependencies = {
       ...packageJson.devDependencies,
       '@babel/core': '^7.25.2',

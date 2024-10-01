@@ -6,11 +6,8 @@ import type {
   WebpackConfig,
 } from '../../types';
 
-export class CssStrategy implements ConfigurationStrategy {
-  constructor(
-    private plugins?: Options['plugins'],
-    private styling?: Options['styling']
-  ) {}
+export class CssModuleStrategy implements ConfigurationStrategy {
+  constructor(private plugins?: Options['plugins']) {}
 
   applyPackageConfig(packageJson: PackageConfig): void {
     packageJson.devDependencies = {
@@ -29,23 +26,25 @@ export class CssStrategy implements ConfigurationStrategy {
       webpackConfig.module.rules = [];
     }
 
-    let use = ['style-loader', 'css-loader'];
+    let styleLoader = 'style-loader';
 
     if (this.plugins?.includes('mini-css-extract-plugin')) {
-      use = ['[code]MiniCssExtractPlugin.loader[/code]', 'css-loader'];
+      styleLoader = '[code]MiniCssExtractPlugin.loader[/code]';
     }
 
-    if (this.styling?.includes('css-module')) {
-      webpackConfig.module.rules.push({
-        test: /\.css$/,
-        exclude: /\.module\.css$/,
-        use,
-      });
-    } else {
-      webpackConfig.module.rules.push({
-        test: /\.css$/,
-        use,
-      });
-    }
+    webpackConfig.module.rules.push({
+      test: /\.module\.css$/,
+      use: [
+        styleLoader,
+        {
+          loader: 'css-loader',
+          options: {
+            modules: {
+              localIdentName: '[name]__[local]___[hash:base64:5]',
+            },
+          },
+        },
+      ],
+    });
   }
 }

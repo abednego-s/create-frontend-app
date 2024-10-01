@@ -8,7 +8,7 @@ export class JestStrategy implements ConfigurationStrategy {
   // eslint-disable-next-line no-unused-vars
   constructor(private transpiler: Options['transpiler']) {}
 
-  apply(packageJson: PackageConfig) {
+  applyPackageConfig(packageJson: PackageConfig) {
     packageJson.scripts = {
       ...packageJson.scripts,
       test: 'jest',

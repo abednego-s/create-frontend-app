@@ -8,7 +8,7 @@ export class WebpackStrategy implements ConfigurationStrategy {
   // eslint-disable-next-line no-unused-vars
   constructor(private plugins: Options['plugins']) {}
 
-  apply(packageJson: PackageConfig) {
+  applyPackageConfig(packageJson: PackageConfig) {
     packageJson.scripts = {
       ...packageJson.scripts,
       build: 'webpack --mode production',

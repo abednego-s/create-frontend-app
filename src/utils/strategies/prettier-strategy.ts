@@ -9,7 +9,7 @@ export class PrettierStrategy implements ConfigurationStrategy {
   // eslint-disable-next-line no-unused-vars
   constructor(private transpiler: Options['transpiler']) {}
 
-  apply(packageJson: PackageConfig): void {
+  applyPackageConfig(packageJson: PackageConfig): void {
     packageJson.scripts = {
       ...packageJson.scripts,
       format: `prettier --write 'src/**/*.{${getExtensions(this.transpiler).join(',')}}'`,

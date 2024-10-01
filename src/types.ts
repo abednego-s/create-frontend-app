@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Configuration as WebpackConfiguration, RuleSetRule } from 'webpack';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { webpackPlugins } from './utils/webpack-plugins';
@@ -102,7 +103,6 @@ export type KnownESLintRuleProperties =
   | '@typescript-eslint/no-require-imports';
 
 export type ESLintConfigRules = {
-  // eslint-disable-next-line no-unused-vars
   [K in KnownESLintRuleProperties]?: 'warn' | 'off' | 'error';
 };
 
@@ -172,6 +172,6 @@ export type ViteConfig = {
 };
 
 export interface ConfigurationStrategy {
-  // eslint-disable-next-line no-unused-vars
-  apply(packageJson: PackageConfig): void;
+  applyPackageConfig(packageJson: PackageConfig): void;
+  applyWebpackConfig?(webpackConfig: WebpackConfig): void;
 }

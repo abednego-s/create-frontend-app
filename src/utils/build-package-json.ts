@@ -1,5 +1,6 @@
 import type { Options, PackageConfig } from '../types';
 import { BabelStrategy } from './strategies/babel-strategy';
+import { CssModuleStrategy } from './strategies/css-module-strategy';
 import { CssStrategy } from './strategies/css-strategy';
 import { EsLintStrategy } from './strategies/eslint-strategy';
 import { FileLoaderStrategy } from './strategies/file-loader-strategy';
@@ -35,70 +36,73 @@ export function buildPackageJson(options: Options) {
   }
 
   if (options.bundler === 'webpack') {
-    new WebpackStrategy(options.plugins).apply(packageJson);
+    new WebpackStrategy(options.plugins).applyPackageConfig(packageJson);
   }
 
   if (options.lib === 'react') {
-    new ReactStrategy().apply(packageJson);
+    new ReactStrategy().applyPackageConfig(packageJson);
   }
 
   if (options.lib === 'svelte') {
-    new SvelteStrategy().apply(packageJson);
+    new SvelteStrategy().applyPackageConfig(packageJson);
   }
 
   if (options.lib === 'vue') {
-    new VueStrategy().apply(packageJson);
+    new VueStrategy().applyPackageConfig(packageJson);
   }
 
   if (options.transpiler?.includes('babel')) {
-    new BabelStrategy(options.lib, options.bundler).apply(packageJson);
+    new BabelStrategy(options.lib, options.bundler).applyPackageConfig(
+      packageJson
+    );
   }
 
   if (options.transpiler?.includes('ts')) {
-    new TypescriptStrategy().apply(packageJson);
+    new TypescriptStrategy().applyPackageConfig(packageJson);
   }
 
   if (options.ui?.includes('tailwind')) {
-    new TailwindStrategy().apply(packageJson);
+    new TailwindStrategy().applyPackageConfig(packageJson);
   }
 
   if (options.ui?.includes('material-ui')) {
-    new MaterialUiStrategy().apply(packageJson);
+    new MaterialUiStrategy().applyPackageConfig(packageJson);
   }
 
-  if (
-    options.styling?.includes('css') ||
-    options.styling?.includes('css-module')
-  ) {
-    new CssStrategy().apply(packageJson);
+  if (options.styling?.includes('css')) {
+    new CssStrategy().applyPackageConfig(packageJson);
+  }
+
+  if (options.styling?.includes('css-module')) {
+    new CssModuleStrategy().applyPackageConfig(packageJson);
   }
 
   if (options.styling?.includes('less')) {
-    new LessStrategy().apply(packageJson);
+    new LessStrategy().applyPackageConfig(packageJson);
   }
 
   if (options.styling?.includes('scss')) {
-    new SassStrategy().apply(packageJson);
+    new SassStrategy().applyPackageConfig(packageJson);
   }
 
   if (options.image) {
-    new FileLoaderStrategy().apply(packageJson);
+    new FileLoaderStrategy(options.image).applyPackageConfig(packageJson);
   }
 
   if (options.testing?.includes('jest')) {
-    new JestStrategy(options.transpiler).apply(packageJson);
+    new JestStrategy(options.transpiler).applyPackageConfig(packageJson);
   }
 
   if (options.testing?.includes('vitest')) {
-    new VitestStrategy(options.lib).apply(packageJson);
+    new VitestStrategy(options.lib).applyPackageConfig(packageJson);
   }
 
   if (options.linting?.includes('eslint')) {
-    new EsLintStrategy(options.transpiler).apply(packageJson);
+    new EsLintStrategy(options.transpiler).applyPackageConfig(packageJson);
   }
 
   if (options.linting?.includes('prettier')) {
-    new PrettierStrategy(options.transpiler).apply(packageJson);
+    new PrettierStrategy(options.transpiler).applyPackageConfig(packageJson);
   }
 
   const dependencies = Object.keys(packageJson.dependencies || {})

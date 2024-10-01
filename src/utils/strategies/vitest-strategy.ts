@@ -8,7 +8,7 @@ export class VitestStrategy implements ConfigurationStrategy {
   // eslint-disable-next-line no-unused-vars
   constructor(private lib: Options['lib']) {}
 
-  apply(packageJson: PackageConfig) {
+  applyPackageConfig(packageJson: PackageConfig) {
     packageJson.scripts = {
       ...packageJson.scripts,
       test: 'vitest',

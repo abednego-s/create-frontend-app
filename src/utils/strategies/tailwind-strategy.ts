@@ -1,7 +1,7 @@
 import type { ConfigurationStrategy, PackageConfig } from '../../types';
 
 export class TailwindStrategy implements ConfigurationStrategy {
-  apply(packageJson: PackageConfig) {
+  applyPackageConfig(packageJson: PackageConfig) {
     packageJson.devDependencies = {
       ...packageJson.devDependencies,
       tailwindcss: 'latest',

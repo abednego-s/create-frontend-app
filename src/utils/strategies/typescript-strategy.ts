@@ -1,7 +1,7 @@
 import type { ConfigurationStrategy, PackageConfig } from '../../types';
 
 export class TypescriptStrategy implements ConfigurationStrategy {
-  apply(packageJson: PackageConfig): void {
+  applyPackageConfig(packageJson: PackageConfig): void {
     packageJson.devDependencies = {
       ...packageJson.devDependencies,
       '@types/react': '^18.3.5',
