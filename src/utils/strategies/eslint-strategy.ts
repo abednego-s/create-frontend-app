@@ -1,5 +1,5 @@
 import type { ConfigurationStrategy, PackageConfig } from '../../types';
-import { getExtensions } from '../get-extenstions';
+import { getExtensions } from '../get-extensions';
 
 export class EsLintStrategy implements ConfigurationStrategy {
   constructor(
