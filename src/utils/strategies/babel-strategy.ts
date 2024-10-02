@@ -1,14 +1,12 @@
-/* eslint-disable no-unused-vars */
-import type {
-  ConfigurationStrategy,
-  Options,
-  PackageConfig,
-} from '../../types';
+import type { ConfigurationStrategy, PackageConfig } from '../../types';
 
 export class BabelStrategy implements ConfigurationStrategy {
   constructor(
-    private lib: Options['lib'],
-    private bundler: Options['bundler']
+    /* eslint-disable no-unused-vars */
+    private options: {
+      isReact: boolean;
+      isWebpack: boolean;
+    }
   ) {}
 
   applyPackageConfig(packageJson: PackageConfig) {
@@ -18,14 +16,14 @@ export class BabelStrategy implements ConfigurationStrategy {
       '@babel/preset-env': '^7.25.4',
     };
 
-    if (this.lib === 'react') {
+    if (this.options.isReact) {
       packageJson.devDependencies = {
         ...packageJson.devDependencies,
         '@babel/preset-react': '^7.24.7',
       };
     }
 
-    if (this.bundler === 'webpack') {
+    if (this.options.isWebpack) {
       packageJson.devDependencies = {
         ...packageJson.devDependencies,
         'babel-loader': '^9.1.3',

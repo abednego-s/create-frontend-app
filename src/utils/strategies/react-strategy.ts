@@ -1,13 +1,17 @@
 /* eslint-disable no-unused-vars */
 import type {
   ConfigurationStrategy,
-  Options,
   PackageConfig,
   WebpackConfig,
 } from '../../types';
 
 export class ReactStrategy implements ConfigurationStrategy {
-  constructor(private transpiler?: Options['transpiler']) {}
+  constructor(
+    private options?: {
+      isBabel?: boolean;
+      isTypescript?: boolean;
+    }
+  ) {}
 
   applyPackageConfig(packageJson: PackageConfig): void {
     packageJson.scripts = {
@@ -26,11 +30,6 @@ export class ReactStrategy implements ConfigurationStrategy {
   }
 
   applyWebpackConfig(webpackConfig: WebpackConfig): void {
-    const isBabel = this.transpiler ? this.transpiler.includes('babel') : false;
-    const isTypescript = this.transpiler
-      ? this.transpiler.includes('ts')
-      : false;
-
     webpackConfig.module = {
       ...webpackConfig.module,
     };
@@ -39,7 +38,7 @@ export class ReactStrategy implements ConfigurationStrategy {
       ...webpackConfig.resolve,
     };
 
-    if (isBabel && !isTypescript) {
+    if (this.options?.isBabel && !this.options?.isTypescript) {
       const rule = {
         test: /\.(js|jsx)$/,
         use: {
@@ -55,7 +54,7 @@ export class ReactStrategy implements ConfigurationStrategy {
       webpackConfig.resolve.extensions = ['.js', '.jsx'];
     }
 
-    if (isTypescript && !isBabel) {
+    if (this.options?.isTypescript && !this.options?.isBabel) {
       const rule = {
         test: /\.ts(x)?$/,
         loader: 'ts-loader',
@@ -69,7 +68,7 @@ export class ReactStrategy implements ConfigurationStrategy {
       webpackConfig.resolve.extensions = ['.ts', '.tsx', '.js'];
     }
 
-    if (isBabel && isTypescript) {
+    if (this.options?.isBabel && this.options?.isTypescript) {
       const rule = {
         test: /\.(js|ts)x?$/,
         exclude: /node_modules/,

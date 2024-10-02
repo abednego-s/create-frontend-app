@@ -5,8 +5,12 @@ import type {
 } from '../../types';
 
 export class WebpackStrategy implements ConfigurationStrategy {
-  // eslint-disable-next-line no-unused-vars
-  constructor(private plugins: Options['plugins']) {}
+  constructor(
+    /* eslint-disable no-unused-vars */
+    private options?: {
+      plugins?: Options['plugins'];
+    }
+  ) {}
 
   applyPackageConfig(packageJson: PackageConfig) {
     packageJson.scripts = {
@@ -14,8 +18,8 @@ export class WebpackStrategy implements ConfigurationStrategy {
       build: 'webpack --mode production',
     };
 
-    if (this.plugins) {
-      const webpackPlugins = this.plugins.reduce((prev, current) => {
+    if (this.options?.plugins) {
+      const webpackPlugins = this.options?.plugins.reduce((prev, current) => {
         if (current !== 'HotModuleReplacementPlugin') {
           prev = {
             ...prev,

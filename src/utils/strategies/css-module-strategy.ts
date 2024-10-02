@@ -1,14 +1,18 @@
-/* eslint-disable no-unused-vars */
 import type {
   ConfigurationStrategy,
-  Options,
   PackageConfig,
   WebpackConfig,
+  WebpackRuleSetRule,
 } from '../../types';
 
 export class CssModuleStrategy implements ConfigurationStrategy {
-  constructor(private plugins?: Options['plugins']) {}
-
+  constructor(
+    // eslint-disable-next-line no-unused-vars
+    private options: {
+      useMiniCssExtractPlugin: boolean;
+      isVue: boolean;
+    }
+  ) {}
   applyPackageConfig(packageJson: PackageConfig): void {
     packageJson.devDependencies = {
       ...packageJson.devDependencies,
@@ -28,8 +32,12 @@ export class CssModuleStrategy implements ConfigurationStrategy {
 
     let styleLoader = 'style-loader';
 
-    if (this.plugins?.includes('mini-css-extract-plugin')) {
-      styleLoader = '[code]MiniCssExtractPlugin.loader[/code]';
+    if (this.options.isVue) {
+      styleLoader = 'vue-style-loader';
+    }
+
+    if (this.options.useMiniCssExtractPlugin) {
+      styleLoader = `[code]process.env.NODE_ENV === 'production' ? MiniCssExtractPlugin.loader : '${styleLoader}'[/code]`;
     }
 
     webpackConfig.module.rules.push({
@@ -39,12 +47,23 @@ export class CssModuleStrategy implements ConfigurationStrategy {
         {
           loader: 'css-loader',
           options: {
-            modules: {
-              localIdentName: '[name]__[local]___[hash:base64:5]',
-            },
+            modules: true,
           },
         },
       ],
     });
+
+    const updatedRules = webpackConfig.module.rules?.map((moduleRule) => {
+      const rule = moduleRule as WebpackRuleSetRule;
+      if (rule?.test?.toString() === /\.css$/.toString()) {
+        return {
+          ...rule,
+          exclude: /\.module\.css$/,
+        };
+      }
+      return rule;
+    });
+
+    webpackConfig.module.rules = updatedRules;
   }
 }

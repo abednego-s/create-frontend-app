@@ -1,17 +1,17 @@
-/* eslint-disable no-unused-vars */
 import type {
   ConfigurationStrategy,
-  Options,
   PackageConfig,
   WebpackConfig,
 } from '../../types';
 
 export class CssStrategy implements ConfigurationStrategy {
   constructor(
-    private plugins?: Options['plugins'],
-    private styling?: Options['styling']
+    // eslint-disable-next-line no-unused-vars
+    private options: {
+      useMiniCssExtractPlugin: boolean;
+      isVue: boolean;
+    }
   ) {}
-
   applyPackageConfig(packageJson: PackageConfig): void {
     packageJson.devDependencies = {
       ...packageJson.devDependencies,
@@ -29,23 +29,24 @@ export class CssStrategy implements ConfigurationStrategy {
       webpackConfig.module.rules = [];
     }
 
-    let use = ['style-loader', 'css-loader'];
+    let styleLoader = 'style-loader';
 
-    if (this.plugins?.includes('mini-css-extract-plugin')) {
-      use = ['[code]MiniCssExtractPlugin.loader[/code]', 'css-loader'];
+    if (this.options.isVue) {
+      styleLoader = 'vue-style-loader';
     }
 
-    if (this.styling?.includes('css-module')) {
-      webpackConfig.module.rules.push({
-        test: /\.css$/,
-        exclude: /\.module\.css$/,
-        use,
-      });
-    } else {
-      webpackConfig.module.rules.push({
-        test: /\.css$/,
-        use,
-      });
+    let use = [styleLoader, 'css-loader'];
+
+    if (this.options.useMiniCssExtractPlugin) {
+      use = [
+        `[code]process.env.NODE_ENV === 'production' ? MiniCssExtractPlugin.loader : '${styleLoader}'[/code]`,
+        'css-loader',
+      ];
     }
+
+    webpackConfig.module.rules.push({
+      test: /\.css$/,
+      use,
+    });
   }
 }

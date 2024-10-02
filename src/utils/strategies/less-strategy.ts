@@ -5,6 +5,14 @@ import type {
 } from '../../types';
 
 export class LessStrategy implements ConfigurationStrategy {
+  constructor(
+    // eslint-disable-next-line no-unused-vars
+    private options: {
+      useMiniCssExtractPlugin: boolean;
+      isVue: boolean;
+    }
+  ) {}
+
   applyPackageConfig(packageJson: PackageConfig): void {
     packageJson.devDependencies = {
       ...packageJson.devDependencies,
@@ -15,6 +23,16 @@ export class LessStrategy implements ConfigurationStrategy {
   }
 
   applyWebpackConfig(webpackConfig: WebpackConfig): void {
+    let styleLoader = 'style-loader';
+
+    if (this.options.isVue) {
+      styleLoader = 'vue-style-loader';
+    }
+
+    if (this.options.useMiniCssExtractPlugin) {
+      styleLoader = `[code]process.env.NODE_ENV === 'production' ? MiniCssExtractPlugin.loader : '${styleLoader}'[/code]`;
+    }
+
     webpackConfig.module = {
       ...webpackConfig.module,
     };
@@ -25,7 +43,7 @@ export class LessStrategy implements ConfigurationStrategy {
 
     webpackConfig.module.rules.push({
       test: /\.less$/,
-      use: ['style-loader', 'css-loader', 'less-loader'],
+      use: [styleLoader, 'css-loader', 'less-loader'],
     });
   }
 }

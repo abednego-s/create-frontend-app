@@ -1,18 +1,24 @@
-import type {
-  ConfigurationStrategy,
-  Options,
-  PackageConfig,
-} from '../../types';
+import type { ConfigurationStrategy, PackageConfig } from '../../types';
 import { getExtensions } from '../get-extenstions';
 
 export class PrettierStrategy implements ConfigurationStrategy {
-  // eslint-disable-next-line no-unused-vars
-  constructor(private transpiler: Options['transpiler']) {}
+  constructor(
+    // eslint-disable-next-line no-unused-vars
+    private options?: {
+      isBabel?: boolean;
+      isTypescript?: boolean;
+    }
+  ) {}
 
   applyPackageConfig(packageJson: PackageConfig): void {
+    const options = {
+      isBabel: this.options?.isBabel ?? false,
+      isTypescript: this.options?.isTypescript ?? false,
+    };
+
     packageJson.scripts = {
       ...packageJson.scripts,
-      format: `prettier --write 'src/**/*.{${getExtensions(this.transpiler).join(',')}}'`,
+      format: `prettier --write 'src/**/*.{${getExtensions(options).join(',')}}'`,
     };
 
     packageJson.devDependencies = {

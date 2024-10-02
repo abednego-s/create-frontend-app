@@ -1,12 +1,12 @@
-import type {
-  ConfigurationStrategy,
-  Options,
-  PackageConfig,
-} from '../../types';
+import type { ConfigurationStrategy, PackageConfig } from '../../types';
 
 export class VitestStrategy implements ConfigurationStrategy {
-  // eslint-disable-next-line no-unused-vars
-  constructor(private lib: Options['lib']) {}
+  constructor(
+    /* eslint-disable no-unused-vars */
+    private options: {
+      isReact: boolean;
+    }
+  ) {}
 
   applyPackageConfig(packageJson: PackageConfig) {
     packageJson.scripts = {
@@ -19,7 +19,7 @@ export class VitestStrategy implements ConfigurationStrategy {
       vitest: 'latest',
     };
 
-    if (this.lib === 'react') {
+    if (this.options.isReact) {
       packageJson.devDependencies = {
         ...packageJson.devDependencies,
         jsdom: 'latest',

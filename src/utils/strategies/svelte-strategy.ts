@@ -1,13 +1,17 @@
 /* eslint-disable no-unused-vars */
 import type {
   ConfigurationStrategy,
-  Options,
   PackageConfig,
   WebpackConfig,
 } from '../../types';
 
 export class SvelteStrategy implements ConfigurationStrategy {
-  constructor(private transpiler?: Options['transpiler']) {}
+  constructor(
+    private options?: {
+      isBabel?: boolean;
+      isTypescript?: boolean;
+    }
+  ) {}
 
   applyPackageConfig(packageJson: PackageConfig): void {
     packageJson.scripts = {
@@ -24,11 +28,6 @@ export class SvelteStrategy implements ConfigurationStrategy {
   }
 
   applyWebpackConfig(webpackConfig: WebpackConfig): void {
-    const isBabel = this.transpiler ? this.transpiler.includes('babel') : false;
-    const isTypescript = this.transpiler
-      ? this.transpiler.includes('ts')
-      : false;
-
     webpackConfig.module = {
       ...webpackConfig.module,
     };
@@ -41,7 +40,7 @@ export class SvelteStrategy implements ConfigurationStrategy {
       ...webpackConfig.resolve,
     };
 
-    const extensions = ['.mjs', '.js', '.svelte'];
+    const extensions = ['.js', '.mjs', '.svelte'];
 
     webpackConfig.module.rules = [
       ...webpackConfig.module.rules,
@@ -50,7 +49,7 @@ export class SvelteStrategy implements ConfigurationStrategy {
         use: {
           loader: 'svelte-loader',
           options: {
-            preprocess: isTypescript
+            preprocess: this.options?.isTypescript
               ? '[code]sveltePreprocess({ typescript: true })[/code]'
               : '[code]sveltePreprocess()[/code]',
           },
@@ -58,7 +57,7 @@ export class SvelteStrategy implements ConfigurationStrategy {
       },
     ];
 
-    if (isBabel) {
+    if (this.options?.isBabel) {
       webpackConfig.module.rules = [
         ...webpackConfig.module.rules,
         {
@@ -71,7 +70,7 @@ export class SvelteStrategy implements ConfigurationStrategy {
       ];
     }
 
-    if (isTypescript) {
+    if (this.options?.isTypescript) {
       webpackConfig.module.rules = [
         ...webpackConfig.module.rules,
         {
@@ -80,7 +79,7 @@ export class SvelteStrategy implements ConfigurationStrategy {
           exclude: /node_modules/,
         },
       ];
-      extensions.push('.ts');
+      extensions.unshift('.ts');
     }
 
     webpackConfig.resolve = {

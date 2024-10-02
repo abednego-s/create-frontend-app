@@ -5,6 +5,14 @@ import type {
 } from '../../types';
 
 export class SassStrategy implements ConfigurationStrategy {
+  constructor(
+    // eslint-disable-next-line no-unused-vars
+    private options: {
+      useMiniCssExtractPlugin: boolean;
+      isVue: boolean;
+    }
+  ) {}
+
   applyPackageConfig(packageJson: PackageConfig): void {
     packageJson.devDependencies = {
       ...packageJson.devDependencies,
@@ -15,6 +23,16 @@ export class SassStrategy implements ConfigurationStrategy {
   }
 
   applyWebpackConfig(webpackConfig: WebpackConfig): void {
+    let styleLoader = 'style-loader';
+
+    if (this.options.isVue) {
+      styleLoader = 'vue-style-loader';
+    }
+
+    if (this.options.useMiniCssExtractPlugin) {
+      styleLoader = `[code]process.env.NODE_ENV === 'production' ? MiniCssExtractPlugin.loader : '${styleLoader}'[/code]`;
+    }
+
     webpackConfig.module = {
       ...webpackConfig.module,
     };
@@ -25,7 +43,7 @@ export class SassStrategy implements ConfigurationStrategy {
 
     webpackConfig.module?.rules?.push({
       test: /\.scss$/,
-      use: ['style-loader', 'css-loader', 'sass-loader'],
+      use: [styleLoader, 'css-loader', 'sass-loader'],
     });
   }
 }
