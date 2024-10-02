@@ -20,6 +20,7 @@ const root = createRoot(domNode);
 root.render(<App />);`;
 
   const svelteTemplate = () => `${cssImport}import App from './App.svelte
+
 const app = new App({
   target: document.getElementById('root'),
 });
@@ -27,16 +28,14 @@ const app = new App({
 export default app;
 `;
 
-  const vueTemplate = () => `${cssImport}import Vue from 'vue';
+  const vueTemplate = () => `${cssImport}import { createApp } from 'vue';
 import App from './App.vue';
 
-new Vue({
-  render: h => h(App),
-}).$mount('#root');`;
+createApp(App).mount('#root');`;
 
   if (options.lib === 'react') {
-    const useTypescript = options.transpiler?.includes('ts') ?? false;
-    return reactTemplate(useTypescript);
+    const isTypescript = options.transpiler?.includes('ts') ?? false;
+    return reactTemplate(isTypescript);
   }
 
   if (options.lib === 'svelte') {
