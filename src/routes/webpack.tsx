@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { CodePreview } from '../components/CodePreview';
 import { DownloadButton } from '../components/DownloadButton';
@@ -15,10 +16,10 @@ const multipleOptionParams: Array<keyof Options> = [
 
 export default function Webpack() {
   const [searchParams] = useSearchParams();
+  const [projectName, setProjectName] = useState('empty-project');
 
   const params = Array.from(searchParams).reduce((prev, current) => {
     const [key, value] = current as [keyof Options, string];
-
     prev = {
       ...prev,
       [key]: multipleOptionParams.includes(key) ? value.split(',') : value,
@@ -27,7 +28,11 @@ export default function Webpack() {
     return prev;
   }, {} as Options);
 
-  const projectFiles = buildProjectFiles({ ...params, bundler: 'webpack' });
+  const projectFiles = buildProjectFiles({
+    ...params,
+    name: projectName,
+    bundler: 'webpack',
+  });
   const files = Array.from(projectFiles.keys())
     .sort()
     .reduce((prev, current) => {
@@ -44,7 +49,18 @@ export default function Webpack() {
         <div className="mb-10">
           <Sidebar />
         </div>
-        <DownloadButton files={files}>Download Zip</DownloadButton>
+        <div className="mb-2">
+          <input
+            type="text"
+            className="w-full px-4 py-2 border-2 border-gray-800 rounded-md"
+            onChange={(e) => setProjectName(e.target.value)}
+            value={projectName}
+          />
+        </div>
+
+        <DownloadButton projectName={projectName} files={files}>
+          Download Zip
+        </DownloadButton>
       </div>
       <div className="w-[750px]">
         <CodePreview files={files} />

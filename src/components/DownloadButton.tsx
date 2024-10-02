@@ -4,11 +4,13 @@ import { saveAs } from 'file-saver';
 import type { ProjectFiles } from '../types';
 
 export type DownloadButtonProps = {
+  projectName: string;
   files: ProjectFiles;
   children: ReactNode;
 };
 
 export function DownloadButton({
+  projectName,
   files,
   children,
 }: Readonly<DownloadButtonProps>) {
@@ -21,7 +23,7 @@ export function DownloadButton({
 
     try {
       const blob = await zip.generateAsync({ type: 'blob' });
-      saveAs(blob, 'hello.zip');
+      saveAs(blob, `${projectName}.zip`);
     } catch (err) {
       console.error('error:', err);
     }
@@ -29,7 +31,7 @@ export function DownloadButton({
 
   return (
     <button
-      className="w-full px-4 py-2 border-2 rounded-md"
+      className="w-full px-4 py-2 text-white border-2 rounded-md bg-stone-800 border-stone-800 hover:bg-white hover:text-stone-800"
       onClick={handleClickDownload}
     >
       {children}
