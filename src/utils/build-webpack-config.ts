@@ -15,28 +15,40 @@ import { FileLoaderStrategy } from './strategies/file-loader-strategy';
 import { CssModuleStrategy } from './strategies/css-module-strategy';
 
 function buildImports(options: WebpackBuildConfigOptions) {
+  let template = '';
+
+  if (options.lib === 'svelte') {
+    template += "const sveltePreprocess = require('svelte-preprocess');\n";
+  }
+
+  if (options.lib === 'vue') {
+    template += "const { VueLoaderPlugin } = require('vue-loader');\n";
+  }
+
   const pluginImports =
     options.plugins
       ?.map((plugin) => `${webpackPlugins[plugin].importDeclaration};`)
       .join('\n') || '';
 
-  let output = pluginImports;
-
-  if (options.lib === 'svelte') {
-    output += "\nconst sveltePreprocess = require('svelte-preprocess');\n";
+  if (pluginImports) {
+    template += pluginImports + '\n';
   }
 
-  if (options.lib === 'vue') {
-    output += "\nconst { VueLoaderPlugin } = require('vue-loader');\n";
-  }
-
-  return output;
+  return template;
 }
 
 function registerPlugins(this: WebpackConfig, plugins: BuildConfig['plugins']) {
-  this.plugins = plugins?.map(
+  const allPlugins = plugins?.map(
     (plugin) => `[code]${webpackPlugins[plugin].pluginEntry}[/code]` as ''
   );
+
+  if (this.plugins) {
+    this.plugins = [...this.plugins];
+
+    if (allPlugins) {
+      this.plugins = [...this.plugins, ...allPlugins];
+    }
+  }
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -72,46 +84,72 @@ function buildConfig(options?: BuildConfig) {
     const { plugins, lib, transpiler, styling, image, optimization, font } =
       options;
 
+    const isBabel = transpiler?.includes('babel');
+    const isTypescript = transpiler?.includes('ts');
+    const useMiniCssExtractPlugin =
+      plugins?.includes('mini-css-extract-plugin') ?? false;
+    const isVue = lib === 'vue';
+    const isCss = styling?.includes('css');
+
     if (transpiler?.includes('ts')) {
       config.entry = './src/index.ts';
     }
 
     if (lib === 'react') {
-      new ReactStrategy(options.transpiler).applyWebpackConfig(config);
+      new ReactStrategy({
+        isBabel,
+        isTypescript,
+      }).applyWebpackConfig(config);
     }
 
     if (lib === 'svelte') {
-      new SvelteStrategy(options.transpiler).applyWebpackConfig(config);
+      new SvelteStrategy({
+        isBabel,
+        isTypescript,
+      }).applyWebpackConfig(config);
     }
 
     if (lib === 'vue') {
-      new VueStrategy().applyWebpackConfig(config);
+      new VueStrategy({
+        isCss,
+        isTypescript,
+      }).applyWebpackConfig(config);
     }
 
     if (styling?.includes('css')) {
-      new CssStrategy(options.plugins, options.styling).applyWebpackConfig(
-        config
-      );
+      new CssStrategy({
+        useMiniCssExtractPlugin,
+        isVue,
+      }).applyWebpackConfig(config);
     }
 
     if (styling?.includes('css-module')) {
-      new CssModuleStrategy(options.plugins).applyWebpackConfig(config);
+      new CssModuleStrategy({
+        useMiniCssExtractPlugin,
+        isVue,
+      }).applyWebpackConfig(config);
     }
 
     if (styling?.includes('less')) {
-      new LessStrategy().applyWebpackConfig(config);
+      new LessStrategy({
+        useMiniCssExtractPlugin,
+        isVue,
+      }).applyWebpackConfig(config);
     }
 
     if (styling?.includes('scss')) {
-      new SassStrategy().applyWebpackConfig(config);
+      new SassStrategy({
+        useMiniCssExtractPlugin,
+        isVue,
+      }).applyWebpackConfig(config);
     }
 
     if (image) {
-      new FileLoaderStrategy(image).applyWebpackConfig(config);
+      new FileLoaderStrategy({ assets: image }).applyWebpackConfig(config);
     }
 
     if (font) {
-      new FileLoaderStrategy(font).applyWebpackConfig(config);
+      new FileLoaderStrategy({ assets: font }).applyWebpackConfig(config);
     }
 
     if (optimization?.includes('split-vendors')) {
