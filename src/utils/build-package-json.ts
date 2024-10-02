@@ -31,78 +31,110 @@ export function buildPackageJson(options: Options) {
     devDependencies: {},
   };
 
-  if (options.name) {
-    packageJson.name = options.name;
+  const {
+    bundler,
+    image,
+    lib,
+    linting,
+    name,
+    plugins,
+    styling,
+    testing,
+    transpiler,
+    ui,
+  } = options;
+
+  const isBabel = transpiler?.includes('babel');
+  const isTypescript = transpiler?.includes('ts');
+  const isReact = lib === 'react';
+  const isWebpack = bundler === 'webpack';
+
+  if (name) {
+    packageJson.name = name;
   }
 
-  if (options.bundler === 'webpack') {
-    new WebpackStrategy(options.plugins).applyPackageConfig(packageJson);
+  if (bundler === 'webpack') {
+    new WebpackStrategy({
+      plugins,
+    }).applyPackageConfig(packageJson);
   }
 
-  if (options.lib === 'react') {
+  if (lib === 'react') {
     new ReactStrategy().applyPackageConfig(packageJson);
   }
 
-  if (options.lib === 'svelte') {
+  if (lib === 'svelte') {
     new SvelteStrategy().applyPackageConfig(packageJson);
   }
 
-  if (options.lib === 'vue') {
+  if (lib === 'vue') {
     new VueStrategy().applyPackageConfig(packageJson);
   }
 
-  if (options.transpiler?.includes('babel')) {
-    new BabelStrategy(options.lib, options.bundler).applyPackageConfig(
-      packageJson
-    );
+  if (transpiler?.includes('babel')) {
+    new BabelStrategy({
+      isReact,
+      isWebpack,
+    }).applyPackageConfig(packageJson);
   }
 
-  if (options.transpiler?.includes('ts')) {
-    new TypescriptStrategy().applyPackageConfig(packageJson);
+  if (transpiler?.includes('ts')) {
+    new TypescriptStrategy({
+      isBabel,
+    }).applyPackageConfig(packageJson);
   }
 
-  if (options.ui?.includes('tailwind')) {
+  if (ui?.includes('tailwind')) {
     new TailwindStrategy().applyPackageConfig(packageJson);
   }
 
-  if (options.ui?.includes('material-ui')) {
+  if (ui?.includes('material-ui')) {
     new MaterialUiStrategy().applyPackageConfig(packageJson);
   }
 
-  if (options.styling?.includes('css')) {
+  if (styling?.includes('css')) {
     new CssStrategy().applyPackageConfig(packageJson);
   }
 
-  if (options.styling?.includes('css-module')) {
+  if (styling?.includes('css-module')) {
     new CssModuleStrategy().applyPackageConfig(packageJson);
   }
 
-  if (options.styling?.includes('less')) {
+  if (styling?.includes('less')) {
     new LessStrategy().applyPackageConfig(packageJson);
   }
 
-  if (options.styling?.includes('scss')) {
+  if (styling?.includes('scss')) {
     new SassStrategy().applyPackageConfig(packageJson);
   }
 
-  if (options.image) {
-    new FileLoaderStrategy(options.image).applyPackageConfig(packageJson);
+  if (image) {
+    new FileLoaderStrategy({ assets: image }).applyPackageConfig(packageJson);
   }
 
-  if (options.testing?.includes('jest')) {
-    new JestStrategy(options.transpiler).applyPackageConfig(packageJson);
+  if (testing?.includes('jest')) {
+    new JestStrategy({
+      isBabel,
+      isTypescript,
+    }).applyPackageConfig(packageJson);
   }
 
-  if (options.testing?.includes('vitest')) {
-    new VitestStrategy(options.lib).applyPackageConfig(packageJson);
+  if (testing?.includes('vitest')) {
+    new VitestStrategy({ isReact }).applyPackageConfig(packageJson);
   }
 
-  if (options.linting?.includes('eslint')) {
-    new EsLintStrategy(options.transpiler).applyPackageConfig(packageJson);
+  if (linting?.includes('eslint')) {
+    new EsLintStrategy({
+      isBabel,
+      isTypescript,
+    }).applyPackageConfig(packageJson);
   }
 
-  if (options.linting?.includes('prettier')) {
-    new PrettierStrategy(options.transpiler).applyPackageConfig(packageJson);
+  if (linting?.includes('prettier')) {
+    new PrettierStrategy({
+      isBabel,
+      isTypescript,
+    }).applyPackageConfig(packageJson);
   }
 
   const dependencies = Object.keys(packageJson.dependencies || {})

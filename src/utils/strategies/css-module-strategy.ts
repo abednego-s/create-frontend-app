@@ -8,9 +8,9 @@ import type {
 export class CssModuleStrategy implements ConfigurationStrategy {
   constructor(
     // eslint-disable-next-line no-unused-vars
-    private options: {
-      useMiniCssExtractPlugin: boolean;
-      isVue: boolean;
+    private options?: {
+      useMiniCssExtractPlugin?: boolean;
+      isVue?: boolean;
     }
   ) {}
   applyPackageConfig(packageJson: PackageConfig): void {
@@ -32,11 +32,11 @@ export class CssModuleStrategy implements ConfigurationStrategy {
 
     let styleLoader = 'style-loader';
 
-    if (this.options.isVue) {
+    if (this.options?.isVue) {
       styleLoader = 'vue-style-loader';
     }
 
-    if (this.options.useMiniCssExtractPlugin) {
+    if (this.options?.useMiniCssExtractPlugin) {
       styleLoader = `[code]process.env.NODE_ENV === 'production' ? MiniCssExtractPlugin.loader : '${styleLoader}'[/code]`;
     }
 

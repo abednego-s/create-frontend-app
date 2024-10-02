@@ -7,11 +7,12 @@ import type {
 export class CssStrategy implements ConfigurationStrategy {
   constructor(
     // eslint-disable-next-line no-unused-vars
-    private options: {
-      useMiniCssExtractPlugin: boolean;
-      isVue: boolean;
+    private options?: {
+      useMiniCssExtractPlugin?: boolean;
+      isVue?: boolean;
     }
   ) {}
+
   applyPackageConfig(packageJson: PackageConfig): void {
     packageJson.devDependencies = {
       ...packageJson.devDependencies,
@@ -31,13 +32,13 @@ export class CssStrategy implements ConfigurationStrategy {
 
     let styleLoader = 'style-loader';
 
-    if (this.options.isVue) {
+    if (this.options?.isVue) {
       styleLoader = 'vue-style-loader';
     }
 
     let use = [styleLoader, 'css-loader'];
 
-    if (this.options.useMiniCssExtractPlugin) {
+    if (this.options?.useMiniCssExtractPlugin) {
       use = [
         `[code]process.env.NODE_ENV === 'production' ? MiniCssExtractPlugin.loader : '${styleLoader}'[/code]`,
         'css-loader',
