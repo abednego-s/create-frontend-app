@@ -1,70 +1,68 @@
-import { useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { CodePreview } from '../components/CodePreview';
-import { DownloadButton } from '../components/DownloadButton';
-import { Sidebar } from '../components/Sidebar';
+import { DownloadForm } from '../components/DownloadForm';
+import { SidebarMenu } from '../components/SidebarMenu';
+import { MainLayout } from '../components/MainLayout';
+import { arrangeProjectFiles } from '../utils/arrange-project-files';
 import { buildProjectFiles } from '../utils/build-project-files';
-import type { Options, ProjectFiles } from '../types';
+import { commonMenuItems } from '../utils/common-menu-items';
+import { convertParamsToOptions } from '../utils/convert-params-to-options';
 
-const multipleOptionParams: Array<keyof Options> = [
-  'transpiler',
-  'plugins',
-  'styling',
-  'image',
-  'font',
+const webpackMenuItems = [
+  ...commonMenuItems,
+  {
+    label: 'Optimization',
+    name: 'optimization',
+    items: [{ id: 'split-vendors', label: 'Code split vendors' }],
+    isMultiple: true,
+  },
+  {
+    label: 'Webpack Plugins',
+    name: 'plugins',
+    items: [
+      { id: 'HotModuleReplacementPlugin', label: 'Hot Module Replacement' },
+      { id: 'html-webpack-plugin', label: 'HTML Webpack Plugins' },
+      { id: 'webpack-bundle-analyzer', label: 'Webpack Bundle Analyzer' },
+      { id: 'mini-css-extract-plugin', label: 'MiniCSSExtractPlugin' },
+      { id: 'clean-webpack-plugin', label: 'CleanWebpackPlugin' },
+    ],
+    isMultiple: true,
+  },
 ];
 
 export default function Webpack() {
   const [searchParams] = useSearchParams();
   const [projectName, setProjectName] = useState('empty-project');
 
-  const params = Array.from(searchParams).reduce((prev, current) => {
-    const [key, value] = current as [keyof Options, string];
-    prev = {
-      ...prev,
-      [key]: multipleOptionParams.includes(key) ? value.split(',') : value,
-    };
+  const handleChangeProjectName = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setProjectName(e.target.value);
+    },
+    []
+  );
 
-    return prev;
-  }, {} as Options);
+  const options = convertParamsToOptions(searchParams);
 
   const projectFiles = buildProjectFiles({
-    ...params,
+    ...options,
     name: projectName,
     bundler: 'webpack',
   });
-  const files = Array.from(projectFiles.keys())
-    .sort()
-    .reduce((prev, current) => {
-      prev = {
-        ...prev,
-        [current]: projectFiles.get(current) as string,
-      };
-      return prev;
-    }, {} as ProjectFiles);
+
+  const files = arrangeProjectFiles(projectFiles);
 
   return (
-    <div className="flex">
-      <div className="flex-grow pr-10">
-        <div className="mb-10">
-          <Sidebar />
-        </div>
-        <div className="mb-2">
-          <input
-            type="text"
-            className="w-full px-4 py-2 border-2 border-gray-800 rounded-md"
-            onChange={(e) => setProjectName(e.target.value)}
-            value={projectName}
-          />
-        </div>
-
-        <DownloadButton projectName={projectName} files={files}>
-          Download Zip
-        </DownloadButton>
-      </div>
-      <div className="w-[750px]">
-        <CodePreview files={files} />
-      </div>
-    </div>
+    <MainLayout
+      sidebarElement={<SidebarMenu menuItems={webpackMenuItems} />}
+      downloadFormElement={
+        <DownloadForm
+          onChangeProjectName={handleChangeProjectName}
+          projectName={projectName}
+          files={files}
+        />
+      }
+      codePreviewElement={<CodePreview files={files} />}
+    />
   );
 }
