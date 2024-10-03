@@ -2,7 +2,7 @@ import { CodePreview } from '../components/CodePreview';
 import { MainLayout } from '../components/MainLayout';
 import { Sidebar } from '../components/Sidebar';
 import { commonMenuItems } from '../utils/common-menu-items';
-import { useProjectConfiguration } from '../utils/useProjectConfiguration';
+import { useProjectConfiguration } from '../utils/hooks/useProjectConfiguration';
 
 const webpackMenuItems = [
   ...commonMenuItems,

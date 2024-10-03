@@ -1,18 +1,18 @@
-import { objectLiteralToString } from '../utils/object-literals-to-string';
-import { webpackPlugins } from '../utils/webpack-plugins';
+import { objectLiteralToString } from '../object-literals-to-string';
+import { webpackPlugins } from '../webpack-plugins';
 import type {
   BuildConfig,
   WebpackConfig,
   WebpackBuildConfigOptions,
-} from '../types';
-import { ReactStrategy } from './strategies/react-strategy';
-import { SvelteStrategy } from './strategies/svelte-strategy';
-import { VueStrategy } from './strategies/vue-strategy';
-import { CssStrategy } from './strategies/css-strategy';
-import { LessStrategy } from './strategies/less-strategy';
-import { SassStrategy } from './strategies/sass-strategy';
-import { FileLoaderStrategy } from './strategies/file-loader-strategy';
-import { CssModuleStrategy } from './strategies/css-module-strategy';
+} from '../../types';
+import { ReactStrategy } from '../strategies/react-strategy';
+import { SvelteStrategy } from '../strategies/svelte-strategy';
+import { VueStrategy } from '../strategies/vue-strategy';
+import { CssStrategy } from '../strategies/css-strategy';
+import { LessStrategy } from '../strategies/less-strategy';
+import { SassStrategy } from '../strategies/sass-strategy';
+import { FileLoaderStrategy } from '../strategies/file-loader-strategy';
+import { CssModuleStrategy } from '../strategies/css-module-strategy';
 
 function buildImports(options: WebpackBuildConfigOptions) {
   let template = '';

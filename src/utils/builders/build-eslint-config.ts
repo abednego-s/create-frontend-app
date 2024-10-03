@@ -1,4 +1,4 @@
-import type { ESLintConfig, Options } from '../types';
+import type { ESLintConfig, Options } from '../../types';
 
 export function buildEslintConfig(options: Options) {
   let config: ESLintConfig = {

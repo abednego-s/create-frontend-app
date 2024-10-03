@@ -1,4 +1,4 @@
-import type { Options } from '../types';
+import type { Options } from '../../types';
 
 export function buildReadme(options: Options) {
   let runLocal = '';

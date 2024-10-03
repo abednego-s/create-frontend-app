@@ -1,4 +1,4 @@
-import type { Options, TSConfig } from '../types';
+import type { Options, TSConfig } from '../../types';
 
 export function buildTypescriptConfig(options: Options) {
   let config: TSConfig = {

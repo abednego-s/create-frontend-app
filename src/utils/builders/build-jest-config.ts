@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-escape */
-import { objectLiteralToString } from './object-literals-to-string';
-import type { Options } from '../types';
+import { objectLiteralToString } from '../object-literals-to-string';
+import type { Options } from '../../types';
 
 export function buildJestConfig(options: Options) {
   const config = {

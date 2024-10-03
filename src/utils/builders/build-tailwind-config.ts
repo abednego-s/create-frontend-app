@@ -1,5 +1,5 @@
-import { objectLiteralToString } from './object-literals-to-string';
-import type { Options } from '../types';
+import { objectLiteralToString } from '../object-literals-to-string';
+import type { Options } from '../../types';
 
 export function buildTailwindConfig(options: Options) {
   let exts = ['js', 'jsx', 'html'].join(',');

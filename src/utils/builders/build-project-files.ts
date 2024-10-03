@@ -20,7 +20,7 @@ import { buildViteConfig } from './build-vite-config';
 import { buildViteTest } from './build-vite-test';
 import { buildSvelteMainApp } from './build-svelte-main-app';
 import { buildVueMainApp } from './build-vue-main-app';
-import type { Options, ProjectFileNames } from '../types';
+import type { Options, ProjectFileNames } from '../../types';
 
 export function buildProjectFiles(options: Options) {
   const projectFiles = new Map<ProjectFileNames, string>();

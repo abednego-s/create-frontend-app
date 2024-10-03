@@ -1,5 +1,5 @@
-import type { Options, ViteConfig } from '../types';
-import { objectLiteralToString } from './object-literals-to-string';
+import type { Options, ViteConfig } from '../../types';
+import { objectLiteralToString } from '../object-literals-to-string';
 
 export function buildViteConfig(options: Options) {
   let config: ViteConfig = {};
