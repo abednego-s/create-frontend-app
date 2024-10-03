@@ -15,7 +15,6 @@ export function DownloadForm({
   projectName,
   files,
 }: DownloadFormProps) {
-  console.log('rendered');
   async function handleClickDownload() {
     const zip = new JSZip();
 
@@ -34,9 +33,12 @@ export function DownloadForm({
   return (
     <form>
       <div className="mb-2">
-        <label>Project Name:</label>
+        <label htmlFor="project-name" className="inline-block mb-2">
+          Project Name:
+        </label>
         <input
           type="text"
+          id="project-name"
           className="w-full px-4 py-2 border-2 border-gray-800 rounded-md"
           onChange={onChangeProjectName}
           value={projectName}

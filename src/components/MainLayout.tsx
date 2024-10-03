@@ -1,23 +1,15 @@
 import { ReactNode } from 'react';
 
 export type MainLayoutProps = {
-  codePreviewElement: ReactNode;
-  downloadFormElement: ReactNode;
-  sidebarElement: ReactNode;
+  leftElement: ReactNode;
+  rightElement: ReactNode;
 };
 
-export function MainLayout({
-  codePreviewElement,
-  downloadFormElement,
-  sidebarElement,
-}: MainLayoutProps) {
+export function MainLayout({ leftElement, rightElement }: MainLayoutProps) {
   return (
     <div className="flex">
-      <div className="w-1/4 pr-4">
-        <div className="mb-5">{sidebarElement}</div>
-        {downloadFormElement}
-      </div>
-      <div className="w-3/4">{codePreviewElement}</div>
+      <div className="w-1/4 pr-4">{leftElement}</div>
+      <div className="w-3/4">{rightElement}</div>
     </div>
   );
 }

@@ -2,14 +2,12 @@ import { MenuItem } from '../types';
 import { Collapsible } from './Collapsible';
 import { MenuItems } from './MenuItems';
 
-type MenuItems = Array<
-  MenuItem & {
-    label: string;
-  }
->;
-
 export type SidebarMenuProps = {
-  menuItems: MenuItems;
+  menuItems: Array<
+    MenuItem & {
+      label: string;
+    }
+  >;
 };
 
 export function SidebarMenu({ menuItems }: SidebarMenuProps) {
