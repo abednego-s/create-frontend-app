@@ -1,4 +1,5 @@
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+import { NavItem } from '../components/NavItem';
 import webpackLogo from '../../assets/webpack.svg';
 import parcelLogo from '../../assets/parcel.svg';
 import esbuildLogo from '../../assets/esbuild.svg';
@@ -15,68 +16,30 @@ export default function Root() {
         <nav className="flex justify-center mb-10">
           <ul className="flex">
             <li className="mr-2">
-              <NavLink
-                to="/"
-                className={({ isActive }) =>
-                  [
-                    isActive ? 'border-slate-800' : '',
-                    'border-2 px-4 py-2 flex',
-                  ].join(' ')
-                }
-              >
-                <img
-                  alt="webpack"
-                  src={webpackLogo}
-                  width={25}
-                  className="mr-2"
-                />
-                <span>Webpack</span>
-              </NavLink>
+              <NavItem to="/" logo={webpackLogo} alt="webpack" text="Webpack" />
             </li>
             <li className="mr-2">
-              <NavLink
+              <NavItem
                 to="/parcel"
-                className={({ isActive }) =>
-                  [
-                    isActive ? 'border-slate-800' : '',
-                    'border-2 px-4 py-2 flex',
-                  ].join(' ')
-                }
-              >
-                <img
-                  alt="parcel"
-                  src={parcelLogo}
-                  width={25}
-                  className="mr-2"
-                />
-                <span>Parcel</span>
-              </NavLink>
+                logo={parcelLogo}
+                alt="parcel"
+                text="Parcel"
+              />
             </li>
             <li>
-              <NavLink
+              <NavItem
                 to="/esbuild"
-                className={({ isActive }) =>
-                  [
-                    isActive ? 'border-slate-800' : '',
-                    'border-2 px-4 py-2 flex',
-                  ].join(' ')
-                }
-              >
-                <img
-                  alt="esbuild"
-                  src={esbuildLogo}
-                  width={25}
-                  className="mr-2"
-                />
-                <span>ESBuild</span>
-              </NavLink>
+                logo={esbuildLogo}
+                alt="esbuild"
+                text="ESBuild"
+              />
             </li>
           </ul>
         </nav>
         <Outlet />
       </main>
       <footer className="mt-10 bg-gray-300">
-        <div className="flex max-w-screen-lg py-10 mx-auto ">
+        <nav className="flex max-w-screen-lg py-10 mx-auto ">
           <ul className="flex">
             <li className="mr-10">
               <a href="https://x.com/abednego_s">Twitter</a>
@@ -87,7 +50,7 @@ export default function Root() {
               </a>
             </li>
           </ul>
-        </div>
+        </nav>
       </footer>
     </>
   );

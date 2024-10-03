@@ -175,3 +175,12 @@ export interface ConfigurationStrategy {
   applyPackageConfig(packageJson: PackageConfig): void;
   applyWebpackConfig?(webpackConfig: WebpackConfig): void;
 }
+
+export type MenuItem = {
+  name: string;
+  items: {
+    id: string;
+    label: string;
+  }[];
+  isMultiple: boolean;
+};
