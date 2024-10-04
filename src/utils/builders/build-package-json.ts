@@ -152,6 +152,8 @@ export function buildPackageJson(options: Options) {
   if (isEslint) {
     new EsLintStrategy({
       isBabel,
+      isReact,
+      isSvelte,
       isTypescript,
     }).applyPackageConfig(packageJson);
   }

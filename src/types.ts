@@ -70,47 +70,22 @@ export type ProjectFileNames =
 export type ProjectFiles = Record<ProjectFileNames, string>;
 
 export type ESLintConfig = {
-  env?: ESLintConfigEnv;
+  env?: {
+    [K in string]: boolean;
+  };
   extends?: string[];
   parser?: string;
-  parserOptions?: ESLintConfigParserOptions;
-  plugins?: string[];
-  rules?: ESLintConfigRules;
-  settings?: ESLintConfigSettings;
-};
-
-export type ESLintConfigEnv = {
-  browser: boolean;
-  node: boolean;
-  es2021: boolean;
-};
-
-export type ESLintConfigParserOptions = {
-  ecmaFeatures?: ESLintConfigEcmaFeatures;
-  ecmaVersion?: string;
-  sourceType?: string;
-};
-
-export type ESLintConfigEcmaFeatures = {
-  jsx?: boolean;
-};
-
-export type KnownESLintRuleProperties =
-  | 'prettier/prettier'
-  | 'react/prop-types'
-  | 'react/jsx-uses-react'
-  | 'react/react-in-jsx-scope'
-  | 'no-unused-vars'
-  | '@typescript-eslint/no-require-imports';
-
-export type ESLintConfigRules = {
-  [K in KnownESLintRuleProperties]?: 'warn' | 'off' | 'error';
-};
-
-export type ESLintConfigSettings = {
-  react: {
-    version: string;
+  parserOptions?: {
+    [K in string]: string | unknown;
   };
+  plugins?: string[];
+  rules?: {
+    [K in string]?: 'warn' | 'off' | 'error';
+  };
+  settings?: {
+    [K in string]: unknown;
+  };
+  overrides?: unknown[];
 };
 
 export type BuildConfig = Pick<

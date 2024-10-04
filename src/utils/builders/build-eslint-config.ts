@@ -1,7 +1,94 @@
 import type { ESLintConfig, Options } from '../../types';
 
+// eslint-disable-next-line no-unused-vars
+function applyReactConfig(this: ESLintConfig) {
+  const pluginExtensions = [
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+  ];
+  const plugins = ['react'];
+
+  this.parserOptions = {
+    ...this.parserOptions,
+    ecmaFeatures: {
+      jsx: true,
+    },
+  };
+
+  this.extends = this.extends
+    ? [...this.extends, ...pluginExtensions]
+    : pluginExtensions;
+
+  this.rules = {
+    ...this.rules,
+    'react/prop-types': 'off',
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
+  };
+
+  this.plugins = this.plugins ? [...this.plugins, ...plugins] : plugins;
+
+  this.settings = {
+    ...this.settings,
+    react: {
+      version: 'detect',
+    },
+  };
+}
+
+// eslint-disable-next-line no-unused-vars
+function applySvelteConfig(this: ESLintConfig) {
+  const svelteConfigOverride = {
+    files: ['*.svelte'],
+    processor: 'svelte3/svelte3',
+  };
+  const pluginExtensions = ['plugin:svelte3/recommended'];
+  const plugins = ['svelte3'];
+  const settings = {
+    'svelte3/ignore-warnings': () => true,
+  };
+
+  this.extends = this.extends
+    ? [...this.extends, ...pluginExtensions]
+    : pluginExtensions;
+
+  this.overrides = this.overrides
+    ? [...this.overrides, svelteConfigOverride]
+    : [svelteConfigOverride];
+
+  this.plugins = this.plugins ? [...this.plugins, ...plugins] : plugins;
+
+  this.settings = this.settings ? { ...this.settings, ...settings } : settings;
+}
+
+// eslint-disable-next-line no-unused-vars
+function applyTypescriptConfig(this: ESLintConfig) {
+  const pluginExtensions = ['plugin:@typescript-eslint/recommended'];
+  const plugins = ['@typescript-eslint'];
+
+  this.extends = this.extends
+    ? [...this.extends, ...pluginExtensions]
+    : pluginExtensions;
+
+  this.plugins = this.plugins ? [...this.plugins, ...plugins] : plugins;
+
+  this.parser = '@typescript-eslint/parser';
+}
+
+// eslint-disable-next-line no-unused-vars
+function applyPrettierConfig(this: ESLintConfig) {
+  const pluginExtensions = ['prettier'];
+  const plugins = ['prettier'];
+
+  this.plugins = this.plugins ? [...this.plugins, ...plugins] : plugins;
+
+  this.extends = this.extends
+    ? [...this.extends, ...pluginExtensions]
+    : pluginExtensions;
+}
+
 export function buildEslintConfig(options: Options) {
-  let config: ESLintConfig = {
+  const config: ESLintConfig = {
     env: {
       browser: true,
       node: true,
@@ -17,63 +104,25 @@ export function buildEslintConfig(options: Options) {
     },
   };
 
-  let plugins: string[] = [];
+  const isPrettier = options.linting?.includes('prettier') ?? false;
+  const isReact = options.lib === 'react';
+  const isSvelte = options.lib === 'svelte';
+  const isTypecript = options.transpiler?.includes('ts') ?? false;
 
-  if (config.plugins) {
-    plugins = [...config.plugins];
+  if (isReact) {
+    applyReactConfig.call(config);
   }
 
-  if (options.lib === 'react') {
-    plugins.push('react');
-
-    config = {
-      ...config,
-      parserOptions: {
-        ...config.parserOptions,
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-      extends: [
-        ...(config.extends as string[]),
-        'plugin:react/recommended',
-        'plugin:react-hooks/recommended',
-      ],
-      rules: {
-        ...config.rules,
-        'react/prop-types': 'off',
-        'react/jsx-uses-react': 'off',
-        'react/react-in-jsx-scope': 'off',
-      },
-      plugins,
-      settings: {
-        ...config.settings,
-        react: {
-          version: 'detect',
-        },
-      },
-    };
+  if (isSvelte) {
+    applySvelteConfig.call(config);
   }
 
-  if (options.linting?.includes('prettier')) {
-    config = {
-      ...config,
-      plugins: [...plugins, 'prettier'],
-    };
+  if (isTypecript) {
+    applyTypescriptConfig.call(config);
   }
 
-  if (options.transpiler?.includes('ts')) {
-    plugins.push('@typescript-eslint');
-
-    config = {
-      ...config,
-      extends: [
-        ...(config.extends as string[]),
-        'plugin:@typescript-eslint/recommended',
-      ],
-      parser: '@typescript-eslint/parser',
-      plugins,
-    };
+  if (isPrettier) {
+    applyPrettierConfig.call(config);
   }
 
   return JSON.stringify(config, null, 2);
