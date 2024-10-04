@@ -9,24 +9,35 @@ export class VueStrategy implements ConfigurationStrategy {
     /* eslint-disable no-unused-vars */
     private options?: {
       isCss?: boolean;
+      isParcel?: boolean;
       isTypescript?: boolean;
+      isWebpack?: boolean;
     }
   ) {}
 
   applyPackageConfig(packageJson: PackageConfig): void {
-    packageJson.scripts = {
-      ...packageJson.scripts,
-      dev: 'webpack serve --mode development',
-    };
-    packageJson.devDependencies = {
-      ...packageJson.devDependencies,
-      vue: '^3.3.4',
-      'vue-loader': '^17.2.4',
-      'vue-template-compiler': '^2.7.14',
-      'webpack-dev-server': '^5.1.0',
-    };
+    if (this.options?.isWebpack) {
+      packageJson.scripts = {
+        ...packageJson.scripts,
+        dev: 'webpack serve --mode development',
+      };
+      packageJson.devDependencies = {
+        ...packageJson.devDependencies,
+        vue: '^3.3.4',
+        'vue-loader': '^17.2.4',
+        'vue-template-compiler': '^2.7.14',
+        'webpack-dev-server': '^5.1.0',
+      };
+    }
 
-    if (this.options?.isCss) {
+    if (this.options?.isParcel) {
+      packageJson.scripts = {
+        ...packageJson.scripts,
+        '@parcel/transformer-vue': 'latest',
+      };
+    }
+
+    if (this.options?.isCss && this.options?.isWebpack) {
       packageJson.devDependencies = {
         ...packageJson.devDependencies,
         'vue-style-loader': '^7.1.2',

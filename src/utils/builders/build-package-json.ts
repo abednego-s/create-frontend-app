@@ -92,7 +92,7 @@ export function buildPackageJson(options: Options) {
   }
 
   if (isVue) {
-    new VueStrategy().applyPackageConfig(packageJson);
+    new VueStrategy({ isWebpack, isParcel }).applyPackageConfig(packageJson);
   }
 
   if (isBabel) {
