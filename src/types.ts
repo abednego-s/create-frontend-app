@@ -7,7 +7,7 @@ export type Bundler = 'webpack' | 'parcel' | 'esbuild';
 export type Library = 'react' | 'vue' | 'svelte';
 export type WebpackPlugins = keyof typeof webpackPlugins;
 export type UI = 'tailwind' | 'material-ui';
-export type Image = 'svg' | 'png' | 'jpg' | 'gif';
+export type Image = 'svg' | 'png' | 'jpe?g' | 'gif';
 export type Styling = 'css' | 'css-module' | 'scss' | 'less';
 export type Testing = 'jest' | 'vitest';
 export type Transpiler = 'babel' | 'ts';
@@ -57,6 +57,7 @@ export type ProjectFileNames =
   | 'src/App.svelte'
   | 'src/App.tsx'
   | 'src/App.vue'
+  | 'src/custom.d.ts'
   | 'src/index.js'
   | 'src/index.ts'
   | 'src/index.html'

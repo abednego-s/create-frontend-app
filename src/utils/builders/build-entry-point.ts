@@ -4,7 +4,7 @@ export function buildEntryPoint(options: Options) {
   let cssImport = '';
 
   if (options.styling?.includes('css')) {
-    cssImport += "import './src/styles.css';\n\n";
+    cssImport += "import './styles.css';\n\n";
   }
 
   const vanillaTemplate = () => `${cssImport}console.log('hello world!')`;

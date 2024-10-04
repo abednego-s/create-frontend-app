@@ -20,6 +20,7 @@ import { buildViteConfig } from './build-vite-config';
 import { buildViteTest } from './build-vite-test';
 import { buildSvelteMainApp } from './build-svelte-main-app';
 import { buildVueMainApp } from './build-vue-main-app';
+import { buildModuleDeclaration } from './build-module-declaration';
 import type { Options, ProjectFileNames } from '../../types';
 
 export function buildProjectFiles(options: Options) {
@@ -34,6 +35,11 @@ export function buildProjectFiles(options: Options) {
     projectFiles.set('webpack.config.js', buildWebpackConfig(options));
   }
 
+  if (options.bundler === 'parcel') {
+    projectFiles.set('src/index.html', buildHtml(options));
+    projectFiles.set('src/index.js', buildEntryPoint(options));
+  }
+
   if (options.transpiler?.includes('babel')) {
     projectFiles.set('.babelrc', buildBabelConfig(options));
   }
@@ -45,7 +51,7 @@ export function buildProjectFiles(options: Options) {
   }
 
   if (options.lib === 'react') {
-    projectFiles.set('src/index.html', buildHtml());
+    projectFiles.set('src/index.html', buildHtml(options));
 
     if (options.transpiler?.includes('ts')) {
       projectFiles.set('src/App.tsx', buildReactMainApp(options));
@@ -55,7 +61,7 @@ export function buildProjectFiles(options: Options) {
   }
 
   if (options.lib === 'svelte') {
-    projectFiles.set('src/index.html', buildHtml());
+    projectFiles.set('src/index.html', buildHtml(options));
     projectFiles.set('src/App.svelte', buildSvelteMainApp(options));
 
     if (options.transpiler?.includes('ts')) {
@@ -66,7 +72,7 @@ export function buildProjectFiles(options: Options) {
   }
 
   if (options.lib === 'vue') {
-    projectFiles.set('src/index.html', buildHtml());
+    projectFiles.set('src/index.html', buildHtml(options));
     projectFiles.set('src/App.vue', buildVueMainApp());
 
     if (options.transpiler?.includes('ts')) {
@@ -83,6 +89,13 @@ export function buildProjectFiles(options: Options) {
 
   if (options.styling?.includes('css')) {
     projectFiles.set('src/styles.css', buildStylesCss());
+  }
+
+  if (
+    (options.styling || options.image || options.font) &&
+    options.transpiler?.includes('ts')
+  ) {
+    projectFiles.set('src/custom.d.ts', buildModuleDeclaration(options));
   }
 
   if (options.testing?.includes('jest')) {
