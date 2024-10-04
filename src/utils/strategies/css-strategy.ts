@@ -10,15 +10,18 @@ export class CssStrategy implements ConfigurationStrategy {
     private options?: {
       useMiniCssExtractPlugin?: boolean;
       isVue?: boolean;
+      isWebpack?: boolean;
     }
   ) {}
 
   applyPackageConfig(packageJson: PackageConfig): void {
-    packageJson.devDependencies = {
-      ...packageJson.devDependencies,
-      'css-loader': '^7.1.2',
-      'style-loader': '^4.0.0',
-    };
+    if (this.options?.isWebpack) {
+      packageJson.devDependencies = {
+        ...packageJson.devDependencies,
+        'css-loader': '^7.1.2',
+        'style-loader': '^4.0.0',
+      };
+    }
   }
 
   applyWebpackConfig(webpackConfig: WebpackConfig): void {

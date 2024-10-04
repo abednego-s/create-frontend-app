@@ -18,6 +18,12 @@ export class WebpackStrategy implements ConfigurationStrategy {
       build: 'webpack --mode production',
     };
 
+    packageJson.devDependencies = {
+      ...packageJson.devDependencies,
+      webpack: '^5.94.0',
+      'webpack-cli': '^5.1.4',
+    };
+
     if (this.options?.plugins) {
       const webpackPlugins = this.options?.plugins.reduce((prev, current) => {
         if (current !== 'HotModuleReplacementPlugin') {
@@ -32,8 +38,6 @@ export class WebpackStrategy implements ConfigurationStrategy {
 
       packageJson.devDependencies = {
         ...packageJson.devDependencies,
-        webpack: '^5.94.0',
-        'webpack-cli': '^5.1.4',
         ...webpackPlugins,
       };
     }

@@ -10,16 +10,24 @@ export class SassStrategy implements ConfigurationStrategy {
     private options?: {
       useMiniCssExtractPlugin?: boolean;
       isVue?: boolean;
+      isWebpack?: boolean;
     }
   ) {}
 
   applyPackageConfig(packageJson: PackageConfig): void {
-    packageJson.devDependencies = {
-      ...packageJson.devDependencies,
-      'css-loader': '^7.1.2',
-      'style-loader': '^4.0.0',
-      'sass-loader': 'latest',
-    };
+    if (this.options?.isWebpack) {
+      packageJson.devDependencies = {
+        ...packageJson.devDependencies,
+        'css-loader': '^7.1.2',
+        'style-loader': '^4.0.0',
+        'sass-loader': 'latest',
+      };
+    } else {
+      packageJson.devDependencies = {
+        ...packageJson.devDependencies,
+        sass: 'latest',
+      };
+    }
   }
 
   applyWebpackConfig(webpackConfig: WebpackConfig): void {

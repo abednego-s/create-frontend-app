@@ -10,14 +10,20 @@ export class LessStrategy implements ConfigurationStrategy {
     private options?: {
       useMiniCssExtractPlugin?: boolean;
       isVue?: boolean;
+      isWebpack?: boolean;
     }
   ) {}
 
   applyPackageConfig(packageJson: PackageConfig): void {
+    if (this.options?.isWebpack) {
+      packageJson.devDependencies = {
+        ...packageJson.devDependencies,
+        'css-loader': '^7.1.2',
+        'style-loader': '^4.0.0',
+      };
+    }
     packageJson.devDependencies = {
       ...packageJson.devDependencies,
-      'css-loader': '^7.1.2',
-      'style-loader': '^4.0.0',
       less: 'latest',
     };
   }

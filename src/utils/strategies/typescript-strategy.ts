@@ -5,17 +5,31 @@ export class TypescriptStrategy implements ConfigurationStrategy {
     /* eslint-disable no-unused-vars */
     private options?: {
       isBabel?: boolean;
+      isReact?: boolean;
+      isWebpack?: boolean;
     }
   ) {}
 
   applyPackageConfig(packageJson: PackageConfig): void {
     packageJson.devDependencies = {
       ...packageJson.devDependencies,
-      '@types/react': '^18.3.5',
-      '@types/react-dom': '^18.3.0',
       typescript: '^5.6.2',
-      'ts-loader': '^9.5.1',
     };
+
+    if (this.options?.isReact) {
+      packageJson.devDependencies = {
+        ...packageJson.devDependencies,
+        '@types/react': '^18.3.5',
+        '@types/react-dom': '^18.3.0',
+      };
+    }
+
+    if (this.options?.isWebpack) {
+      packageJson.devDependencies = {
+        ...packageJson.devDependencies,
+        'ts-loader': '^9.5.1',
+      };
+    }
 
     if (this.options?.isBabel) {
       packageJson.devDependencies = {
