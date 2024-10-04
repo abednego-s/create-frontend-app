@@ -88,7 +88,7 @@ export function buildPackageJson(options: Options) {
   }
 
   if (isSvelte) {
-    new SvelteStrategy().applyPackageConfig(packageJson);
+    new SvelteStrategy({ isWebpack, isParcel }).applyPackageConfig(packageJson);
   }
 
   if (isVue) {

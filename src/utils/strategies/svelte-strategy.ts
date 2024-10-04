@@ -9,21 +9,37 @@ export class SvelteStrategy implements ConfigurationStrategy {
   constructor(
     private options?: {
       isBabel?: boolean;
+      isParcel?: boolean;
       isTypescript?: boolean;
+      isWebpack?: boolean;
     }
   ) {}
 
   applyPackageConfig(packageJson: PackageConfig): void {
-    packageJson.scripts = {
-      ...packageJson.scripts,
-      dev: 'webpack serve --mode development',
-    };
-    packageJson.devDependencies = {
-      ...packageJson.devDependencies,
+    if (this.options?.isWebpack) {
+      packageJson.scripts = {
+        ...packageJson.scripts,
+        dev: 'webpack serve --mode development',
+      };
+
+      packageJson.devDependencies = {
+        ...packageJson.devDependencies,
+        'svelte-loader': '^3.2.3',
+        'svelte-preprocess': '^6.0.2',
+        'webpack-dev-server': '^5.1.0',
+      };
+    }
+
+    if (this.options?.isParcel) {
+      packageJson.devDependencies = {
+        ...packageJson.devDependencies,
+        '@parcel/transformer-svelte': 'latest',
+      };
+    }
+
+    packageJson.dependencies = {
+      ...packageJson.dependencies,
       svelte: '^4.2.19',
-      'svelte-loader': '^3.2.3',
-      'svelte-preprocess': '^6.0.2',
-      'webpack-dev-server': '^5.1.0',
     };
   }
 
