@@ -23,7 +23,7 @@ const extensionLang: Record<string, string> = {
 
 export function CodePreview({ files }: Readonly<CodePreviewProps>) {
   const [selectedFile, setSelectedFile] =
-    useState<ProjectFileNames>('webpack.config.js');
+    useState<ProjectFileNames>('package.json');
 
   const [language, setLanguage] = useState('javascript');
 
@@ -38,7 +38,7 @@ export function CodePreview({ files }: Readonly<CodePreviewProps>) {
 
   return (
     <div className="flex overflow-hidden rounded-md h-[650px]">
-      <ul className="pt-4 bg-black">
+      <ul className="pt-4 bg-black w-60">
         {(Object.keys(files) as ProjectFileNames[]).map((projectFile) => (
           <li
             key={projectFile}
