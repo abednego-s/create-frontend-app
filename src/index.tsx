@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Root from './routes/root';
 import Webpack from './routes/webpack';
 import './style.css';
+import Parcel from './routes/parcel';
 
 const domNode = document.getElementById('root') as HTMLElement;
 const root = createRoot(domNode);
@@ -19,7 +20,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'parcel',
-        element: <div>Parcel</div>,
+        element: <Parcel />,
       },
       {
         path: 'esbuild',
