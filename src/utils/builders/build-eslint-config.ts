@@ -1,11 +1,12 @@
+/* eslint-disable no-unused-vars */
 import type { ESLintConfig, Options } from '../../types';
 
-// eslint-disable-next-line no-unused-vars
 function applyReactConfig(this: ESLintConfig) {
   const pluginExtensions = [
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
   ];
+
   const plugins = ['react'];
 
   this.parserOptions = {
@@ -36,7 +37,6 @@ function applyReactConfig(this: ESLintConfig) {
   };
 }
 
-// eslint-disable-next-line no-unused-vars
 function applySvelteConfig(this: ESLintConfig) {
   const svelteConfigOverride = {
     files: ['*.svelte'],
@@ -61,7 +61,6 @@ function applySvelteConfig(this: ESLintConfig) {
   this.settings = this.settings ? { ...this.settings, ...settings } : settings;
 }
 
-// eslint-disable-next-line no-unused-vars
 function applyTypescriptConfig(this: ESLintConfig) {
   const pluginExtensions = ['plugin:@typescript-eslint/recommended'];
   const plugins = ['@typescript-eslint'];
@@ -75,7 +74,6 @@ function applyTypescriptConfig(this: ESLintConfig) {
   this.parser = '@typescript-eslint/parser';
 }
 
-// eslint-disable-next-line no-unused-vars
 function applyPrettierConfig(this: ESLintConfig) {
   const pluginExtensions = ['prettier'];
   const plugins = ['prettier'];
@@ -104,9 +102,9 @@ export function buildEslintConfig(options: Options) {
     },
   };
 
-  const isPrettier = options.linting?.includes('prettier') ?? false;
   const isReact = options.lib === 'react';
   const isSvelte = options.lib === 'svelte';
+  const isPrettier = options.linting?.includes('prettier') ?? false;
   const isTypecript = options.transpiler?.includes('ts') ?? false;
 
   if (isReact) {
