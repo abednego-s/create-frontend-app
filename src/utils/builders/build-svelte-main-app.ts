@@ -1,13 +1,15 @@
 import type { Options } from '../../types';
 
 export function buildSvelteMainApp(options: Options) {
-  let varDeclaration = `<script>\n  let name = world;`;
+  const isTypescript = options.transpiler?.includes('ts');
 
-  if (options.transpiler?.includes('ts')) {
-    varDeclaration = `<script lang="ts">\n  let name: string = 'world';`;
+  let variableDeclaration = `<script>\n  let name = world;`;
+
+  if (isTypescript) {
+    variableDeclaration = `<script lang="ts">\n  let name: string = 'world';`;
   }
 
-  const output = `${varDeclaration}
+  const output = `${variableDeclaration}
 </script>
 
 <style>
