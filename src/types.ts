@@ -2,7 +2,7 @@ import { Configuration as WebpackConfiguration, RuleSetRule } from 'webpack';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { webpackPlugins } from './utils/webpack-plugins';
 
-export type Bundler = 'webpack' | 'parcel' | 'esbuild';
+export type Bundler = 'webpack' | 'parcel' | 'rollup';
 export type Library = 'react' | 'vue' | 'svelte';
 export type WebpackPlugins = keyof typeof webpackPlugins;
 export type UI = 'tailwind' | 'material-ui';

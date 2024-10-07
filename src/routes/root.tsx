@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { NavItem } from '../components/NavItem';
 import webpackLogo from '../../assets/webpack.svg';
 import parcelLogo from '../../assets/parcel.svg';
-import esbuildLogo from '../../assets/esbuild.svg';
+import rollupLogo from '../../assets/rollup.svg';
 
 export default function Root() {
   return (
@@ -28,10 +28,10 @@ export default function Root() {
             </li>
             <li>
               <NavItem
-                to="/esbuild"
-                logo={esbuildLogo}
-                alt="esbuild"
-                text="ESBuild"
+                to="/rollup"
+                logo={rollupLogo}
+                alt="rollup"
+                text="Rollup"
               />
             </li>
           </ul>
