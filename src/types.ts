@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Configuration as WebpackConfiguration, RuleSetRule } from 'webpack';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
 import { webpackPlugins } from './utils/webpack-plugins';
@@ -29,8 +28,6 @@ export type Options = {
   font?: Font[];
   linting?: Linting[];
 };
-
-export type WebpackBuildConfigOptions = Omit<Options, 'name' | 'bundler'>;
 
 interface Configuration extends WebpackConfiguration {
   devServer?: WebpackDevServerConfiguration;
@@ -68,81 +65,3 @@ export type ProjectFileNames =
   | 'webpack.config.js';
 
 export type ProjectFiles = Record<ProjectFileNames, string>;
-
-export type ESLintConfig = {
-  env?: {
-    [K in string]: boolean;
-  };
-  extends?: string[];
-  parser?: string;
-  parserOptions?: {
-    [K in string]: string | unknown;
-  };
-  plugins?: string[];
-  rules?: {
-    [K in string]?: 'warn' | 'off' | 'error';
-  };
-  settings?: {
-    [K in string]: unknown;
-  };
-  overrides?: unknown[];
-};
-
-export type BuildConfig = Pick<
-  Options,
-  | 'plugins'
-  | 'lib'
-  | 'transpiler'
-  | 'styling'
-  | 'image'
-  | 'optimization'
-  | 'font'
->;
-
-export type PackageConfig = {
-  name?: string;
-  version: string;
-  description?: string;
-  main?: string;
-  scripts?: Record<string, string>;
-  dependencies?: Record<string, string>;
-  devDependencies?: Record<string, string>;
-  peerDependencies?: Record<string, string>;
-  optionalDependencies?: Record<string, string>;
-  engines?: Record<string, string>;
-  browserslist?: string[];
-  keywords?: string[];
-  author?: string;
-  license?: string;
-  repository?: string;
-  bugs?: string;
-  homepage?: string;
-  config?: Record<string, unknown>;
-  workspaces?: string[];
-  private?: boolean;
-};
-
-export type TSConfig = {
-  compilerOptions: {
-    target: string;
-    module: string;
-    moduleResolution: string;
-    strict: boolean;
-    esModuleInterop: boolean;
-    skipLibCheck: boolean;
-    forceConsistentCasingInFileNames: boolean;
-    noImplicitAny: boolean;
-    jsx?: string;
-    allowSyntheticDefaultImports?: boolean;
-    types?: string[];
-  };
-  include: string[];
-  exclude: string[];
-};
-
-export type VitestConfig = {
-  plugins?: string[];
-  test?: {
-    environment: string;
-  };
-};

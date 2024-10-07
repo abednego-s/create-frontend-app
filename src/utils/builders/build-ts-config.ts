@@ -1,4 +1,22 @@
-import { Options, TSConfig } from '../../types';
+import { Options } from '../../types';
+
+export type TSConfig = {
+  compilerOptions: {
+    target: string;
+    module: string;
+    moduleResolution: string;
+    strict: boolean;
+    esModuleInterop: boolean;
+    skipLibCheck: boolean;
+    forceConsistentCasingInFileNames: boolean;
+    noImplicitAny: boolean;
+    jsx?: string;
+    allowSyntheticDefaultImports?: boolean;
+    types?: string[];
+  };
+  include: string[];
+  exclude: string[];
+};
 
 export function buildTypescriptConfig(options: Options) {
   const { lib } = options;

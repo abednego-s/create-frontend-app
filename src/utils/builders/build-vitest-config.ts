@@ -1,5 +1,12 @@
-import { Options, VitestConfig } from '../../types';
 import { objectLiteralToString } from '../object-literals-to-string';
+import { Options } from '../../types';
+
+export type VitestConfig = {
+  plugins?: string[];
+  test?: {
+    environment: string;
+  };
+};
 
 export function buildVitestConfig(options: Options) {
   const { lib } = options;

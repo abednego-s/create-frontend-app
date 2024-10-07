@@ -1,6 +1,29 @@
-import { Options, PackageConfig } from '../../types';
 import { getExtensions } from '../get-extensions';
 import { sortByKeys } from '../sort-by-keys';
+import { Options } from '../../types';
+
+export type PackageConfig = {
+  name?: string;
+  version: string;
+  description?: string;
+  main?: string;
+  scripts?: Record<string, string>;
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
+  optionalDependencies?: Record<string, string>;
+  engines?: Record<string, string>;
+  browserslist?: string[];
+  keywords?: string[];
+  author?: string;
+  license?: string;
+  repository?: string;
+  bugs?: string;
+  homepage?: string;
+  config?: Record<string, unknown>;
+  workspaces?: string[];
+  private?: boolean;
+};
 
 function applyWebpack(this: PackageConfig, plugins: Options['plugins']) {
   this.scripts = {

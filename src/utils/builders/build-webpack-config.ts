@@ -1,11 +1,19 @@
 import { objectLiteralToString } from '../object-literals-to-string';
 import { webpackPlugins } from '../webpack-plugins';
-import {
-  BuildConfig,
-  WebpackConfig,
-  WebpackBuildConfigOptions,
-  WebpackRuleSetRule,
-} from '../../types';
+import { WebpackConfig, WebpackRuleSetRule, Options } from '../../types';
+
+export type WebpackBuildConfigOptions = Omit<Options, 'name' | 'bundler'>;
+
+export type BuildConfigOptions = Pick<
+  Options,
+  | 'plugins'
+  | 'lib'
+  | 'transpiler'
+  | 'styling'
+  | 'image'
+  | 'optimization'
+  | 'font'
+>;
 
 function applyReact(
   this: WebpackConfig,
@@ -373,7 +381,7 @@ function buildImports(options: WebpackBuildConfigOptions) {
   return template;
 }
 
-function registerPlugins(this: WebpackConfig, plugins: BuildConfig['plugins']) {
+function registerPlugins(this: WebpackConfig, plugins: Options['plugins']) {
   const allPlugins = plugins?.map(
     (plugin) => `[code]${webpackPlugins[plugin].pluginEntry}[/code]` as ''
   );
@@ -404,7 +412,7 @@ function optimizer(this: WebpackConfig) {
   };
 }
 
-function buildConfig(options?: BuildConfig) {
+function buildConfig(options?: BuildConfigOptions) {
   const config: WebpackConfig = {
     entry: './src/index.js',
     output: {
@@ -420,10 +428,8 @@ function buildConfig(options?: BuildConfig) {
     const isReact = lib === 'react';
     const isVue = lib === 'vue';
     const isSvelte = lib === 'svelte';
-
     const isBabel = transpiler?.includes('babel') ?? false;
     const isTypescript = transpiler?.includes('ts') ?? false;
-
     const isCss = styling?.includes('css') ?? false;
     const isCssModule = styling?.includes('css-module') ?? false;
     const isLess = styling?.includes('less') ?? false;

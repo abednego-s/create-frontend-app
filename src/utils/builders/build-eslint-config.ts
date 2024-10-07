@@ -1,4 +1,24 @@
-import { ESLintConfig, Options } from '../../types';
+/* eslint-disable no-unused-vars */
+import { Options } from '../../types';
+
+export type ESLintConfig = {
+  env?: {
+    [K in string]: boolean;
+  };
+  extends?: string[];
+  parser?: string;
+  parserOptions?: {
+    [K in string]: string | unknown;
+  };
+  plugins?: string[];
+  rules?: {
+    [K in string]?: 'warn' | 'off' | 'error';
+  };
+  settings?: {
+    [K in string]: unknown;
+  };
+  overrides?: unknown[];
+};
 
 // eslint-disable-next-line no-unused-vars
 function applyReactConfig(this: ESLintConfig) {
