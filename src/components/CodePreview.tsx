@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CodeBlock } from './CodeBlock';
-import type { ProjectFiles, ProjectFileNames } from '../types';
+import { ProjectFiles, ProjectFileNames } from '../types';
 
 export type CodePreviewProps = {
   files: ProjectFiles;

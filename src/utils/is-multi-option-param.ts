@@ -1,4 +1,4 @@
-import type { Options } from '../types';
+import { Options } from '../types';
 
 const multipleOptionParams = new Set<keyof Options>([
   'font',

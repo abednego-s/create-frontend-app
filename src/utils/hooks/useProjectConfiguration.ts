@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { convertParamsToOptions } from '../convert-params-to-options';
 import { buildProjectFiles } from '../builders/build-project-files';
 import { arrangeProjectFiles } from '../arrange-project-files';
-import type { Options } from '../../types';
+import { Options } from '../../types';
 
 export function useProjectConfiguration(bundler: Options['bundler']) {
   const [searchParams] = useSearchParams();

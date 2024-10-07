@@ -1,7 +1,7 @@
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
-import type { ChangeEvent } from 'react';
-import type { ProjectFiles } from '../types';
+import { ChangeEvent } from 'react';
+import { ProjectFiles } from '../types';
 
 export type DownloadFormProps = {
   // eslint-disable-next-line no-unused-vars

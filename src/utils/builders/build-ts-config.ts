@@ -1,6 +1,10 @@
-import type { Options, TSConfig } from '../../types';
+import { Options, TSConfig } from '../../types';
 
 export function buildTypescriptConfig(options: Options) {
+  const { lib } = options;
+  const isReact = lib === 'react';
+  const isSvelte = lib === 'svelte';
+
   const config: TSConfig = {
     compilerOptions: {
       target: 'ES2015',
@@ -15,9 +19,6 @@ export function buildTypescriptConfig(options: Options) {
     include: ['src/**/*'],
     exclude: ['node_modules'],
   };
-
-  const isReact = options.lib === 'react';
-  const isSvelte = options.lib === 'svelte';
 
   if (isReact) {
     config.compilerOptions = {

@@ -1,9 +1,16 @@
 import { Options } from '../../types';
 
 export function buildEntryPoint(options: Options) {
+  const { styling, lib, transpiler } = options;
+  const isCss = styling?.includes('css') ?? false;
+  const isReact = lib === 'react';
+  const isSvelte = lib === 'svelte';
+  const isVue = lib === 'vue';
+  const isTypescript = transpiler?.includes('ts') ?? false;
+
   let cssImport = '';
 
-  if (options.styling?.includes('css')) {
+  if (isCss) {
     cssImport += "import './styles.css';\n\n";
   }
 
@@ -33,16 +40,15 @@ import App from './App.vue';
 
 createApp(App).mount('#root');`;
 
-  if (options.lib === 'react') {
-    const isTypescript = options.transpiler?.includes('ts') ?? false;
+  if (isReact) {
     return reactTemplate(isTypescript);
   }
 
-  if (options.lib === 'svelte') {
+  if (isSvelte) {
     return svelteTemplate();
   }
 
-  if (options.lib === 'vue') {
+  if (isVue) {
     return vueTemplate();
   }
 

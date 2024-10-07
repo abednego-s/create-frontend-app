@@ -1,10 +1,13 @@
 import { objectLiteralToString } from '../object-literals-to-string';
-import type { Options } from '../../types';
+import { Options } from '../../types';
 
 export function buildTailwindConfig(options: Options) {
+  const { transpiler } = options;
+  const isTypescript = transpiler?.includes('ts');
+
   let extensions = ['js', 'jsx', 'html'].join(',');
 
-  if (options.transpiler?.includes('ts')) {
+  if (isTypescript) {
     extensions = ['ts', 'tsx', 'html'].join(',');
   }
 

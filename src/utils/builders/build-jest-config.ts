@@ -1,13 +1,15 @@
-/* eslint-disable no-useless-escape */
 import { objectLiteralToString } from '../object-literals-to-string';
-import type { Options } from '../../types';
+import { Options } from '../../types';
 
 export function buildJestConfig(options: Options) {
+  const { lib } = options;
+  const isReact = lib === 'react';
+
   const config = {
     testEnvironment: 'node',
   };
 
-  if (options.lib === 'react') {
+  if (isReact) {
     config.testEnvironment = 'jsdom';
   }
 

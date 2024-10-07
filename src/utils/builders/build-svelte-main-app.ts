@@ -1,7 +1,8 @@
-import type { Options } from '../../types';
+import { Options } from '../../types';
 
 export function buildSvelteMainApp(options: Options) {
-  const isTypescript = options.transpiler?.includes('ts');
+  const { transpiler } = options;
+  const isTypescript = transpiler?.includes('ts') ?? false;
 
   let variableDeclaration = `<script>\n  let name = world;`;
 

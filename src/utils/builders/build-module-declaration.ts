@@ -1,4 +1,4 @@
-import type { Options } from '../../types';
+import { Options } from '../../types';
 
 function getStyleSheetModuleDeclaration(extension: string) {
   return `declare module '*.${extension}' {

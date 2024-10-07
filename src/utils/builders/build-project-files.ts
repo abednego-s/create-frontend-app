@@ -21,9 +21,35 @@ import { buildVitestTest } from './build-vitest-test';
 import { buildSvelteMainApp } from './build-svelte-main-app';
 import { buildVueMainApp } from './build-vue-main-app';
 import { buildModuleDeclaration } from './build-module-declaration';
-import type { Options, ProjectFileNames } from '../../types';
+import { Options, ProjectFileNames } from '../../types';
 
 export function buildProjectFiles(options: Options) {
+  const {
+    bundler,
+    font,
+    image,
+    lib,
+    linting,
+    styling,
+    testing,
+    transpiler,
+    ui,
+  } = options;
+
+  const isBabel = transpiler?.includes('babel') ?? false;
+  const isTypescript = transpiler?.includes('ts') ?? false;
+  const isReact = lib === 'react';
+  const isSvelte = lib === 'svelte';
+  const isVue = lib === 'vue';
+  const isParcel = bundler === 'parcel';
+  const isWebpack = bundler === 'webpack';
+  const isTailwind = ui?.includes('tailwind') ?? false;
+  const isCss = styling?.includes('css') ?? false;
+  const isJest = testing?.includes('jest') ?? false;
+  const isVitest = testing?.includes('vitest') ?? false;
+  const isEslint = linting?.includes('eslint') ?? false;
+  const isPrettier = linting?.includes('prettier') ?? false;
+
   const projectFiles = new Map<ProjectFileNames, string>();
 
   projectFiles.set('.gitignore', buildGitIgnore());
@@ -31,99 +57,96 @@ export function buildProjectFiles(options: Options) {
   projectFiles.set('src/index.js', buildEntryPoint(options));
   projectFiles.set('README.md', buildReadme(options));
 
-  if (options.bundler === 'webpack') {
+  if (isWebpack) {
     projectFiles.set('webpack.config.js', buildWebpackConfig(options));
   }
 
-  if (options.bundler === 'parcel') {
+  if (isParcel) {
     projectFiles.set('src/index.html', buildHtml(options));
     projectFiles.set('src/index.js', buildEntryPoint(options));
   }
 
-  if (options.transpiler?.includes('babel')) {
+  if (isBabel) {
     projectFiles.set('.babelrc', buildBabelConfig(options));
   }
 
-  if (options.transpiler?.includes('ts')) {
+  if (isTypescript) {
     projectFiles.delete('src/index.js');
     projectFiles.set('tsconfig.json', buildTypescriptConfig(options));
     projectFiles.set('src/index.ts', buildEntryPoint(options));
+
+    if (styling || image || font) {
+      projectFiles.set('src/custom.d.ts', buildModuleDeclaration(options));
+    }
   }
 
-  if (options.lib === 'react') {
+  if (isReact) {
     projectFiles.set('src/index.html', buildHtml(options));
 
-    if (options.transpiler?.includes('ts')) {
+    if (isTypescript) {
       projectFiles.set('src/App.tsx', buildReactMainApp(options));
     } else {
       projectFiles.set('src/App.jsx', buildReactMainApp(options));
     }
   }
 
-  if (options.lib === 'svelte') {
+  if (isSvelte) {
     projectFiles.set('src/index.html', buildHtml(options));
     projectFiles.set('src/App.svelte', buildSvelteMainApp(options));
 
-    if (options.transpiler?.includes('ts')) {
+    if (isTypescript) {
       projectFiles.set('src/index.ts', buildEntryPoint(options));
     } else {
       projectFiles.set('src/index.js', buildEntryPoint(options));
     }
   }
 
-  if (options.lib === 'vue') {
+  if (isVue) {
     projectFiles.set('src/index.html', buildHtml(options));
     projectFiles.set('src/App.vue', buildVueMainApp());
 
-    if (options.transpiler?.includes('ts')) {
+    if (isTypescript) {
       projectFiles.set('src/index.ts', buildEntryPoint(options));
     } else {
       projectFiles.set('src/index.js', buildEntryPoint(options));
     }
   }
 
-  if (options.ui?.includes('tailwind')) {
+  if (isTailwind) {
     projectFiles.set('tailwind.config.js', buildTailwindConfig(options));
     projectFiles.set('postcss.config.js', buildPostCssConfig());
   }
 
-  if (options.styling?.includes('css')) {
+  if (isCss) {
     projectFiles.set('src/styles.css', buildStylesCss());
   }
 
-  if (
-    (options.styling || options.image || options.font) &&
-    options.transpiler?.includes('ts')
-  ) {
-    projectFiles.set('src/custom.d.ts', buildModuleDeclaration(options));
-  }
-
-  if (options.testing?.includes('jest')) {
+  if (isJest) {
     projectFiles.set('jest.config.js', buildJestConfig(options));
 
-    if (options.transpiler?.includes('ts')) {
+    if (isTypescript) {
       projectFiles.set('__tests__/test.ts', buildJestTest());
     } else {
       projectFiles.set('__tests__/test.js', buildJestTest());
     }
   }
 
-  if (options.testing?.includes('vitest')) {
+  if (isVitest) {
     projectFiles.set('vite.config.js', buildVitestConfig(options));
 
-    if (options.transpiler?.includes('ts')) {
+    if (isTypescript) {
       projectFiles.set('__tests__/test.ts', buildVitestTest());
     } else {
       projectFiles.set('__tests__/test.js', buildVitestTest());
     }
   }
 
-  if (options.linting?.includes('eslint')) {
+  if (isEslint) {
     projectFiles.set('.eslintignore', buildEslintIgnore());
     projectFiles.set('.eslintrc.json', buildEslintConfig(options));
   }
 
-  if (options.linting?.includes('prettier')) {
+  if (isPrettier) {
     projectFiles.set('.prettierignore', buildPrettierIgnore());
     projectFiles.set('.prettierrc', buildPrettierConfig());
   }

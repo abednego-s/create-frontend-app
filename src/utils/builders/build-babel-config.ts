@@ -1,17 +1,22 @@
-import type { Options } from '../../types';
+import { Options } from '../../types';
 
 export function buildBabelConfig(options: Options) {
+  const { transpiler, lib } = options;
+  const isBabel = transpiler?.includes('babel') ?? false;
+  const isReact = lib === 'react';
+  const isTypescript = transpiler?.includes('ts') ?? false;
+
   const presets = [];
 
-  if (options.transpiler?.includes('babel')) {
+  if (isBabel) {
     presets.push('@babel/preset-env');
   }
 
-  if (options.lib === 'react') {
+  if (isReact) {
     presets.push(['@babel/preset-react', { runtime: 'automatic' }]);
   }
 
-  if (options.transpiler?.includes('ts')) {
+  if (isTypescript) {
     presets.push('@babel/preset-typescript');
   }
 

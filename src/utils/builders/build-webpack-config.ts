@@ -1,6 +1,6 @@
 import { objectLiteralToString } from '../object-literals-to-string';
 import { webpackPlugins } from '../webpack-plugins';
-import type {
+import {
   BuildConfig,
   WebpackConfig,
   WebpackBuildConfigOptions,

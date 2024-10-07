@@ -1,10 +1,13 @@
-import type { Options, VitestConfig } from '../../types';
+import { Options, VitestConfig } from '../../types';
 import { objectLiteralToString } from '../object-literals-to-string';
 
 export function buildVitestConfig(options: Options) {
+  const { lib } = options;
+  const isReact = lib === 'react';
+
   let config: VitestConfig = {};
 
-  if (options.lib === 'react') {
+  if (isReact) {
     config = {
       ...config,
       plugins: ['[code]react()[/code]'],

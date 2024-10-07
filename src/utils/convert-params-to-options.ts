@@ -1,5 +1,5 @@
 import { isMultiOptionParam } from './is-multi-option-param';
-import type { Options } from '../types';
+import { Options } from '../types';
 
 export function convertParamsToOptions(searchParams: URLSearchParams) {
   return Array.from(searchParams).reduce((prev, current) => {

@@ -1,5 +1,6 @@
-import type { Options, PackageConfig } from '../../types';
+import { Options, PackageConfig } from '../../types';
 import { getExtensions } from '../get-extensions';
+import { sortByKeys } from '../sort-by-keys';
 
 function applyWebpack(this: PackageConfig, plugins: Options['plugins']) {
   this.scripts = {
@@ -394,19 +395,6 @@ function applyPrettier(
 }
 
 export function buildPackageJson(options: Options) {
-  const packageJson: PackageConfig = {
-    name: 'empty-project',
-    version: '1.0.0',
-    description: '',
-    main: 'dist/bundle.js',
-    keywords: [],
-    author: '',
-    license: 'ISC',
-    scripts: {},
-    dependencies: {},
-    devDependencies: {},
-  };
-
   const {
     bundler,
     image,
@@ -419,30 +407,36 @@ export function buildPackageJson(options: Options) {
     transpiler,
     ui,
   } = options;
-
   const isBabel = transpiler?.includes('babel') ?? false;
   const isTypescript = transpiler?.includes('ts') ?? false;
-
   const isReact = lib === 'react';
   const isSvelte = lib === 'svelte';
   const isVue = lib === 'vue';
-
   const isParcel = bundler === 'parcel';
   const isWebpack = bundler === 'webpack';
-
   const isTailwind = ui?.includes('tailwind') ?? false;
   const isMaterialUi = ui?.includes('material-ui') ?? false;
-
   const isCss = styling?.includes('css') ?? false;
   const isCssModule = styling?.includes('css-module') ?? false;
   const isLess = styling?.includes('less') ?? false;
   const isSass = styling?.includes('scss') ?? false;
-
   const isJest = testing?.includes('jest') ?? false;
   const isVitest = testing?.includes('vitest') ?? false;
-
   const isEslint = linting?.includes('eslint') ?? false;
   const isPrettier = linting?.includes('prettier') ?? false;
+
+  const packageJson: PackageConfig = {
+    name: 'empty-project',
+    version: '1.0.0',
+    description: '',
+    main: 'dist/bundle.js',
+    keywords: [],
+    author: '',
+    license: 'ISC',
+    scripts: {},
+    dependencies: {},
+    devDependencies: {},
+  };
 
   if (name) {
     packageJson.name = name;
@@ -532,31 +526,13 @@ export function buildPackageJson(options: Options) {
     });
   }
 
-  const dependencies = Object.keys(packageJson.dependencies || {})
-    .sort()
-    .reduce((prev, current) => {
-      prev = {
-        ...prev,
-        [current]:
-          packageJson.dependencies?.[
-            current as keyof PackageConfig['dependencies']
-          ],
-      };
-      return prev;
-    }, {});
+  const dependencies = sortByKeys<
+    Record<keyof PackageConfig['dependencies'], string>
+  >(packageJson.dependencies || {});
 
-  const devDependencies = Object.keys(packageJson.devDependencies || {})
-    .sort()
-    .reduce((prev, current) => {
-      prev = {
-        ...prev,
-        [current]:
-          packageJson.devDependencies?.[
-            current as keyof PackageConfig['devDependencies']
-          ],
-      };
-      return prev;
-    }, {});
+  const devDependencies = sortByKeys<
+    Record<keyof PackageConfig['devDependencies'], string>
+  >(packageJson.dependencies || {});
 
   packageJson.devDependencies = devDependencies;
   packageJson.dependencies = dependencies;

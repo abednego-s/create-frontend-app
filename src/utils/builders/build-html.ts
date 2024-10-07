@@ -1,10 +1,14 @@
-import type { Options } from '../../types';
+import { Options } from '../../types';
 
 export function buildHtml(options: Options) {
+  const { bundler, transpiler } = options;
+  const isParcel = bundler === 'parcel';
+  const isTypecript = transpiler?.includes('ts');
+
   let scriptTag = '';
 
-  if (options.bundler === 'parcel') {
-    const extension = options.transpiler?.includes('ts') ? 'ts' : 'js';
+  if (isParcel) {
+    const extension = isTypecript ? 'ts' : 'js';
     scriptTag = `<script src="./index.${extension}"></script>`;
   }
 

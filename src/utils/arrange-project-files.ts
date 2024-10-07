@@ -1,4 +1,4 @@
-import type { ProjectFileNames, ProjectFiles } from '../types';
+import { ProjectFileNames, ProjectFiles } from '../types';
 
 export function arrangeProjectFiles(
   projectFiles: Map<ProjectFileNames, string>
@@ -8,7 +8,7 @@ export function arrangeProjectFiles(
     .reduce((prev, current) => {
       prev = {
         ...prev,
-        [current]: projectFiles.get(current) as string,
+        [current]: projectFiles.get(current),
       };
       return prev;
     }, {} as ProjectFiles);

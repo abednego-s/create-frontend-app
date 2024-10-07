@@ -1,9 +1,11 @@
-import type { Options } from '../../types';
+import { Options } from '../../types';
 
 export function buildReadme(options: Options) {
+  const { lib } = options;
+
   let runLocal = '';
 
-  if (options.lib) {
+  if (lib) {
     runLocal = `\nTo run locally:
 
 \`\`\`sh

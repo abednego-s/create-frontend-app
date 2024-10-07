@@ -1,7 +1,9 @@
-import type { Options } from '../../types';
+import { Options } from '../../types';
 
 export function buildReactMainApp(options: Options) {
-  const isCss = options.styling?.includes('css');
+  const { styling } = options;
+
+  const isCss = styling?.includes('css') ?? false;
 
   let importStatement = '';
 
