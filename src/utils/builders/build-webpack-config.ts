@@ -1,10 +1,5 @@
 import { objectLiteralToString } from '../object-literals-to-string';
 import { webpackPlugins } from '../webpack-plugins';
-import type {
-  BuildConfig,
-  WebpackConfig,
-  WebpackBuildConfigOptions,
-} from '../../types';
 import { ReactStrategy } from '../strategies/react-strategy';
 import { SvelteStrategy } from '../strategies/svelte-strategy';
 import { VueStrategy } from '../strategies/vue-strategy';
@@ -13,6 +8,11 @@ import { LessStrategy } from '../strategies/less-strategy';
 import { SassStrategy } from '../strategies/sass-strategy';
 import { FileLoaderStrategy } from '../strategies/file-loader-strategy';
 import { CssModuleStrategy } from '../strategies/css-module-strategy';
+import type {
+  BuildConfig,
+  WebpackConfig,
+  WebpackBuildConfigOptions,
+} from '../../types';
 
 function buildImports(options: WebpackBuildConfigOptions) {
   let template = '';
@@ -42,12 +42,8 @@ function registerPlugins(this: WebpackConfig, plugins: BuildConfig['plugins']) {
     (plugin) => `[code]${webpackPlugins[plugin].pluginEntry}[/code]` as ''
   );
 
-  if (this.plugins) {
-    this.plugins = [...this.plugins];
-
-    if (allPlugins) {
-      this.plugins = [...this.plugins, ...allPlugins];
-    }
+  if (allPlugins) {
+    this.plugins = this.plugins ? [...this.plugins, ...allPlugins] : allPlugins;
   }
 }
 
@@ -58,6 +54,7 @@ function optimizer(this: WebpackConfig) {
     filename: '[name].[contenthash].js',
   };
   this.optimization = {
+    ...this.optimization,
     runtimeChunk: 'single',
     splitChunks: {
       cacheGroups: {
@@ -84,60 +81,68 @@ function buildConfig(options?: BuildConfig) {
     const { plugins, lib, transpiler, styling, image, optimization, font } =
       options;
 
+    const isReact = lib === 'react';
+    const isVue = lib === 'vue';
+    const isSvelte = lib === 'svelte';
+
     const isBabel = transpiler?.includes('babel');
     const isTypescript = transpiler?.includes('ts');
+
+    const isCss = styling?.includes('css');
+    const isCssModule = styling?.includes('css-module');
+    const isLess = styling?.includes('less');
+    const isSass = styling?.includes('scss');
+
     const useMiniCssExtractPlugin =
       plugins?.includes('mini-css-extract-plugin') ?? false;
-    const isVue = lib === 'vue';
-    const isCss = styling?.includes('css');
 
     if (transpiler?.includes('ts')) {
       config.entry = './src/index.ts';
     }
 
-    if (lib === 'react') {
+    if (isReact) {
       new ReactStrategy({
         isBabel,
         isTypescript,
       }).applyWebpackConfig(config);
     }
 
-    if (lib === 'svelte') {
+    if (isSvelte) {
       new SvelteStrategy({
         isBabel,
         isTypescript,
       }).applyWebpackConfig(config);
     }
 
-    if (lib === 'vue') {
+    if (isVue) {
       new VueStrategy({
         isCss,
         isTypescript,
       }).applyWebpackConfig(config);
     }
 
-    if (styling?.includes('css')) {
+    if (isCss) {
       new CssStrategy({
         useMiniCssExtractPlugin,
         isVue,
       }).applyWebpackConfig(config);
     }
 
-    if (styling?.includes('css-module')) {
+    if (isCssModule) {
       new CssModuleStrategy({
         useMiniCssExtractPlugin,
         isVue,
       }).applyWebpackConfig(config);
     }
 
-    if (styling?.includes('less')) {
+    if (isLess) {
       new LessStrategy({
         useMiniCssExtractPlugin,
         isVue,
       }).applyWebpackConfig(config);
     }
 
-    if (styling?.includes('scss')) {
+    if (isSass) {
       new SassStrategy({
         useMiniCssExtractPlugin,
         isVue,
