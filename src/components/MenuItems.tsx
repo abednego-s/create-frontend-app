@@ -1,8 +1,16 @@
 import { Checkbox } from './Checkbox';
 import { Radio } from './Radio';
-import type { MenuItem } from '../types';
 
-type MenuItemsProps = MenuItem;
+export type MenuItem = {
+  name: string;
+  items: {
+    id: string;
+    label: string;
+  }[];
+  isMultiple: boolean;
+};
+
+export type MenuItemsProps = MenuItem;
 
 export function MenuItems({ items, name, isMultiple }: MenuItemsProps) {
   return items.map((item) => (

@@ -1,6 +1,5 @@
-import { MenuItem } from '../types';
 import { Collapsible } from './Collapsible';
-import { MenuItems } from './MenuItems';
+import { MenuItem, MenuItems } from './MenuItems';
 
 export type SidebarMenuProps = {
   menuItems: Array<
