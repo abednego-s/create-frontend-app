@@ -1,4 +1,4 @@
-export function buildViteTest() {
+export function buildVitestTest() {
   return `import { describe, it, expect } from 'vitest'
 
 describe('A truthy statement', () => {

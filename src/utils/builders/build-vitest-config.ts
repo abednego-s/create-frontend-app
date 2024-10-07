@@ -1,8 +1,8 @@
-import type { Options, ViteConfig } from '../../types';
+import type { Options, VitestConfig } from '../../types';
 import { objectLiteralToString } from '../object-literals-to-string';
 
-export function buildViteConfig(options: Options) {
-  let config: ViteConfig = {};
+export function buildVitestConfig(options: Options) {
+  let config: VitestConfig = {};
 
   if (options.lib === 'react') {
     config = {

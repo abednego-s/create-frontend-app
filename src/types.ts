@@ -140,7 +140,7 @@ export type TSConfig = {
   exclude: string[];
 };
 
-export type ViteConfig = {
+export type VitestConfig = {
   plugins?: string[];
   test?: {
     environment: string;

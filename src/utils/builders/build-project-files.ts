@@ -16,8 +16,8 @@ import { buildEslintIgnore } from './build-eslint-ignore';
 import { buildEslintConfig } from './build-eslint-config';
 import { buildPrettierIgnore } from './build-prettier-ignore';
 import { buildPrettierConfig } from './build-prettier-config';
-import { buildViteConfig } from './build-vite-config';
-import { buildViteTest } from './build-vite-test';
+import { buildVitestConfig } from './build-vitest-config';
+import { buildVitestTest } from './build-vitest-test';
 import { buildSvelteMainApp } from './build-svelte-main-app';
 import { buildVueMainApp } from './build-vue-main-app';
 import { buildModuleDeclaration } from './build-module-declaration';
@@ -109,12 +109,12 @@ export function buildProjectFiles(options: Options) {
   }
 
   if (options.testing?.includes('vitest')) {
-    projectFiles.set('vite.config.js', buildViteConfig(options));
+    projectFiles.set('vite.config.js', buildVitestConfig(options));
 
     if (options.transpiler?.includes('ts')) {
-      projectFiles.set('__tests__/test.ts', buildViteTest());
+      projectFiles.set('__tests__/test.ts', buildVitestTest());
     } else {
-      projectFiles.set('__tests__/test.js', buildViteTest());
+      projectFiles.set('__tests__/test.js', buildVitestTest());
     }
   }
 
