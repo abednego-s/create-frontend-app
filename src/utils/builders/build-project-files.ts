@@ -21,6 +21,7 @@ import { buildVitestTest } from './build-vitest-test';
 import { buildSvelteMainApp } from './build-svelte-main-app';
 import { buildVueMainApp } from './build-vue-main-app';
 import { buildModuleDeclaration } from './build-module-declaration';
+import { buildRollupConfig } from './build-rollup-config';
 import { Options, ProjectFileNames } from '../../types';
 
 export function buildProjectFiles(options: Options) {
@@ -43,6 +44,7 @@ export function buildProjectFiles(options: Options) {
   const isVue = lib === 'vue';
   const isParcel = bundler === 'parcel';
   const isWebpack = bundler === 'webpack';
+  const isRollup = bundler === 'rollup';
   const isTailwind = ui?.includes('tailwind') ?? false;
   const isCss = styling?.includes('css') ?? false;
   const isJest = testing?.includes('jest') ?? false;
@@ -64,6 +66,11 @@ export function buildProjectFiles(options: Options) {
   if (isParcel) {
     projectFiles.set('src/index.html', buildHtml(options));
     projectFiles.set('src/index.js', buildEntryPoint(options));
+  }
+
+  if (isRollup) {
+    projectFiles.set('src/index.html', buildHtml(options));
+    projectFiles.set('rollup.config.js', buildRollupConfig(options));
   }
 
   if (isBabel) {

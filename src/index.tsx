@@ -3,8 +3,9 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Root from './routes/root';
 import Webpack from './routes/webpack';
-import './style.css';
 import Parcel from './routes/parcel';
+import Rollup from './routes/rollup';
+import './style.css';
 
 const domNode = document.getElementById('root') as HTMLElement;
 const root = createRoot(domNode);
@@ -23,8 +24,8 @@ const router = createBrowserRouter([
         element: <Parcel />,
       },
       {
-        path: 'esbuild',
-        element: <div>ESBuild</div>,
+        path: 'rollup',
+        element: <Rollup />,
       },
     ],
   },

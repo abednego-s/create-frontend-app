@@ -3,13 +3,18 @@ import { Options } from '../../types';
 export function buildHtml(options: Options) {
   const { bundler, transpiler } = options;
   const isParcel = bundler === 'parcel';
-  const isTypecript = transpiler?.includes('ts');
+  const isRollup = bundler === 'rollup';
+  const isTypecript = transpiler?.includes('ts') ?? false;
 
   let scriptTag = '';
 
   if (isParcel) {
     const extension = isTypecript ? 'ts' : 'js';
     scriptTag = `<script src="./index.${extension}"></script>`;
+  }
+
+  if (isRollup) {
+    scriptTag = '<script src="/dist/bundle.js"></script>';
   }
 
   const output = `<!DOCTYPE html>

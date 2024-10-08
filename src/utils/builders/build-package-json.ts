@@ -69,6 +69,65 @@ function applyParcel(this: PackageConfig) {
   };
 }
 
+function applyRollup(
+  this: PackageConfig,
+  {
+    isBabel,
+    isTypescript,
+    isCss,
+    isImages,
+    isFonts,
+  }: {
+    isBabel: boolean;
+    isTypescript: boolean;
+    isCss: boolean;
+    isImages: boolean;
+    isFonts: boolean;
+  }
+) {
+  this.scripts = {
+    ...this.scripts,
+    build: 'rollup -c',
+    start: 'lite-server',
+  };
+  this.devDependencies = {
+    ...this.devDependencies,
+    rollup: 'latest',
+    '@rollup/plugin-node-resolve': 'latest',
+    'lite-server': 'latest',
+    'rollup-plugin-commonjs': 'latest',
+  };
+
+  if (isBabel) {
+    this.devDependencies = {
+      ...this.devDependencies,
+      '@rollup/plugin-babel': 'latest',
+    };
+  }
+
+  if (isTypescript) {
+    this.devDependencies = {
+      ...this.devDependencies,
+      '@rollup/plugin-typescript': 'latest',
+    };
+  }
+
+  if (isCss) {
+    this.devDependencies = {
+      ...this.devDependencies,
+      'rollup-plugin-postcss': 'latest',
+      postcss: 'latest',
+    };
+  }
+
+  if (isImages || isFonts) {
+    this.devDependencies = {
+      ...this.devDependencies,
+      '@rollup/plugin-url': 'latest',
+    };
+  }
+}
+
 // eslint-disable-next-line no-unused-vars
 function applyReact(this: PackageConfig) {
   this.scripts = {
@@ -289,12 +348,16 @@ function applySass(this: PackageConfig, { isWebpack }: { isWebpack: boolean }) {
   }
 }
 
-// eslint-disable-next-line no-unused-vars
-function applyFileLoader(this: PackageConfig) {
-  this.devDependencies = {
-    ...this.devDependencies,
-    'file-loader': '^6.2.0',
-  };
+function applyFileLoader(
+  this: PackageConfig,
+  { isWebpack }: { isWebpack: boolean }
+) {
+  if (isWebpack) {
+    this.devDependencies = {
+      ...this.devDependencies,
+      'file-loader': '^6.2.0',
+    };
+  }
 }
 
 function applyJest(
@@ -421,6 +484,7 @@ export function buildPackageJson(options: Options) {
   const {
     bundler,
     image,
+    font,
     lib,
     linting,
     name,
@@ -437,6 +501,7 @@ export function buildPackageJson(options: Options) {
   const isVue = lib === 'vue';
   const isParcel = bundler === 'parcel';
   const isWebpack = bundler === 'webpack';
+  const isRollup = bundler === 'rollup';
   const isTailwind = ui?.includes('tailwind') ?? false;
   const isMaterialUi = ui?.includes('material-ui') ?? false;
   const isCss = styling?.includes('css') ?? false;
@@ -471,6 +536,16 @@ export function buildPackageJson(options: Options) {
 
   if (isParcel) {
     applyParcel.call(packageJson);
+  }
+
+  if (isRollup) {
+    applyRollup.call(packageJson, {
+      isBabel,
+      isTypescript,
+      isCss,
+      isImages: !!image,
+      isFonts: !!font,
+    });
   }
 
   if (isReact) {
@@ -522,7 +597,7 @@ export function buildPackageJson(options: Options) {
   }
 
   if (image) {
-    applyFileLoader.call(packageJson);
+    applyFileLoader.call(packageJson, { isWebpack });
   }
 
   if (isJest) {
@@ -555,9 +630,10 @@ export function buildPackageJson(options: Options) {
 
   const devDependencies = sortByKeys<
     Record<keyof PackageConfig['devDependencies'], string>
-  >(packageJson.dependencies || {});
+  >(packageJson.devDependencies || {});
 
   packageJson.devDependencies = devDependencies;
   packageJson.dependencies = dependencies;
+
   return JSON.stringify(packageJson, null, 2);
 }

@@ -50,6 +50,7 @@ export type ProjectFileNames =
   | 'package.json'
   | 'postcss.config.js'
   | 'README.md'
+  | 'rollup.config.js'
   | 'src/App.jsx'
   | 'src/App.svelte'
   | 'src/App.tsx'
