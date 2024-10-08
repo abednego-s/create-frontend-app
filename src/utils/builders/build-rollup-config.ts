@@ -16,7 +16,7 @@ export function buildRollupConfig(options: Options) {
       file: 'dist/bundle.js',
       format: 'iife',
     },
-    plugins: [`[code]resolve()[/code]`],
+    plugins: [`[code]resolve()[/code]`, `[code]commonjs()[/code]`],
   };
 
   if (isBabel) {
@@ -102,7 +102,7 @@ export function buildRollupConfig(options: Options) {
 
   const imports = [
     "import resolve from '@rollup/plugin-node-resolve';",
-    "import commonjs from 'rollup-plugin-commonjs';",
+    "import commonjs from '@rollup/plugin-commonjs';",
   ];
 
   if (isBabel) {

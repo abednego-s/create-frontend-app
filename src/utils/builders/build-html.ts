@@ -14,7 +14,7 @@ export function buildHtml(options: Options) {
   }
 
   if (isRollup) {
-    scriptTag = '<script src="/dist/bundle.js"></script>';
+    scriptTag = '<script src="./dist/bundle.js"></script>';
   }
 
   const output = `<!DOCTYPE html>
@@ -22,7 +22,7 @@ export function buildHtml(options: Options) {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Empty Poject</title>
+    <title>Empty Project</title>
   </head>
   <body>
     <div id="root"></div>${scriptTag ? `\n\t${scriptTag}` : ''}

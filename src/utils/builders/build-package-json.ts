@@ -88,14 +88,13 @@ function applyRollup(
   this.scripts = {
     ...this.scripts,
     build: 'rollup -c',
-    start: 'lite-server',
+    dev: 'rollup -c -w',
   };
   this.devDependencies = {
     ...this.devDependencies,
     rollup: 'latest',
     '@rollup/plugin-node-resolve': 'latest',
-    'lite-server': 'latest',
-    'rollup-plugin-commonjs': 'latest',
+    '@rollup/plugin-commonjs': 'latest',
   };
 
   if (isBabel) {
@@ -128,21 +127,28 @@ function applyRollup(
   }
 }
 
-// eslint-disable-next-line no-unused-vars
-function applyReact(this: PackageConfig) {
-  this.scripts = {
-    ...this.scripts,
-    dev: 'webpack serve --mode development',
-  };
+function applyReact(
+  this: PackageConfig,
+  { isWebpack }: { isWebpack: boolean }
+) {
+  if (isWebpack) {
+    this.scripts = {
+      ...this.scripts,
+      dev: 'webpack serve --mode development',
+    };
+  }
   this.dependencies = {
     ...this.dependencies,
     react: '^18.3.1',
     'react-dom': '^18.3.1',
   };
-  this.devDependencies = {
-    ...this.devDependencies,
-    'webpack-dev-server': '^5.1.0',
-  };
+
+  if (isWebpack) {
+    this.devDependencies = {
+      ...this.devDependencies,
+      'webpack-dev-server': '^5.1.0',
+    };
+  }
 }
 
 function applySvelte(
@@ -549,7 +555,7 @@ export function buildPackageJson(options: Options) {
   }
 
   if (isReact) {
-    applyReact.call(packageJson);
+    applyReact.call(packageJson, { isWebpack });
   }
 
   if (isSvelte) {
