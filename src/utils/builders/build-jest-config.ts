@@ -1,4 +1,4 @@
-import { objectLiteralToString } from '../object-literals-to-string';
+import { objectLiteralToString } from '../object-literal-to-string';
 import { Options } from '../../types';
 
 export function buildJestConfig(options: Options) {

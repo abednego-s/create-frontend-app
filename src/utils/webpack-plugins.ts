@@ -2,7 +2,8 @@ export const webpackPlugins = {
   'html-webpack-plugin': {
     importDeclaration:
       "const HTMLWebpackPlugin = require('html-webpack-plugin')",
-    pluginEntry: "new HTMLWebpackPlugin({ template: './src/index.html' })",
+    pluginEntry:
+      "new HTMLWebpackPlugin({\n\t\ttemplate: './src/index.html' \n\t})",
   },
   'webpack-bundle-analyzer': {
     importDeclaration:

@@ -1,4 +1,4 @@
-import { objectLiteralToString } from '../object-literals-to-string';
+import { objectLiteralToString } from '../object-literal-to-string';
 import { webpackPlugins } from '../webpack-plugins';
 import { WebpackConfig, WebpackRuleSetRule, Options } from '../../types';
 
