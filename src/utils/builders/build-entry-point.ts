@@ -1,16 +1,17 @@
 import { Options } from '../../types';
 
 export function buildEntryPoint(options: Options) {
-  const { styling, lib, transpiler } = options;
+  const { styling, lib, transpiler, ui } = options;
   const isCss = styling?.includes('css') ?? false;
   const isReact = lib === 'react';
   const isSvelte = lib === 'svelte';
   const isVue = lib === 'vue';
   const isTypescript = transpiler?.includes('ts') ?? false;
+  const isTailwind = ui?.includes('tailwind');
 
   let cssImport = '';
 
-  if (isCss) {
+  if (isCss || isTailwind) {
     cssImport += "import './styles.css';\n\n";
   }
 

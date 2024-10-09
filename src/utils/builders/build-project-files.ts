@@ -122,10 +122,11 @@ export function buildProjectFiles(options: Options) {
   if (isTailwind) {
     projectFiles.set('tailwind.config.js', buildTailwindConfig(options));
     projectFiles.set('postcss.config.js', buildPostCssConfig());
+    projectFiles.set('src/styles.css', buildStylesCss(options));
   }
 
   if (isCss) {
-    projectFiles.set('src/styles.css', buildStylesCss());
+    projectFiles.set('src/styles.css', buildStylesCss(options));
   }
 
   if (isJest) {
