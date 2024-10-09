@@ -1,17 +1,22 @@
+import { stripIndent } from 'common-tags';
 import { Options } from '../../types';
 
 function getStyleSheetModuleDeclaration(extension: string) {
-  return `declare module '*.${extension}' {
-  const content: { [className: string]: string };
-  export default content;
-}`;
+  return stripIndent`
+    declare module '*.${extension}' {
+      const content: { [className: string]: string };
+      export default content;
+    }
+  `;
 }
 
 function getStaticAssetDeclaration(extension: string) {
-  return `declare module '*.${extension}' {
-  const content: string;
-  export default content;
-}`;
+  return stripIndent`
+    declare module '*.${extension}' {
+      const content: string;
+      export default content;
+    }
+  `;
 }
 
 export function buildModuleDeclaration(options: Options) {

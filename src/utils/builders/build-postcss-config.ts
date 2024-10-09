@@ -1,8 +1,12 @@
+import { stripIndent } from 'common-tags';
+
 export function buildPostCssConfig() {
-  return `module.exports = {
-  plugins: [ 
-    require('tailwindcss'), 
-    require('autoprefixer')
-  ],
-};`;
+  return stripIndent`
+    module.exports = {
+      plugins: [ 
+        require('tailwindcss'), 
+        require('autoprefixer')
+      ],
+    };
+  `;
 }

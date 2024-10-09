@@ -2,6 +2,7 @@ import { Options } from '../../types';
 
 export function buildBabelConfig(options: Options) {
   const { transpiler, lib } = options;
+
   const isBabel = transpiler?.includes('babel') ?? false;
   const isReact = lib === 'react';
   const isTypescript = transpiler?.includes('ts') ?? false;

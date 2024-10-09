@@ -19,6 +19,7 @@
     "@babel/preset-react": "^7.24.7",
     "@babel/preset-typescript": "^7.24.7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
+    "@types/common-tags": "^1.8.4",
     "@types/file-saver": "^2.0.7",
     "@types/prismjs": "^1.26.4",
     "@types/react": "^18.3.6",
@@ -50,6 +51,7 @@
     "webpack-dev-server": "^5.1.0"
   },
   "dependencies": {
+    "common-tags": "^1.8.2",
     "file-saver": "^2.0.5",
     "jszip": "^3.10.1",
     "prismjs": "^1.29.0",

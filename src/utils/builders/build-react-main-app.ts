@@ -1,21 +1,24 @@
+import { stripIndent } from 'common-tags';
 import { Options } from '../../types';
 
 export function buildReactMainApp(options: Options) {
   const { styling } = options;
   const isCss = styling?.includes('css') ?? false;
-  let importStatement = '';
+  let cssImport = '';
 
   if (isCss) {
-    importStatement += "import './styles.css'\n\n";
+    cssImport += "import './styles.css'";
   }
 
-  const output = `${importStatement}const App = () => {
-  return (
-    <div>
-      <h1>Hello World!</h1>
-    </div>
-  );
-}`;
+  const template = stripIndent`
+    const App = () => {
+      return (
+        <div>
+          <h1>Hello World!</h1>
+        </div>
+      );
+    }
+  `;
 
-  return output;
+  return cssImport ? cssImport + '\n\n' + template : template;
 }

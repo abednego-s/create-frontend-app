@@ -1,3 +1,4 @@
+import { stripIndents } from 'common-tags';
 import { objectLiteralToString } from '../object-literal-to-string';
 import { webpackPlugins } from '../webpack-plugins';
 import { WebpackConfig, WebpackRuleSetRule, Options } from '../../types';
@@ -504,14 +505,17 @@ function buildConfig(options?: BuildConfigOptions) {
 }
 
 export function buildWebpackConfig(options?: WebpackBuildConfigOptions) {
-  let template =
-    "const path = require('path');\nconst webpack = require('webpack');\n";
+  let template = stripIndents`
+    const path = require('path');
+    const webpack = require('webpack');
+  `;
+
   if (options) {
     template += buildImports(options) + '\n';
   }
 
   if (options) {
-    template += buildConfig(options) + '\n\n';
+    template += '\n' + buildConfig(options) + '\n\n';
   } else {
     template += '\n' + buildConfig() + '\n\n';
   }

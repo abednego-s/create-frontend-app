@@ -1,3 +1,8 @@
+import { stripIndents } from 'common-tags';
+
 export function buildEslintIgnore() {
-  return `node_modules/\ndist/`;
+  return stripIndents`
+    node_modules
+    dist/
+  `;
 }

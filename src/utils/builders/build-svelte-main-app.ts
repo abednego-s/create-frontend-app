@@ -1,27 +1,29 @@
+import { html } from 'common-tags';
 import { Options } from '../../types';
 
 export function buildSvelteMainApp(options: Options) {
   const { transpiler } = options;
   const isTypescript = transpiler?.includes('ts') ?? false;
 
-  let variableDeclaration = `<script>\n  let name = world;`;
+  let scriptTag = isTypescript
+    ? `<script lang="ts">\n  let name: string = 'world';`
+    : `<script>\n  let name = world;`;
 
-  if (isTypescript) {
-    variableDeclaration = `<script lang="ts">\n  let name: string = 'world';`;
-  }
+  scriptTag += '\n</script>';
 
-  const output = `${variableDeclaration}
-</script>
+  const output = html`
+    ${scriptTag}
 
-<style>
-  h1 {
-    color: teal;
-  }
-</style>
+    <style>
+      h1 {
+        color: teal;
+      }
+    </style>
 
-<h1>Hello {name}!</h1>
+    <h1>Hello {name}!</h1>
 
-<input bind:value={name} placeholder="Enter your name">`;
+    <input bind:value="{name}" placeholder="Enter your name" />
+  `;
 
   return output;
 }

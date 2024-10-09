@@ -1,3 +1,4 @@
+import { stripIndent, stripIndents } from 'common-tags';
 import { objectLiteralToString } from '../object-literal-to-string';
 import { Options } from '../../types';
 
@@ -25,10 +26,13 @@ export function buildVitestConfig(options: Options) {
     };
   }
 
-  const template = `import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig(${objectLiteralToString(config)})`;
+  const template = stripIndent`
+    ${stripIndents`
+      import { defineConfig } from 'vite'
+      import react from '@vitejs/plugin-react'  
+    `}
+    \nexport default defineConfig(${objectLiteralToString(config)})
+  `;
 
   return template;
 }

@@ -1,3 +1,4 @@
+import { stripIndents } from 'common-tags';
 import { Options } from '../../types';
 
 export function buildReadme(options: Options) {
@@ -6,30 +7,31 @@ export function buildReadme(options: Options) {
   let runLocal = '';
 
   if (lib) {
-    runLocal = `\nTo run locally:
+    runLocal = `
+      To run locally:
 
-\`\`\`sh
-npm run dev
-\`\`\` \n`;
+      \`\`\`sh
+      npm run dev
+      \`\`\`
+    `;
   }
 
-  const output = `# empty-project
+  return stripIndents`
+    # empty-project
   
-Empty project.
+    Empty project.
 
-## Building and running on localhost
+    ## Building and running on localhost
 
-First install dependencies:
+    First install dependencies:
 
-\`\`\`sh
-npm install
-\`\`\`
-${runLocal}
-To create a production build:
+    \`\`\`sh
+    npm install
+    \`\`\`
+    ${runLocal}
+    To create a production build:
 
-\`\`\`sh
-npm run build
-\`\`\``;
-
-  return output;
+    \`\`\`sh
+    npm run build
+    \`\`\``;
 }

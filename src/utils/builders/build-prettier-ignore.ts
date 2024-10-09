@@ -1,3 +1,8 @@
+import { stripIndents } from 'common-tags';
+
 export function buildPrettierIgnore() {
-  return `node_modules/\ndist/`;
+  return stripIndents`
+    node_modules
+    dist/
+  `;
 }

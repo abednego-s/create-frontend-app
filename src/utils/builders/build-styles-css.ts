@@ -1,3 +1,4 @@
+import { stripIndent, stripIndents } from 'common-tags';
 import { Options } from '../../types';
 
 export function buildStylesCss(options: Options) {
@@ -5,14 +6,17 @@ export function buildStylesCss(options: Options) {
   const isTailwind = ui?.includes('tailwind') ?? false;
 
   if (isTailwind) {
-    return `@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-`;
+    return stripIndents`
+      @import 'tailwindcss/base';
+      @import 'tailwindcss/components';
+      @import 'tailwindcss/utilities';
+    `;
   }
 
-  return `h1 { 
-  color: white; 
-  background-color: black;
-}`;
+  return stripIndent`
+    h1 { 
+      color: white; 
+      background-color: black;
+    }
+  `;
 }

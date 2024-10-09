@@ -1,16 +1,17 @@
 import { objectLiteralToString } from '../object-literal-to-string';
+import { stripIndent, stripIndents } from 'common-tags';
 import { Options } from '../../types';
 
 export function buildRollupConfig(options: Options) {
   const { transpiler, lib, styling, image, font } = options;
+
   const isBabel = transpiler?.includes('babel') ?? false;
-  const isTypescript = transpiler?.includes('ts') ?? false;
-  const isSvelte = lib === 'svelte';
-  const isVue = lib === 'vue';
   const isCss = styling?.includes('css') ?? false;
   const isSass = styling?.includes('scss') ?? false;
   const isLess = styling?.includes('less') ?? false;
-  const useStaticAssets = image || font;
+  const isSvelte = lib === 'svelte';
+  const isTypescript = transpiler?.includes('ts') ?? false;
+  const isVue = lib === 'vue';
 
   const config: {
     input: string;
@@ -47,6 +48,14 @@ export function buildRollupConfig(options: Options) {
 
   let resolveParam = null;
 
+  const staticAssets = [...(image || []), ...(font || [])];
+
+  const imports = new Map();
+
+  imports.set('resolve', '@rollup/plugin-node-resolve');
+  imports.set('commonjs', '@rollup/plugin-commonjs');
+  imports.set('terser', 'rollup-plugin-terser');
+
   if (isSvelte) {
     resolveParam = {
       browser: true,
@@ -55,22 +64,23 @@ export function buildRollupConfig(options: Options) {
   }
 
   config.plugins = [
-    `[code]resolve(${resolveParam ? objectLiteralToString(resolveParam, 2) : ''})[/code]`,
-    `[code]commonjs()[/code]`,
+    `resolve(${resolveParam ? objectLiteralToString(resolveParam, 2) : ''})`,
+    `commonjs()`,
   ];
 
   if (isBabel) {
-    config.plugins.push(`[code]babel({
+    config.plugins.push(`babel({
       babelHelpers: 'bundled',
       exclude: 'node_modules/**'
-    })[/code]`);
+    })`);
+
+    imports.set('{ babel }', '@rollup/plugin-babel');
   }
 
   if (isTypescript) {
-    config.plugins.push(`[code]typescript()[/code]`);
+    config.plugins.push(`typescript()`);
+    imports.set('typescript', '@rollup/plugin-typescript');
   }
-
-  const staticAssets = [...(image || []), ...(font || [])];
 
   staticAssets.forEach((extension) => {
     if (extension === 'jpe?g') {
@@ -112,74 +122,57 @@ export function buildRollupConfig(options: Options) {
   }
 
   if (isCss) {
-    config.plugins.push(
-      `[code]postcss(${objectLiteralToString(postCssConfig, 2)})[/code]`
-    );
+    config.plugins.push(`postcss(${objectLiteralToString(postCssConfig, 2)})`);
   }
 
-  if (useStaticAssets) {
-    config.plugins.push(
-      `[code]url(${objectLiteralToString(pluginUrlConfig, 2)})[/code]`
-    );
+  if (image || font) {
+    config.plugins.push(`url(${objectLiteralToString(pluginUrlConfig, 2)})`);
+
+    imports.set('url', '@rollup/plugin-url');
   }
 
   if (isSvelte) {
     config.plugins = [
       ...config.plugins,
-      `[code]svelte({
+      `svelte({
       compilerOptions: {
         dev: !isProduction
       }
-    })[/code]`,
-      `[code]css({ output: 'bundle.css' })[/code]`,
+    })`,
+      `css({ output: 'bundle.css' })`,
     ];
+
     config.watch = {
       clearScreen: false,
     };
+
+    imports.set('css', 'rollup-plugin-css-only');
   }
 
   if (isVue) {
-    config.plugins.push(`[code]vue()[/code]`);
-  }
-
-  config.plugins.push(`[code]isProduction && terser()[/code]`);
-
-  const imports = [
-    "import resolve from '@rollup/plugin-node-resolve';",
-    "import commonjs from '@rollup/plugin-commonjs';",
-    "import terser from 'rollup-plugin-terser';",
-  ];
-
-  if (isBabel) {
-    imports.push("import { babel } from '@rollup/plugin-babel';");
-  }
-
-  if (isTypescript) {
-    imports.push("import typescript from '@rollup/plugin-typescript';");
-  }
-
-  if (isSvelte) {
-    imports.push("import css from 'rollup-plugin-css-only';");
-  }
-
-  if (isVue) {
-    imports.push("import vue from 'rollup-plugin-vue';");
+    config.plugins.push(`vue()`);
+    imports.set('vue', 'rollup-plugin-vue');
   }
 
   if (isCss || isSass || isLess) {
-    imports.push("import postcss from 'rollup-plugin-postcss';");
+    imports.set('postcss', 'rollup-plugin-postcss');
   }
 
-  if (useStaticAssets) {
-    imports.push("import url from '@rollup/plugin-url'");
-  }
+  let allImports = '';
 
-  const template = `${imports.join('\n')}
+  imports.forEach((value, key) => {
+    allImports += `import ${key} from '${value}';\n`;
+  });
 
-const isProduction = !process.env.ROLLUP_WATCH;
+  config.plugins.push(`isProduction && terser()`);
 
-export default ${objectLiteralToString(config)}
+  config.plugins = config.plugins.map((plugin) => `[code]${plugin}[/code]`);
+
+  return stripIndent`
+    ${stripIndents`
+      ${allImports}
+      const isProduction = !process.env.ROLLUP_WATCH;
+    `}
+    \nexport default ${objectLiteralToString(config)}
   `;
-
-  return template;
 }
