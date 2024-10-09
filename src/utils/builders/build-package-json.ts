@@ -74,12 +74,14 @@ function applyRollup(
   {
     isBabel,
     isTypescript,
+    isSvelte,
     isCss,
     isImages,
     isFonts,
   }: {
     isBabel: boolean;
     isTypescript: boolean;
+    isSvelte: boolean;
     isCss: boolean;
     isImages: boolean;
     isFonts: boolean;
@@ -95,6 +97,7 @@ function applyRollup(
     rollup: 'latest',
     '@rollup/plugin-node-resolve': 'latest',
     '@rollup/plugin-commonjs': 'latest',
+    'rollup-plugin-terser': 'latest',
   };
 
   if (isBabel) {
@@ -108,6 +111,14 @@ function applyRollup(
     this.devDependencies = {
       ...this.devDependencies,
       '@rollup/plugin-typescript': 'latest',
+    };
+  }
+
+  if (isSvelte) {
+    this.devDependencies = {
+      ...this.devDependencies,
+      'rollup-plugin-svelte': 'latest',
+      'rollup-plugin-css-only': 'latest',
     };
   }
 
@@ -176,8 +187,8 @@ function applySvelte(
     };
   }
 
-  this.dependencies = {
-    ...this.dependencies,
+  this.devDependencies = {
+    ...this.devDependencies,
     svelte: '^4.2.19',
   };
 }
@@ -548,6 +559,7 @@ export function buildPackageJson(options: Options) {
     applyRollup.call(packageJson, {
       isBabel,
       isTypescript,
+      isSvelte,
       isCss,
       isImages: !!image,
       isFonts: !!font,
