@@ -198,8 +198,14 @@ function applyVue(
   {
     isWebpack,
     isParcel,
+    isRollup,
     isCss,
-  }: { isWebpack: boolean; isParcel: boolean; isCss: boolean }
+  }: {
+    isWebpack: boolean;
+    isParcel: boolean;
+    isRollup: boolean;
+    isCss: boolean;
+  }
 ) {
   if (isWebpack) {
     this.scripts = {
@@ -225,7 +231,18 @@ function applyVue(
   if (isParcel) {
     this.scripts = {
       ...this.scripts,
+    };
+
+    this.devDependencies = {
+      ...this.devDependencies,
       '@parcel/transformer-vue': 'latest',
+    };
+  }
+
+  if (isRollup) {
+    this.devDependencies = {
+      ...this.devDependencies,
+      'rollup-plugin-vue': 'latest',
     };
   }
 }
@@ -575,7 +592,7 @@ export function buildPackageJson(options: Options) {
   }
 
   if (isVue) {
-    applyVue.call(packageJson, { isWebpack, isParcel, isCss });
+    applyVue.call(packageJson, { isWebpack, isParcel, isRollup, isCss });
   }
 
   if (isBabel) {

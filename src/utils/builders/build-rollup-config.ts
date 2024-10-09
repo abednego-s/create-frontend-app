@@ -6,6 +6,7 @@ export function buildRollupConfig(options: Options) {
   const isBabel = transpiler?.includes('babel') ?? false;
   const isTypescript = transpiler?.includes('ts') ?? false;
   const isSvelte = lib === 'svelte';
+  const isVue = lib === 'vue';
   const isCss = styling?.includes('css') ?? false;
   const isSass = styling?.includes('scss') ?? false;
   const isLess = styling?.includes('less') ?? false;
@@ -137,6 +138,10 @@ export function buildRollupConfig(options: Options) {
     };
   }
 
+  if (isVue) {
+    config.plugins.push(`[code]vue()[/code]`);
+  }
+
   config.plugins.push(`[code]isProduction && terser()[/code]`);
 
   const imports = [
@@ -155,6 +160,10 @@ export function buildRollupConfig(options: Options) {
 
   if (isSvelte) {
     imports.push("import css from 'rollup-plugin-css-only';");
+  }
+
+  if (isVue) {
+    imports.push("import vue from 'rollup-plugin-vue';");
   }
 
   if (isCss || isSass || isLess) {
