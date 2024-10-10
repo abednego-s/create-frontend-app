@@ -12,18 +12,18 @@ const webpackMenuItems = [
     items: [{ id: 'split-vendors', label: 'Code split vendors' }],
     isMultiple: true,
   },
-  {
-    label: 'Webpack Plugins',
-    name: 'plugins',
-    items: [
-      { id: 'HotModuleReplacementPlugin', label: 'Hot Module Replacement' },
-      { id: 'html-webpack-plugin', label: 'HTML Webpack Plugins' },
-      { id: 'webpack-bundle-analyzer', label: 'Webpack Bundle Analyzer' },
-      { id: 'mini-css-extract-plugin', label: 'MiniCSSExtractPlugin' },
-      { id: 'clean-webpack-plugin', label: 'CleanWebpackPlugin' },
-    ],
-    isMultiple: true,
-  },
+  // {
+  //   label: 'Webpack Plugins',
+  //   name: 'plugins',
+  //   items: [
+  //     { id: 'HotModuleReplacementPlugin', label: 'Hot Module Replacement' },
+  //     { id: 'html-webpack-plugin', label: 'HTML Webpack Plugins' },
+  //     { id: 'webpack-bundle-analyzer', label: 'Webpack Bundle Analyzer' },
+  //     { id: 'mini-css-extract-plugin', label: 'MiniCSSExtractPlugin' },
+  //     { id: 'clean-webpack-plugin', label: 'CleanWebpackPlugin' },
+  //   ],
+  //   isMultiple: true,
+  // },
 ];
 
 export default function Webpack() {

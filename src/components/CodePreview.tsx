@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { CodeBlock } from './CodeBlock';
-import { ProjectFiles, ProjectFileNames } from '../types';
+import LoadingSkeleton from './LoadingSkeleton';
+import { ProjectFiles } from '../types';
 
 export type CodePreviewProps = {
-  files: ProjectFiles;
+  files: ProjectFiles | null;
 };
 
 const extensionLang: Record<string, string> = {
@@ -21,13 +22,13 @@ const extensionLang: Record<string, string> = {
   vue: 'cshtml',
 };
 
-export function CodePreview({ files }: Readonly<CodePreviewProps>) {
+export function CodePreview({ files }: CodePreviewProps) {
   const [selectedFile, setSelectedFile] =
-    useState<ProjectFileNames>('package.json');
+    useState<keyof ProjectFiles>('package.json');
 
   const [language, setLanguage] = useState('javascript');
 
-  function handleClickFile(file: ProjectFileNames) {
+  function handleClickFile(file: keyof ProjectFiles) {
     setSelectedFile(file);
     const extension = file.split('.').at(-1);
     if (extension) {
@@ -36,10 +37,16 @@ export function CodePreview({ files }: Readonly<CodePreviewProps>) {
     }
   }
 
+  if (!files) {
+    return <WaitingForProjectBuild />;
+  }
+
+  const projectFiles = Object.keys(files) as (keyof ProjectFiles)[];
+
   return (
     <div className="flex overflow-hidden rounded-md h-[650px]">
       <ul className="pt-4 bg-black w-60">
-        {(Object.keys(files) as ProjectFileNames[]).map((projectFile) => (
+        {projectFiles.map((projectFile) => (
           <li
             key={projectFile}
             className={`block px-4 py-1 text-gray-400 cursor-pointer hover:bg-stone-800 ${selectedFile === projectFile ? 'bg-stone-800' : ''}`}
@@ -51,6 +58,21 @@ export function CodePreview({ files }: Readonly<CodePreviewProps>) {
         ))}
       </ul>
       <CodeBlock code={files[selectedFile]} language={language} />
+    </div>
+  );
+}
+
+export function WaitingForProjectBuild() {
+  return (
+    <div className="flex overflow-hidden rounded-md h-[650px]">
+      <div className="bg-black w-60">
+        <div className="space-y-4 animate-pulse">
+          <LoadingSkeleton />
+        </div>
+      </div>
+      <div className="w-full bg-stone-800">
+        <LoadingSkeleton />
+      </div>
     </div>
   );
 }

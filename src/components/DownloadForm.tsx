@@ -7,7 +7,7 @@ export type DownloadFormProps = {
   // eslint-disable-next-line no-unused-vars
   onChangeProjectName: (e: ChangeEvent<HTMLInputElement>) => void;
   projectName: string;
-  files: ProjectFiles;
+  files: ProjectFiles | null;
 };
 
 export function DownloadForm({
@@ -16,17 +16,19 @@ export function DownloadForm({
   files,
 }: DownloadFormProps) {
   async function handleClickDownload() {
-    const zip = new JSZip();
+    if (files) {
+      const zip = new JSZip();
 
-    for (const [key, value] of Object.entries(files)) {
-      zip.file(key, value);
-    }
+      for (const [key, value] of Object.entries(files)) {
+        zip.file(key, value);
+      }
 
-    try {
-      const blob = await zip.generateAsync({ type: 'blob' });
-      saveAs(blob, `${projectName}.zip`);
-    } catch (err) {
-      console.error('error:', err);
+      try {
+        const blob = await zip.generateAsync({ type: 'blob' });
+        saveAs(blob, `${projectName}.zip`);
+      } catch (err) {
+        console.error('error:', err);
+      }
     }
   }
 
@@ -45,8 +47,9 @@ export function DownloadForm({
         />
       </div>
       <button
-        className="w-full px-4 py-2 text-white border-2 rounded-md bg-stone-800 border-stone-800 hover:bg-white hover:text-stone-800"
+        className="w-full px-4 py-2 text-white border-2 rounded-md bg-stone-800 border-stone-800 hover:bg-white hover:text-stone-800 disabled:cursor-not-allowed"
         onClick={handleClickDownload}
+        disabled={!files}
       >
         Download Zip
       </button>

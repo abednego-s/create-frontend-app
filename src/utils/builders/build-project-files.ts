@@ -24,7 +24,7 @@ import { buildModuleDeclaration } from './build-module-declaration';
 import { buildRollupConfig } from './build-rollup-config';
 import { Options, ProjectFileNames } from '../../types';
 
-export function buildProjectFiles(options: Options) {
+export async function buildProjectFiles(options: Options) {
   const {
     bundler,
     font,
@@ -55,7 +55,7 @@ export function buildProjectFiles(options: Options) {
   const projectFiles = new Map<ProjectFileNames, string>();
 
   projectFiles.set('.gitignore', buildGitIgnore());
-  projectFiles.set('package.json', buildPackageJson(options));
+  projectFiles.set('package.json', await buildPackageJson(options));
   projectFiles.set('src/index.js', buildEntryPoint(options));
   projectFiles.set('README.md', buildReadme(options));
 

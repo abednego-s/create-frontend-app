@@ -1,5 +1,6 @@
 import { getExtensions } from '../get-extensions';
 import { sortByKeys } from '../sort-by-keys';
+import { getLatestVersion } from '../get-package-versions';
 import { Options } from '../../types';
 
 export type PackageConfig = {
@@ -25,7 +26,8 @@ export type PackageConfig = {
   private?: boolean;
 };
 
-function applyWebpack(this: PackageConfig, plugins: Options['plugins']) {
+// eslint-disable-next-line no-unused-vars
+async function applyWebpack(this: PackageConfig) {
   this.scripts = {
     ...this.scripts,
     build: 'webpack --mode production',
@@ -33,31 +35,35 @@ function applyWebpack(this: PackageConfig, plugins: Options['plugins']) {
 
   this.devDependencies = {
     ...this.devDependencies,
-    webpack: '^5.94.0',
-    'webpack-cli': '^5.1.4',
+    webpack: await getLatestVersion('webpack'),
+    'webpack-cli': await getLatestVersion('webpack-cli'),
   };
 
-  if (plugins) {
-    const webpackPlugins = plugins.reduce((prev, current) => {
-      if (current !== 'HotModuleReplacementPlugin') {
-        prev = {
-          ...prev,
-          [current]: 'latest',
-        };
-      }
+  // async function foo(plugins: Options['plugins']) {
+  //   return plugins?.reduce(async (prev, current) => {
+  //     if (current !== 'HotModuleReplacementPlugin') {
+  //       prev = {
+  //         ...prev,
+  //         [current]: await getLatestVersion(current as RegisteredPackage),
+  //       };
+  //     }
 
-      return prev;
-    }, {});
+  //     return prev;
+  //   }, {});
+  // }
 
-    this.devDependencies = {
-      ...this.devDependencies,
-      ...webpackPlugins,
-    };
-  }
+  // if (plugins) {
+  //   const webpackPlugins = await foo(plugins);
+
+  //   this.devDependencies = {
+  //     ...this.devDependencies,
+  //     ...webpackPlugins,
+  //   };
+  // }
 }
 
 // eslint-disable-next-line no-unused-vars
-function applyParcel(this: PackageConfig) {
+async function applyParcel(this: PackageConfig) {
   this.scripts = {
     ...this.scripts,
     start: 'parcel src/index.html',
@@ -65,11 +71,11 @@ function applyParcel(this: PackageConfig) {
   };
   this.devDependencies = {
     ...this.devDependencies,
-    parcel: 'latest',
+    parcel: await getLatestVersion('parcel'),
   };
 }
 
-function applyRollup(
+async function applyRollup(
   this: PackageConfig,
   {
     isBabel,
@@ -94,51 +100,59 @@ function applyRollup(
   };
   this.devDependencies = {
     ...this.devDependencies,
-    rollup: 'latest',
-    '@rollup/plugin-node-resolve': 'latest',
-    '@rollup/plugin-commonjs': 'latest',
-    'rollup-plugin-terser': 'latest',
+    rollup: await getLatestVersion('rollup'),
+    '@rollup/plugin-node-resolve': await getLatestVersion(
+      '@rollup/plugin-node-resolve'
+    ),
+    '@rollup/plugin-commonjs': await getLatestVersion(
+      '@rollup/plugin-commonjs'
+    ),
+    'rollup-plugin-terser': await getLatestVersion('rollup-plugin-terser'),
   };
 
   if (isBabel) {
     this.devDependencies = {
       ...this.devDependencies,
-      '@rollup/plugin-babel': 'latest',
+      '@rollup/plugin-babel': await getLatestVersion('@rollup/plugin-babel'),
     };
   }
 
   if (isTypescript) {
     this.devDependencies = {
       ...this.devDependencies,
-      '@rollup/plugin-typescript': 'latest',
+      '@rollup/plugin-typescript': await getLatestVersion(
+        '@rollup/plugin-typescript'
+      ),
     };
   }
 
   if (isSvelte) {
     this.devDependencies = {
       ...this.devDependencies,
-      'rollup-plugin-svelte': 'latest',
-      'rollup-plugin-css-only': 'latest',
+      'rollup-plugin-svelte': await getLatestVersion('rollup-plugin-svelte'),
+      'rollup-plugin-css-only': await getLatestVersion(
+        'rollup-plugin-css-only'
+      ),
     };
   }
 
   if (isCss) {
     this.devDependencies = {
       ...this.devDependencies,
-      'rollup-plugin-postcss': 'latest',
-      postcss: 'latest',
+      'rollup-plugin-postcss': await getLatestVersion('rollup-plugin-postcss'),
+      postcss: await getLatestVersion('postcss'),
     };
   }
 
   if (isImages || isFonts) {
     this.devDependencies = {
       ...this.devDependencies,
-      '@rollup/plugin-url': 'latest',
+      '@rollup/plugin-url': await getLatestVersion('@rollup/plugin-url'),
     };
   }
 }
 
-function applyReact(
+async function applyReact(
   this: PackageConfig,
   { isWebpack }: { isWebpack: boolean }
 ) {
@@ -150,19 +164,19 @@ function applyReact(
   }
   this.dependencies = {
     ...this.dependencies,
-    react: '^18.3.1',
-    'react-dom': '^18.3.1',
+    react: await getLatestVersion('react'),
+    'react-dom': await getLatestVersion('react-dom'),
   };
 
   if (isWebpack) {
     this.devDependencies = {
       ...this.devDependencies,
-      'webpack-dev-server': '^5.1.0',
+      'webpack-dev-server': await getLatestVersion('webpack-dev-server'),
     };
   }
 }
 
-function applySvelte(
+async function applySvelte(
   this: PackageConfig,
   { isWebpack, isParcel }: { isWebpack: boolean; isParcel: boolean }
 ) {
@@ -174,26 +188,28 @@ function applySvelte(
 
     this.devDependencies = {
       ...this.devDependencies,
-      'svelte-loader': '^3.2.3',
-      'svelte-preprocess': '^6.0.2',
-      'webpack-dev-server': '^5.1.0',
+      'svelte-loader': await getLatestVersion('svelte-loader'),
+      'svelte-preprocess': await getLatestVersion('svelte-preprocess'),
+      'webpack-dev-server': await getLatestVersion('webpack-dev-server'),
     };
   }
 
   if (isParcel) {
     this.devDependencies = {
       ...this.devDependencies,
-      '@parcel/transformer-svelte': 'latest',
+      '@parcel/transformer-svelte': await getLatestVersion(
+        '@parcel/transformer-svelte'
+      ),
     };
   }
 
   this.devDependencies = {
     ...this.devDependencies,
-    svelte: '^4.2.19',
+    svelte: await getLatestVersion('svelte'),
   };
 }
 
-function applyVue(
+async function applyVue(
   this: PackageConfig,
   {
     isWebpack,
@@ -214,16 +230,16 @@ function applyVue(
     };
     this.devDependencies = {
       ...this.devDependencies,
-      vue: '^3.3.4',
-      'vue-loader': '^17.2.4',
-      'vue-template-compiler': '^2.7.14',
-      'webpack-dev-server': '^5.1.0',
+      vue: await getLatestVersion('vue'),
+      'vue-loader': await getLatestVersion('vue-loader'),
+      'vue-template-compiler': await getLatestVersion('vue-template-compiler'),
+      'webpack-dev-server': await getLatestVersion('webpack-dev-server'),
     };
 
     if (isCss) {
       this.devDependencies = {
         ...this.devDependencies,
-        'vue-style-loader': '^7.1.2',
+        'vue-style-loader': await getLatestVersion('vue-style-loader'),
       };
     }
   }
@@ -235,44 +251,46 @@ function applyVue(
 
     this.devDependencies = {
       ...this.devDependencies,
-      '@parcel/transformer-vue': 'latest',
+      '@parcel/transformer-vue': await getLatestVersion(
+        '@parcel/transformer-vue'
+      ),
     };
   }
 
   if (isRollup) {
     this.devDependencies = {
       ...this.devDependencies,
-      'rollup-plugin-vue': 'latest',
+      'rollup-plugin-vue': await getLatestVersion('rollup-plugin-vue'),
     };
   }
 }
 
-function applyBabel(
+async function applyBabel(
   this: PackageConfig,
   { isWebpack, isReact }: { isWebpack: boolean; isReact: boolean }
 ) {
   this.devDependencies = {
     ...this.devDependencies,
-    '@babel/core': '^7.25.2',
-    '@babel/preset-env': '^7.25.4',
+    '@babel/core': await getLatestVersion('@babel/core'),
+    '@babel/preset-env': await getLatestVersion('@babel/preset-env'),
   };
 
   if (isReact) {
     this.devDependencies = {
       ...this.devDependencies,
-      '@babel/preset-react': '^7.24.7',
+      '@babel/preset-react': await getLatestVersion('@babel/preset-react'),
     };
   }
 
   if (isWebpack) {
     this.devDependencies = {
       ...this.devDependencies,
-      'babel-loader': '^9.1.3',
+      'babel-loader': await getLatestVersion('babel-loader'),
     };
   }
 }
 
-function applyTypescript(
+async function applyTypescript(
   this: PackageConfig,
   {
     isWebpack,
@@ -282,119 +300,130 @@ function applyTypescript(
 ) {
   this.devDependencies = {
     ...this.devDependencies,
-    typescript: '^5.6.2',
+    typescript: await getLatestVersion('typescript'),
   };
 
   if (isReact) {
     this.devDependencies = {
       ...this.devDependencies,
-      '@types/react': '^18.3.5',
-      '@types/react-dom': '^18.3.0',
+      '@types/react': await getLatestVersion('@types/react'),
+      '@types/react-dom': await getLatestVersion('@types/react-dom'),
     };
   }
 
   if (isWebpack) {
     this.devDependencies = {
       ...this.devDependencies,
-      'ts-loader': '^9.5.1',
+      'ts-loader': await getLatestVersion('ts-loader'),
     };
   }
 
   if (isBabel) {
     this.devDependencies = {
       ...this.devDependencies,
-      '@babel/preset-typescript': 'latest',
+      '@babel/preset-typescript': await getLatestVersion(
+        '@babel/preset-typescript'
+      ),
     };
   }
 }
 
 // eslint-disable-next-line no-unused-vars
-function applyTailwind(this: PackageConfig) {
+async function applyTailwind(this: PackageConfig) {
   this.devDependencies = {
     ...this.devDependencies,
-    tailwindcss: 'latest',
-    autoprefixer: 'latest',
-    postcss: 'latest',
-    'postcss-loader': 'latest',
+    tailwindcss: await getLatestVersion('tailwindcss'),
+    autoprefixer: await getLatestVersion('autoprefixer'),
+    postcss: await getLatestVersion('postcss'),
+    'postcss-loader': await getLatestVersion('postcss-loader'),
   };
 }
 
 // eslint-disable-next-line no-unused-vars
-function applyMaterialUi(this: PackageConfig) {
+async function applyMaterialUi(this: PackageConfig) {
   this.dependencies = {
     ...this.dependencies,
-    '@mui/material': 'latest',
-    '@emotion/react': 'latest',
-    '@emotion/styled': 'latest',
+    '@mui/material': await getLatestVersion('@mui/material'),
+    '@emotion/react': await getLatestVersion('@emotion/react'),
+    '@emotion/styled': await getLatestVersion('@emotion/styled'),
   };
 }
 
-function applyCss(this: PackageConfig, { isWebpack }: { isWebpack: boolean }) {
-  if (isWebpack) {
-    this.devDependencies = {
-      ...this.devDependencies,
-      'css-loader': '^7.1.2',
-      'style-loader': '^4.0.0',
-    };
-  }
-}
-
-function applyCssModule(
+async function applyCss(
   this: PackageConfig,
   { isWebpack }: { isWebpack: boolean }
 ) {
   if (isWebpack) {
     this.devDependencies = {
       ...this.devDependencies,
-      'css-loader': '^7.1.2',
-      'style-loader': '^4.0.0',
+      'css-loader': await getLatestVersion('css-loader'),
+      'style-loader': await getLatestVersion('style-loader'),
     };
   }
 }
 
-function applyLess(this: PackageConfig, { isWebpack }: { isWebpack: boolean }) {
+async function applyCssModule(
+  this: PackageConfig,
+  { isWebpack }: { isWebpack: boolean }
+) {
   if (isWebpack) {
     this.devDependencies = {
       ...this.devDependencies,
-      'css-loader': '^7.1.2',
-      'style-loader': '^4.0.0',
+      'css-loader': await getLatestVersion('css-loader'),
+      'style-loader': await getLatestVersion('style-loader'),
+    };
+  }
+}
+
+async function applyLess(
+  this: PackageConfig,
+  { isWebpack }: { isWebpack: boolean }
+) {
+  if (isWebpack) {
+    this.devDependencies = {
+      ...this.devDependencies,
+      'css-loader': await getLatestVersion('css-loader'),
+      'style-loader': await getLatestVersion('style-loader'),
     };
   }
   this.devDependencies = {
     ...this.devDependencies,
-    less: 'latest',
+    less: await getLatestVersion('less'),
   };
 }
 
-function applySass(this: PackageConfig, { isWebpack }: { isWebpack: boolean }) {
+async function applySass(
+  this: PackageConfig,
+  { isWebpack }: { isWebpack: boolean }
+) {
   if (isWebpack) {
     this.devDependencies = {
       ...this.devDependencies,
-      'css-loader': '^7.1.2',
-      'style-loader': '^4.0.0',
-      'sass-loader': 'latest',
+      'css-loader': await getLatestVersion('css-loader'),
+      'style-loader': await getLatestVersion('style-loader'),
+      'sass-loader': await getLatestVersion('sass-loader'),
     };
   } else {
     this.devDependencies = {
       ...this.devDependencies,
-      sass: 'latest',
+      sass: await getLatestVersion('sass'),
     };
   }
 }
 
-function applyFileLoader(
+async function applyFileLoader(
   this: PackageConfig,
   { isWebpack }: { isWebpack: boolean }
 ) {
   if (isWebpack) {
     this.devDependencies = {
       ...this.devDependencies,
-      'file-loader': '^6.2.0',
+      'file-loader': await getLatestVersion('file-loader'),
     };
   }
 }
 
-function applyJest(
+async function applyJest(
   this: PackageConfig,
   { isBabel, isTypescript }: { isBabel: boolean; isTypescript: boolean }
 ) {
@@ -406,20 +435,23 @@ function applyJest(
   if (isBabel) {
     this.devDependencies = {
       ...this.devDependencies,
-      'babel-jest': 'latest',
+      'babel-jest': await getLatestVersion('babel-jest'),
     };
   }
 
   if (isTypescript) {
     this.devDependencies = {
       ...this.devDependencies,
-      'ts-jest': 'latest',
-      '@types/jest': 'latest',
+      'ts-jest': await getLatestVersion('ts-jest'),
+      '@types/jest': await getLatestVersion('@types/jest'),
     };
   }
 }
 
-function applyVitest(this: PackageConfig, { isReact }: { isReact: boolean }) {
+async function applyVitest(
+  this: PackageConfig,
+  { isReact }: { isReact: boolean }
+) {
   this.scripts = {
     ...this.scripts,
     test: 'vitest',
@@ -427,19 +459,19 @@ function applyVitest(this: PackageConfig, { isReact }: { isReact: boolean }) {
 
   this.devDependencies = {
     ...this.devDependencies,
-    vitest: 'latest',
+    vitest: await getLatestVersion('vitest'),
   };
 
   if (isReact) {
     this.devDependencies = {
       ...this.devDependencies,
-      jsdom: 'latest',
-      '@vitejs/plugin-react': 'latest',
+      jsdom: await getLatestVersion('jsdom'),
+      '@vitejs/plugin-react': await getLatestVersion('@vitejs/plugin-react'),
     };
   }
 }
 
-function applyEsLint(
+async function applyEsLint(
   this: PackageConfig,
   {
     isBabel,
@@ -466,35 +498,41 @@ function applyEsLint(
 
   this.devDependencies = {
     ...this.devDependencies,
-    eslint: 'latest',
-    'eslint-config-prettier': 'latest',
+    eslint: await getLatestVersion('eslint'),
+    'eslint-config-prettier': await getLatestVersion('eslint-config-prettier'),
   };
 
   if (isReact) {
     this.devDependencies = {
       ...this.devDependencies,
-      'eslint-plugin-react': 'latest',
-      'eslint-plugin-react-hooks': 'latest',
+      'eslint-plugin-react': await getLatestVersion('eslint-plugin-react'),
+      'eslint-plugin-react-hooks': await getLatestVersion(
+        'eslint-plugin-react-hooks'
+      ),
     };
   }
 
   if (isSvelte) {
     this.devDependencies = {
       ...this.devDependencies,
-      'eslint-plugin-svelte3': 'latest',
+      'eslint-plugin-svelte3': await getLatestVersion('eslint-plugin-svelte3'),
     };
   }
 
   if (isTypescript) {
     this.devDependencies = {
       ...this.devDependencies,
-      '@typescript-eslint/parser': 'latest',
-      '@typescript-eslint/eslint-plugin': 'latest',
+      '@typescript-eslint/parser': await getLatestVersion(
+        '@typescript-eslint/parser'
+      ),
+      '@typescript-eslint/eslint-plugin': await getLatestVersion(
+        '@typescript-eslint/eslint-plugin'
+      ),
     };
   }
 }
 
-function applyPrettier(
+async function applyPrettier(
   this: PackageConfig,
   { isBabel, isTypescript }: { isBabel: boolean; isTypescript: boolean }
 ) {
@@ -510,11 +548,11 @@ function applyPrettier(
 
   this.devDependencies = {
     ...this.devDependencies,
-    prettier: 'latest',
+    prettier: await getLatestVersion('prettier'),
   };
 }
 
-export function buildPackageJson(options: Options) {
+export async function buildPackageJson(options: Options) {
   const {
     bundler,
     image,
@@ -522,12 +560,12 @@ export function buildPackageJson(options: Options) {
     lib,
     linting,
     name,
-    plugins,
     styling,
     testing,
     transpiler,
     ui,
   } = options;
+
   const isBabel = transpiler?.includes('babel') ?? false;
   const isTypescript = transpiler?.includes('ts') ?? false;
   const isReact = lib === 'react';
@@ -565,15 +603,15 @@ export function buildPackageJson(options: Options) {
   }
 
   if (isWebpack) {
-    applyWebpack.call(packageJson, plugins);
+    await applyWebpack.call(packageJson);
   }
 
   if (isParcel) {
-    applyParcel.call(packageJson);
+    await applyParcel.call(packageJson);
   }
 
   if (isRollup) {
-    applyRollup.call(packageJson, {
+    await applyRollup.call(packageJson, {
       isBabel,
       isTypescript,
       isSvelte,
@@ -584,23 +622,23 @@ export function buildPackageJson(options: Options) {
   }
 
   if (isReact) {
-    applyReact.call(packageJson, { isWebpack });
+    await applyReact.call(packageJson, { isWebpack });
   }
 
   if (isSvelte) {
-    applySvelte.call(packageJson, { isWebpack, isParcel });
+    await applySvelte.call(packageJson, { isWebpack, isParcel });
   }
 
   if (isVue) {
-    applyVue.call(packageJson, { isWebpack, isParcel, isRollup, isCss });
+    await applyVue.call(packageJson, { isWebpack, isParcel, isRollup, isCss });
   }
 
   if (isBabel) {
-    applyBabel.call(packageJson, { isWebpack, isReact });
+    await applyBabel.call(packageJson, { isWebpack, isReact });
   }
 
   if (isTypescript) {
-    applyTypescript.call(packageJson, {
+    await applyTypescript.call(packageJson, {
       isBabel,
       isReact,
       isWebpack,
@@ -608,43 +646,43 @@ export function buildPackageJson(options: Options) {
   }
 
   if (isTailwind) {
-    applyTailwind.call(packageJson);
+    await applyTailwind.call(packageJson);
   }
 
   if (isMaterialUi) {
-    applyMaterialUi.call(packageJson);
+    await applyMaterialUi.call(packageJson);
   }
 
   if (isCss) {
-    applyCss.call(packageJson, { isWebpack });
+    await applyCss.call(packageJson, { isWebpack });
   }
 
   if (isCssModule) {
-    applyCssModule.call(packageJson, { isWebpack });
+    await applyCssModule.call(packageJson, { isWebpack });
   }
 
   if (isLess) {
-    applyLess.call(packageJson, { isWebpack });
+    await applyLess.call(packageJson, { isWebpack });
   }
 
   if (isSass) {
-    applySass.call(packageJson, { isWebpack });
+    await applySass.call(packageJson, { isWebpack });
   }
 
   if (image) {
-    applyFileLoader.call(packageJson, { isWebpack });
+    await applyFileLoader.call(packageJson, { isWebpack });
   }
 
   if (isJest) {
-    applyJest.call(packageJson, { isBabel, isTypescript });
+    await applyJest.call(packageJson, { isBabel, isTypescript });
   }
 
   if (isVitest) {
-    applyVitest.call(packageJson, { isReact });
+    await applyVitest.call(packageJson, { isReact });
   }
 
   if (isEslint) {
-    applyEsLint.call(packageJson, {
+    await applyEsLint.call(packageJson, {
       isBabel,
       isReact,
       isSvelte,
@@ -653,7 +691,7 @@ export function buildPackageJson(options: Options) {
   }
 
   if (isPrettier) {
-    applyPrettier.call(packageJson, {
+    await applyPrettier.call(packageJson, {
       isBabel,
       isTypescript,
     });
