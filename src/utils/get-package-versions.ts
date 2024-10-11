@@ -29,6 +29,8 @@ export const packages = [
   'eslint-plugin-react-hooks',
   'eslint-plugin-svelte3',
   'file-loader',
+  'identity-obj-proxy',
+  'jest',
   'jsdom',
   'less',
   'parcel',

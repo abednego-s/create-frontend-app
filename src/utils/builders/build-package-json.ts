@@ -425,11 +425,20 @@ async function applyFileLoader(
 
 async function applyJest(
   this: PackageConfig,
-  { isBabel, isTypescript }: { isBabel: boolean; isTypescript: boolean }
+  {
+    isBabel,
+    isCssModule,
+    isTypescript,
+  }: { isBabel: boolean; isCssModule: boolean; isTypescript: boolean }
 ) {
   this.scripts = {
     ...this.scripts,
     test: 'jest',
+  };
+
+  this.devDependencies = {
+    ...this.devDependencies,
+    jest: await getLatestVersion('jest'),
   };
 
   if (isBabel) {
@@ -444,6 +453,13 @@ async function applyJest(
       ...this.devDependencies,
       'ts-jest': await getLatestVersion('ts-jest'),
       '@types/jest': await getLatestVersion('@types/jest'),
+    };
+  }
+
+  if (isCssModule) {
+    this.devDependencies = {
+      ...this.devDependencies,
+      'identity-obj-proxy': await getLatestVersion('identity-obj-proxy'),
     };
   }
 }
@@ -674,7 +690,7 @@ export async function buildPackageJson(options: Options) {
   }
 
   if (isJest) {
-    await applyJest.call(packageJson, { isBabel, isTypescript });
+    await applyJest.call(packageJson, { isBabel, isCssModule, isTypescript });
   }
 
   if (isVitest) {

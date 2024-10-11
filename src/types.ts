@@ -44,6 +44,8 @@ export type ProjectFileNames =
   | '.eslintrc.json'
   | '.prettierignore'
   | '.prettierrc'
+  | '__mocks__/fileMock.js'
+  | '__mocks__/styleMock.js'
   | '__tests__/test.js'
   | '__tests__/test.ts'
   | 'jest.config.js'

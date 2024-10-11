@@ -2,15 +2,28 @@ import { objectLiteralToString } from '../object-literal-to-string';
 import { Options } from '../../types';
 
 export function buildJestConfig(options: Options) {
-  const { lib } = options;
-  const isReact = lib === 'react';
+  const { styling } = options;
+  const isCssModule = styling?.includes('css-module');
 
-  const config = {
-    testEnvironment: 'node',
+  const config: {
+    testEnvironment: string;
+    moduleNameMapper: Record<string, string>;
+    setupFilesAfterEnv: string[];
+  } = {
+    testEnvironment: 'jsdom',
+    moduleNameMapper: {
+      '\\\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/styleMock.js',
+      '\\\\.(jpg|jpeg|png|gif|svg|eot|otf|ttf|woff|woff2)$':
+        '<rootDir>/__mocks__/fileMock.js',
+    },
+    setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   };
 
-  if (isReact) {
-    config.testEnvironment = 'jsdom';
+  if (isCssModule) {
+    config.moduleNameMapper = {
+      ...config.moduleNameMapper,
+      '\\\\.module\\\\.(css|less|scss)$': 'identity-obj-proxy',
+    };
   }
 
   return `module.exports = ${objectLiteralToString(config)}`;

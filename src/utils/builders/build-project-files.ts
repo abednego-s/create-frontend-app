@@ -131,6 +131,11 @@ export async function buildProjectFiles(options: Options) {
 
   if (isJest) {
     projectFiles.set('jest.config.js', buildJestConfig(options));
+    projectFiles.set(
+      '__mocks__/fileMock.js',
+      "module.exports = 'test-file-stub'"
+    );
+    projectFiles.set('__mocks__/styleMock.js', 'module.exports = {}');
 
     if (isTypescript) {
       projectFiles.set('__tests__/test.ts', buildJestTest());
