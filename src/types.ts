@@ -64,7 +64,7 @@ export type ProjectFileNames =
   | 'src/styles.css'
   | 'tailwind.config.js'
   | 'tsconfig.json'
-  | 'vite.config.js'
+  | 'vitest.config.js'
   | 'webpack.config.js';
 
 export type ProjectFiles = Record<ProjectFileNames, string>;

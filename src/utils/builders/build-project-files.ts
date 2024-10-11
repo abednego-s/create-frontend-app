@@ -145,7 +145,7 @@ export async function buildProjectFiles(options: Options) {
   }
 
   if (isVitest) {
-    projectFiles.set('vite.config.js', buildVitestConfig(options));
+    projectFiles.set('vitest.config.js', buildVitestConfig(options));
 
     if (isTypescript) {
       projectFiles.set('__tests__/test.ts', buildVitestTest());

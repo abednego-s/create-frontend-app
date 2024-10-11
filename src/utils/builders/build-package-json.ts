@@ -466,7 +466,11 @@ async function applyJest(
 
 async function applyVitest(
   this: PackageConfig,
-  { isReact }: { isReact: boolean }
+  {
+    isReact,
+    isSvelte,
+    isVue,
+  }: { isReact: boolean; isSvelte: boolean; isVue: boolean }
 ) {
   this.scripts = {
     ...this.scripts,
@@ -483,6 +487,24 @@ async function applyVitest(
       ...this.devDependencies,
       jsdom: await getLatestVersion('jsdom'),
       '@vitejs/plugin-react': await getLatestVersion('@vitejs/plugin-react'),
+    };
+  }
+
+  if (isSvelte) {
+    this.devDependencies = {
+      ...this.devDependencies,
+      jsdom: await getLatestVersion('jsdom'),
+      '@sveltejs/vite-plugin-svelte': await getLatestVersion(
+        '@sveltejs/vite-plugin-svelte'
+      ),
+    };
+  }
+
+  if (isVue) {
+    this.devDependencies = {
+      ...this.devDependencies,
+      jsdom: await getLatestVersion('jsdom'),
+      '@vitejs/plugin-vue': await getLatestVersion('@vitejs/plugin-vue'),
     };
   }
 }
@@ -694,7 +716,7 @@ export async function buildPackageJson(options: Options) {
   }
 
   if (isVitest) {
-    await applyVitest.call(packageJson, { isReact });
+    await applyVitest.call(packageJson, { isReact, isSvelte, isVue });
   }
 
   if (isEslint) {

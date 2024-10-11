@@ -11,6 +11,8 @@ export function buildReactMainApp(options: Options) {
   }
 
   const template = stripIndent`
+    import React from 'react';
+    
     const App = () => {
       return (
         <div>

@@ -404,7 +404,7 @@ function optimizer(this: WebpackConfig) {
     splitChunks: {
       cacheGroups: {
         vendor: {
-          test: '[code]/[\\/]node_modules[\\/]/[/code]',
+          test: '[code]/[\\\\/]node_modules[\\\\/]/[/code]',
           name: 'vendors',
           chunks: 'all',
         },
@@ -511,10 +511,7 @@ export function buildWebpackConfig(options?: WebpackBuildConfigOptions) {
   `;
 
   if (options) {
-    template += buildImports(options) + '\n';
-  }
-
-  if (options) {
+    template += '\n' + buildImports(options);
     template += '\n' + buildConfig(options) + '\n\n';
   } else {
     template += '\n' + buildConfig() + '\n\n';

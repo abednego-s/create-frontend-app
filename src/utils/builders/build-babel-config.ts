@@ -14,7 +14,7 @@ export function buildBabelConfig(options: Options) {
   }
 
   if (isReact) {
-    presets.push(['@babel/preset-react', { runtime: 'automatic' }]);
+    presets.push(['@babel/preset-react']);
   }
 
   if (isTypescript) {
