@@ -1,19 +1,13 @@
 import { stripIndents } from 'common-tags';
+import { WebpackPluginInstance, RuleSetRule } from 'webpack';
 import { objectLiteralToString } from '../object-literal-to-string';
-import { webpackPlugins } from '../webpack-plugins';
-import { WebpackConfig, WebpackRuleSetRule, Options } from '../../types';
+import { WebpackConfig, Options } from '../../types';
 
 export type WebpackBuildConfigOptions = Omit<Options, 'name' | 'bundler'>;
 
 export type BuildConfigOptions = Pick<
   Options,
-  | 'plugins'
-  | 'lib'
-  | 'transpiler'
-  | 'styling'
-  | 'image'
-  | 'optimization'
-  | 'font'
+  'lib' | 'transpiler' | 'styling' | 'image' | 'optimization' | 'font'
 >;
 
 function applyReact(
@@ -184,13 +178,7 @@ function applyVue(
   this.resolve.extensions = extensions;
 }
 
-function applyCss(
-  this: WebpackConfig,
-  {
-    useVue,
-    useMiniCssExtractPlugin,
-  }: { useVue: boolean; useMiniCssExtractPlugin: boolean }
-) {
+function applyCss(this: WebpackConfig, { useVue }: { useVue: boolean }) {
   this.module = {
     ...this.module,
   };
@@ -205,14 +193,7 @@ function applyCss(
     styleLoader = 'vue-style-loader';
   }
 
-  let use = [styleLoader, 'css-loader'];
-
-  if (useMiniCssExtractPlugin) {
-    use = [
-      `[code]process.env.NODE_ENV === 'production' ? MiniCssExtractPlugin.loader : '${styleLoader}'[/code]`,
-      'css-loader',
-    ];
-  }
+  const use = [styleLoader, 'css-loader'];
 
   this.module.rules.push({
     test: /\.css$/,
@@ -220,13 +201,7 @@ function applyCss(
   });
 }
 
-function applyCssModule(
-  this: WebpackConfig,
-  {
-    useVue,
-    useMiniCssExtractPlugin,
-  }: { useVue: boolean; useMiniCssExtractPlugin: boolean }
-) {
+function applyCssModule(this: WebpackConfig, { useVue }: { useVue: boolean }) {
   this.module = {
     ...this.module,
   };
@@ -239,10 +214,6 @@ function applyCssModule(
 
   if (useVue) {
     styleLoader = 'vue-style-loader';
-  }
-
-  if (useMiniCssExtractPlugin) {
-    styleLoader = `[code]process.env.NODE_ENV === 'production' ? MiniCssExtractPlugin.loader : '${styleLoader}'[/code]`;
   }
 
   this.module.rules.push({
@@ -259,7 +230,7 @@ function applyCssModule(
   });
 
   const updatedRules = this.module.rules?.map((moduleRule) => {
-    const rule = moduleRule as WebpackRuleSetRule;
+    const rule = moduleRule as RuleSetRule;
     if (rule?.test?.toString() === /\.css$/.toString()) {
       return {
         ...rule,
@@ -272,21 +243,11 @@ function applyCssModule(
   this.module.rules = updatedRules;
 }
 
-function applyLess(
-  this: WebpackConfig,
-  {
-    useVue,
-    useMiniCssExtractPlugin,
-  }: { useVue: boolean; useMiniCssExtractPlugin: boolean }
-) {
+function applyLess(this: WebpackConfig, { useVue }: { useVue: boolean }) {
   let styleLoader = 'style-loader';
 
   if (useVue) {
     styleLoader = 'vue-style-loader';
-  }
-
-  if (useMiniCssExtractPlugin) {
-    styleLoader = `[code]process.env.NODE_ENV === 'production' ? MiniCssExtractPlugin.loader : '${styleLoader}'[/code]`;
   }
 
   this.module = {
@@ -303,21 +264,11 @@ function applyLess(
   });
 }
 
-function applySass(
-  this: WebpackConfig,
-  {
-    useVue,
-    useMiniCssExtractPlugin,
-  }: { useVue: boolean; useMiniCssExtractPlugin: boolean }
-) {
+function applySass(this: WebpackConfig, { useVue }: { useVue: boolean }) {
   let styleLoader = 'style-loader';
 
   if (useVue) {
     styleLoader = 'vue-style-loader';
-  }
-
-  if (useMiniCssExtractPlugin) {
-    styleLoader = `[code]process.env.NODE_ENV === 'production' ? MiniCssExtractPlugin.loader : '${styleLoader}'[/code]`;
   }
 
   this.module = {
@@ -370,26 +321,7 @@ function buildImports(options: WebpackBuildConfigOptions) {
     template += "const { VueLoaderPlugin } = require('vue-loader');\n";
   }
 
-  const pluginImports =
-    options.plugins
-      ?.map((plugin) => `${webpackPlugins[plugin].importDeclaration};`)
-      .join('\n') || '';
-
-  if (pluginImports) {
-    template += pluginImports + '\n';
-  }
-
   return template;
-}
-
-function registerPlugins(this: WebpackConfig, plugins: Options['plugins']) {
-  const allPlugins = plugins?.map(
-    (plugin) => `[code]${webpackPlugins[plugin].pluginEntry}[/code]` as ''
-  );
-
-  if (allPlugins) {
-    this.plugins = this.plugins ? [...this.plugins, ...allPlugins] : allPlugins;
-  }
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -420,11 +352,13 @@ function buildConfig(options?: BuildConfigOptions) {
       path: "[code]path.resolve(__dirname, 'dist')[/code]",
       filename: 'bundle.js',
     },
+    plugins: [
+      `[code]new HtmlWebpackPlugin({\n\t  template: './src/index.html'\n\t})[/code]` as unknown as WebpackPluginInstance,
+    ],
   };
 
   if (options) {
-    const { plugins, lib, transpiler, styling, image, optimization, font } =
-      options;
+    const { lib, transpiler, styling, image, optimization, font } = options;
 
     const useReact = lib === 'react';
     const useVue = lib === 'vue';
@@ -435,9 +369,6 @@ function buildConfig(options?: BuildConfigOptions) {
     const useCssModule = styling?.includes('css-module') ?? false;
     const useLess = styling?.includes('less') ?? false;
     const useSass = styling?.includes('scss') ?? false;
-
-    const useMiniCssExtractPlugin =
-      plugins?.includes('mini-css-extract-plugin') ?? false;
 
     if (useTypescript) {
       config.entry = './src/index.ts';
@@ -458,22 +389,20 @@ function buildConfig(options?: BuildConfigOptions) {
     if (useCss) {
       applyCss.call(config, {
         useVue,
-        useMiniCssExtractPlugin,
       });
     }
 
     if (useCssModule) {
-      applyCssModule.call(config, { useVue, useMiniCssExtractPlugin });
+      applyCssModule.call(config, { useVue });
     }
 
     if (useLess) {
-      applyLess.call(config, { useVue, useMiniCssExtractPlugin });
+      applyLess.call(config, { useVue });
     }
 
     if (useSass) {
       applySass.call(config, {
         useVue,
-        useMiniCssExtractPlugin,
       });
     }
 
@@ -487,10 +416,6 @@ function buildConfig(options?: BuildConfigOptions) {
 
     if (optimization?.includes('split-vendors')) {
       optimizer.call(config);
-    }
-
-    if (plugins) {
-      registerPlugins.call(config, plugins);
     }
 
     if (lib) {
@@ -508,6 +433,7 @@ export function buildWebpackConfig(options?: WebpackBuildConfigOptions) {
   let template = stripIndents`
     const path = require('path');
     const webpack = require('webpack');
+    const HtmlWebpackPlugin = require('html-webpack-plugin');
   `;
 
   if (options) {

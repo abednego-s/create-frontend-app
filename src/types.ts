@@ -1,10 +1,8 @@
-import { Configuration as WebpackConfiguration, RuleSetRule } from 'webpack';
+import { Configuration as WebpackConfiguration } from 'webpack';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
-import { webpackPlugins } from './utils/webpack-plugins';
 
 export type Bundler = 'webpack' | 'parcel' | 'rollup';
 export type Library = 'react' | 'vue' | 'svelte';
-export type WebpackPlugins = keyof typeof webpackPlugins;
 export type UI = 'tailwind' | 'material-ui';
 export type Image = 'svg' | 'png' | 'jpe?g' | 'gif';
 export type Styling = 'css' | 'css-module' | 'scss' | 'less';
@@ -18,7 +16,6 @@ export type Options = {
   name?: string;
   bundler: Bundler;
   lib?: Library;
-  plugins?: WebpackPlugins[];
   ui?: UI[];
   image?: Image[];
   styling?: Styling[];
@@ -35,8 +32,6 @@ interface Configuration extends WebpackConfiguration {
 
 export type WebpackConfig = Configuration;
 
-export type WebpackRuleSetRule = RuleSetRule;
-
 export type ProjectFileNames =
   | '.babelrc'
   | '.gitignore'
@@ -51,6 +46,7 @@ export type ProjectFileNames =
   | 'jest.config.js'
   | 'package.json'
   | 'postcss.config.js'
+  | 'public/index.html'
   | 'README.md'
   | 'rollup.config.js'
   | 'src/App.jsx'
