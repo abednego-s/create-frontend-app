@@ -78,19 +78,19 @@ async function applyParcel(this: PackageConfig) {
 async function applyRollup(
   this: PackageConfig,
   {
-    isBabel,
-    isTypescript,
-    isSvelte,
-    isCss,
-    isImages,
-    isFonts,
+    useBabel,
+    useTypescript,
+    useSvelte,
+    useCss,
+    hasImages,
+    hasFonts,
   }: {
-    isBabel: boolean;
-    isTypescript: boolean;
-    isSvelte: boolean;
-    isCss: boolean;
-    isImages: boolean;
-    isFonts: boolean;
+    useBabel: boolean;
+    useTypescript: boolean;
+    useSvelte: boolean;
+    useCss: boolean;
+    hasImages: boolean;
+    hasFonts: boolean;
   }
 ) {
   this.scripts = {
@@ -110,14 +110,14 @@ async function applyRollup(
     'rollup-plugin-terser': await getLatestVersion('rollup-plugin-terser'),
   };
 
-  if (isBabel) {
+  if (useBabel) {
     this.devDependencies = {
       ...this.devDependencies,
       '@rollup/plugin-babel': await getLatestVersion('@rollup/plugin-babel'),
     };
   }
 
-  if (isTypescript) {
+  if (useTypescript) {
     this.devDependencies = {
       ...this.devDependencies,
       '@rollup/plugin-typescript': await getLatestVersion(
@@ -126,7 +126,7 @@ async function applyRollup(
     };
   }
 
-  if (isSvelte) {
+  if (useSvelte) {
     this.devDependencies = {
       ...this.devDependencies,
       'rollup-plugin-svelte': await getLatestVersion('rollup-plugin-svelte'),
@@ -136,7 +136,7 @@ async function applyRollup(
     };
   }
 
-  if (isCss) {
+  if (useCss) {
     this.devDependencies = {
       ...this.devDependencies,
       'rollup-plugin-postcss': await getLatestVersion('rollup-plugin-postcss'),
@@ -144,7 +144,7 @@ async function applyRollup(
     };
   }
 
-  if (isImages || isFonts) {
+  if (hasImages || hasFonts) {
     this.devDependencies = {
       ...this.devDependencies,
       '@rollup/plugin-url': await getLatestVersion('@rollup/plugin-url'),
@@ -215,12 +215,12 @@ async function applyVue(
     isWebpack,
     isParcel,
     isRollup,
-    isCss,
+    useCss,
   }: {
     isWebpack: boolean;
     isParcel: boolean;
     isRollup: boolean;
-    isCss: boolean;
+    useCss: boolean;
   }
 ) {
   if (isWebpack) {
@@ -236,7 +236,7 @@ async function applyVue(
       'webpack-dev-server': await getLatestVersion('webpack-dev-server'),
     };
 
-    if (isCss) {
+    if (useCss) {
       this.devDependencies = {
         ...this.devDependencies,
         'vue-style-loader': await getLatestVersion('vue-style-loader'),
@@ -267,7 +267,7 @@ async function applyVue(
 
 async function applyBabel(
   this: PackageConfig,
-  { isWebpack, isReact }: { isWebpack: boolean; isReact: boolean }
+  { isWebpack, useReact }: { isWebpack: boolean; useReact: boolean }
 ) {
   this.devDependencies = {
     ...this.devDependencies,
@@ -275,7 +275,7 @@ async function applyBabel(
     '@babel/preset-env': await getLatestVersion('@babel/preset-env'),
   };
 
-  if (isReact) {
+  if (useReact) {
     this.devDependencies = {
       ...this.devDependencies,
       '@babel/preset-react': await getLatestVersion('@babel/preset-react'),
@@ -294,16 +294,16 @@ async function applyTypescript(
   this: PackageConfig,
   {
     isWebpack,
-    isBabel,
-    isReact,
-  }: { isWebpack: boolean; isBabel: boolean; isReact: boolean }
+    useBabel,
+    useReact,
+  }: { isWebpack: boolean; useBabel: boolean; useReact: boolean }
 ) {
   this.devDependencies = {
     ...this.devDependencies,
     typescript: await getLatestVersion('typescript'),
   };
 
-  if (isReact) {
+  if (useReact) {
     this.devDependencies = {
       ...this.devDependencies,
       '@types/react': await getLatestVersion('@types/react'),
@@ -318,7 +318,7 @@ async function applyTypescript(
     };
   }
 
-  if (isBabel) {
+  if (useBabel) {
     this.devDependencies = {
       ...this.devDependencies,
       '@babel/preset-typescript': await getLatestVersion(
@@ -426,10 +426,10 @@ async function applyFileLoader(
 async function applyJest(
   this: PackageConfig,
   {
-    isBabel,
-    isCssModule,
-    isTypescript,
-  }: { isBabel: boolean; isCssModule: boolean; isTypescript: boolean }
+    useBabel,
+    useCssModule,
+    useTypescript,
+  }: { useBabel: boolean; useCssModule: boolean; useTypescript: boolean }
 ) {
   this.scripts = {
     ...this.scripts,
@@ -441,14 +441,14 @@ async function applyJest(
     jest: await getLatestVersion('jest'),
   };
 
-  if (isBabel) {
+  if (useBabel) {
     this.devDependencies = {
       ...this.devDependencies,
       'babel-jest': await getLatestVersion('babel-jest'),
     };
   }
 
-  if (isTypescript) {
+  if (useTypescript) {
     this.devDependencies = {
       ...this.devDependencies,
       'ts-jest': await getLatestVersion('ts-jest'),
@@ -456,7 +456,7 @@ async function applyJest(
     };
   }
 
-  if (isCssModule) {
+  if (useCssModule) {
     this.devDependencies = {
       ...this.devDependencies,
       'identity-obj-proxy': await getLatestVersion('identity-obj-proxy'),
@@ -467,10 +467,10 @@ async function applyJest(
 async function applyVitest(
   this: PackageConfig,
   {
-    isReact,
-    isSvelte,
-    isVue,
-  }: { isReact: boolean; isSvelte: boolean; isVue: boolean }
+    useReact,
+    useSvelte,
+    useVue,
+  }: { useReact: boolean; useSvelte: boolean; useVue: boolean }
 ) {
   this.scripts = {
     ...this.scripts,
@@ -482,7 +482,7 @@ async function applyVitest(
     vitest: await getLatestVersion('vitest'),
   };
 
-  if (isReact) {
+  if (useReact) {
     this.devDependencies = {
       ...this.devDependencies,
       jsdom: await getLatestVersion('jsdom'),
@@ -490,7 +490,7 @@ async function applyVitest(
     };
   }
 
-  if (isSvelte) {
+  if (useSvelte) {
     this.devDependencies = {
       ...this.devDependencies,
       jsdom: await getLatestVersion('jsdom'),
@@ -500,7 +500,7 @@ async function applyVitest(
     };
   }
 
-  if (isVue) {
+  if (useVue) {
     this.devDependencies = {
       ...this.devDependencies,
       jsdom: await getLatestVersion('jsdom'),
@@ -512,20 +512,20 @@ async function applyVitest(
 async function applyEsLint(
   this: PackageConfig,
   {
-    isBabel,
-    isTypescript,
-    isReact,
-    isSvelte,
+    useBabel,
+    useTypescript,
+    useReact,
+    useSvelte,
   }: {
-    isBabel: boolean;
-    isTypescript: boolean;
-    isReact: boolean;
-    isSvelte: boolean;
+    useBabel: boolean;
+    useTypescript: boolean;
+    useReact: boolean;
+    useSvelte: boolean;
   }
 ) {
   const options = {
-    isBabel,
-    isTypescript,
+    useBabel,
+    useTypescript,
   };
 
   this.scripts = {
@@ -540,7 +540,7 @@ async function applyEsLint(
     'eslint-config-prettier': await getLatestVersion('eslint-config-prettier'),
   };
 
-  if (isReact) {
+  if (useReact) {
     this.devDependencies = {
       ...this.devDependencies,
       'eslint-plugin-react': await getLatestVersion('eslint-plugin-react'),
@@ -550,14 +550,14 @@ async function applyEsLint(
     };
   }
 
-  if (isSvelte) {
+  if (useSvelte) {
     this.devDependencies = {
       ...this.devDependencies,
       'eslint-plugin-svelte3': await getLatestVersion('eslint-plugin-svelte3'),
     };
   }
 
-  if (isTypescript) {
+  if (useTypescript) {
     this.devDependencies = {
       ...this.devDependencies,
       '@typescript-eslint/parser': await getLatestVersion(
@@ -572,11 +572,11 @@ async function applyEsLint(
 
 async function applyPrettier(
   this: PackageConfig,
-  { isBabel, isTypescript }: { isBabel: boolean; isTypescript: boolean }
+  { useBabel, useTypescript }: { useBabel: boolean; useTypescript: boolean }
 ) {
   const options = {
-    isBabel,
-    isTypescript,
+    useBabel,
+    useTypescript,
   };
 
   this.scripts = {
@@ -604,24 +604,24 @@ export async function buildPackageJson(options: Options) {
     ui,
   } = options;
 
-  const isBabel = transpiler?.includes('babel') ?? false;
-  const isTypescript = transpiler?.includes('ts') ?? false;
-  const isReact = lib === 'react';
-  const isSvelte = lib === 'svelte';
-  const isVue = lib === 'vue';
+  const useBabel = transpiler?.includes('babel') ?? false;
+  const useTypescript = transpiler?.includes('ts') ?? false;
+  const useReact = lib === 'react';
+  const useSvelte = lib === 'svelte';
+  const useVue = lib === 'vue';
   const isParcel = bundler === 'parcel';
   const isWebpack = bundler === 'webpack';
   const isRollup = bundler === 'rollup';
-  const isTailwind = ui?.includes('tailwind') ?? false;
-  const isMaterialUi = ui?.includes('material-ui') ?? false;
-  const isCss = styling?.includes('css') ?? false;
-  const isCssModule = styling?.includes('css-module') ?? false;
-  const isLess = styling?.includes('less') ?? false;
-  const isSass = styling?.includes('scss') ?? false;
-  const isJest = testing?.includes('jest') ?? false;
-  const isVitest = testing?.includes('vitest') ?? false;
-  const isEslint = linting?.includes('eslint') ?? false;
-  const isPrettier = linting?.includes('prettier') ?? false;
+  const useTailwind = ui?.includes('tailwind') ?? false;
+  const useMaterialUi = ui?.includes('material-ui') ?? false;
+  const useCss = styling?.includes('css') ?? false;
+  const useCssModule = styling?.includes('css-module') ?? false;
+  const useLess = styling?.includes('less') ?? false;
+  const useSass = styling?.includes('scss') ?? false;
+  const useJest = testing?.includes('jest') ?? false;
+  const useVitest = testing?.includes('vitest') ?? false;
+  const useEslint = linting?.includes('eslint') ?? false;
+  const usePrettier = linting?.includes('prettier') ?? false;
 
   const packageJson: PackageConfig = {
     name: 'empty-project',
@@ -650,60 +650,60 @@ export async function buildPackageJson(options: Options) {
 
   if (isRollup) {
     await applyRollup.call(packageJson, {
-      isBabel,
-      isTypescript,
-      isSvelte,
-      isCss,
-      isImages: !!image,
-      isFonts: !!font,
+      useBabel,
+      useTypescript,
+      useSvelte,
+      useCss,
+      hasImages: !!image,
+      hasFonts: !!font,
     });
   }
 
-  if (isReact) {
+  if (useReact) {
     await applyReact.call(packageJson, { isWebpack });
   }
 
-  if (isSvelte) {
+  if (useSvelte) {
     await applySvelte.call(packageJson, { isWebpack, isParcel });
   }
 
-  if (isVue) {
-    await applyVue.call(packageJson, { isWebpack, isParcel, isRollup, isCss });
+  if (useVue) {
+    await applyVue.call(packageJson, { isWebpack, isParcel, isRollup, useCss });
   }
 
-  if (isBabel) {
-    await applyBabel.call(packageJson, { isWebpack, isReact });
+  if (useBabel) {
+    await applyBabel.call(packageJson, { isWebpack, useReact });
   }
 
-  if (isTypescript) {
+  if (useTypescript) {
     await applyTypescript.call(packageJson, {
-      isBabel,
-      isReact,
+      useBabel,
+      useReact,
       isWebpack,
     });
   }
 
-  if (isTailwind) {
+  if (useTailwind) {
     await applyTailwind.call(packageJson);
   }
 
-  if (isMaterialUi) {
+  if (useMaterialUi) {
     await applyMaterialUi.call(packageJson);
   }
 
-  if (isCss) {
+  if (useCss) {
     await applyCss.call(packageJson, { isWebpack });
   }
 
-  if (isCssModule) {
+  if (useCssModule) {
     await applyCssModule.call(packageJson, { isWebpack });
   }
 
-  if (isLess) {
+  if (useLess) {
     await applyLess.call(packageJson, { isWebpack });
   }
 
-  if (isSass) {
+  if (useSass) {
     await applySass.call(packageJson, { isWebpack });
   }
 
@@ -711,27 +711,31 @@ export async function buildPackageJson(options: Options) {
     await applyFileLoader.call(packageJson, { isWebpack });
   }
 
-  if (isJest) {
-    await applyJest.call(packageJson, { isBabel, isCssModule, isTypescript });
-  }
-
-  if (isVitest) {
-    await applyVitest.call(packageJson, { isReact, isSvelte, isVue });
-  }
-
-  if (isEslint) {
-    await applyEsLint.call(packageJson, {
-      isBabel,
-      isReact,
-      isSvelte,
-      isTypescript,
+  if (useJest) {
+    await applyJest.call(packageJson, {
+      useBabel,
+      useCssModule,
+      useTypescript,
     });
   }
 
-  if (isPrettier) {
+  if (useVitest) {
+    await applyVitest.call(packageJson, { useReact, useSvelte, useVue });
+  }
+
+  if (useEslint) {
+    await applyEsLint.call(packageJson, {
+      useBabel,
+      useReact,
+      useSvelte,
+      useTypescript,
+    });
+  }
+
+  if (usePrettier) {
     await applyPrettier.call(packageJson, {
-      isBabel,
-      isTypescript,
+      useBabel,
+      useTypescript,
     });
   }
 

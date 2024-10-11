@@ -3,11 +3,11 @@ import { Options } from '../../types';
 
 export function buildTailwindConfig(options: Options) {
   const { transpiler } = options;
-  const isTypescript = transpiler?.includes('ts');
+  const useTypescript = transpiler?.includes('ts');
 
   let extensions = ['js', 'jsx', 'html'].join(',');
 
-  if (isTypescript) {
+  if (useTypescript) {
     extensions = ['ts', 'tsx', 'html'].join(',');
   }
 

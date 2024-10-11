@@ -26,12 +26,12 @@ function vueTemplate() {
   `;
 }
 
-function reactTemplate(isTypescript: boolean) {
+function reactTemplate(useTypescript: boolean) {
   return stripIndent`
     import App from './App';
     import { createRoot } from 'react-dom/client';
 
-    const domNode = document.getElementById('root') ${isTypescript ? 'as HTMLElement' : ''};
+    const domNode = document.getElementById('root') ${useTypescript ? 'as HTMLElement' : ''};
     const root = createRoot(domNode);
 
     root.render(<App />);
@@ -41,29 +41,29 @@ function reactTemplate(isTypescript: boolean) {
 export function buildEntryPoint(options: Options) {
   const { styling, lib, transpiler, ui } = options;
 
-  const isCss = styling?.includes('css') ?? false;
-  const isReact = lib === 'react';
-  const isSvelte = lib === 'svelte';
-  const isVue = lib === 'vue';
-  const isTypescript = transpiler?.includes('ts') ?? false;
-  const isTailwind = ui?.includes('tailwind');
+  const useCss = styling?.includes('css') ?? false;
+  const useReact = lib === 'react';
+  const useSvelte = lib === 'svelte';
+  const useVue = lib === 'vue';
+  const useTypescript = transpiler?.includes('ts') ?? false;
+  const useTailwind = ui?.includes('tailwind');
 
   let cssImport = '';
   let template = vanillaTemplate();
 
-  if (isCss || isTailwind) {
+  if (useCss || useTailwind) {
     cssImport += "import './styles.css';\n";
   }
 
-  if (isReact) {
-    template = reactTemplate(isTypescript);
+  if (useReact) {
+    template = reactTemplate(useTypescript);
   }
 
-  if (isSvelte) {
+  if (useSvelte) {
     template = svelteTemplate();
   }
 
-  if (isVue) {
+  if (useVue) {
     template = vueTemplate();
   }
 

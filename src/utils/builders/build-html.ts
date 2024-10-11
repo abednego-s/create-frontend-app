@@ -4,7 +4,7 @@ import { Options } from '../../types';
 export function buildHtml(options: Options) {
   const { bundler, transpiler, styling } = options;
 
-  const isCss = styling?.includes('css') ?? false;
+  const useCss = styling?.includes('css') ?? false;
   const isParcel = bundler === 'parcel';
   const isRollup = bundler === 'rollup';
   const isTypecript = transpiler?.includes('ts') ?? false;
@@ -20,7 +20,7 @@ export function buildHtml(options: Options) {
   if (isRollup) {
     scriptTag = '<script src="./dist/bundle.js"></script>';
 
-    if (isCss) {
+    if (useCss) {
       linkTag = '<link rel="stylesheet" href="/.dist/bundle.css">';
     }
   }

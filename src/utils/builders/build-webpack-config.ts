@@ -18,7 +18,7 @@ export type BuildConfigOptions = Pick<
 
 function applyReact(
   this: WebpackConfig,
-  { isBabel, isTypescript }: { isBabel: boolean; isTypescript: boolean }
+  { useBabel, useTypescript }: { useBabel: boolean; useTypescript: boolean }
 ) {
   this.module = {
     ...this.module,
@@ -28,7 +28,7 @@ function applyReact(
     ...this.resolve,
   };
 
-  if (isBabel && !isTypescript) {
+  if (useBabel && !useTypescript) {
     const rule = {
       test: /\.(js|jsx)$/,
       use: {
@@ -44,7 +44,7 @@ function applyReact(
     this.resolve.extensions = ['.js', '.jsx'];
   }
 
-  if (isTypescript && !isBabel) {
+  if (useTypescript && !useBabel) {
     const rule = {
       test: /\.ts(x)?$/,
       loader: 'ts-loader',
@@ -58,7 +58,7 @@ function applyReact(
     this.resolve.extensions = ['.ts', '.tsx', '.js'];
   }
 
-  if (isBabel && isTypescript) {
+  if (useBabel && useTypescript) {
     const rule = {
       test: /\.(js|ts)x?$/,
       exclude: /node_modules/,
@@ -77,7 +77,7 @@ function applyReact(
 
 function applySvelte(
   this: WebpackConfig,
-  { isBabel, isTypescript }: { isBabel: boolean; isTypescript: boolean }
+  { useBabel, useTypescript }: { useBabel: boolean; useTypescript: boolean }
 ) {
   this.module = {
     ...this.module,
@@ -100,7 +100,7 @@ function applySvelte(
       use: {
         loader: 'svelte-loader',
         options: {
-          preprocess: isTypescript
+          preprocess: useTypescript
             ? '[code]sveltePreprocess({ typescript: true })[/code]'
             : '[code]sveltePreprocess()[/code]',
         },
@@ -108,7 +108,7 @@ function applySvelte(
     },
   ];
 
-  if (isBabel) {
+  if (useBabel) {
     this.module.rules = [
       ...this.module.rules,
       {
@@ -121,7 +121,7 @@ function applySvelte(
     ];
   }
 
-  if (isTypescript) {
+  if (useTypescript) {
     this.module.rules = [
       ...this.module.rules,
       {
@@ -146,7 +146,7 @@ function applySvelte(
 
 function applyVue(
   this: WebpackConfig,
-  { isTypescript }: { isTypescript: boolean }
+  { useTypescript }: { useTypescript: boolean }
 ) {
   this.module = {
     ...this.module,
@@ -177,7 +177,7 @@ function applyVue(
     vue$: 'vue/dist/vue.esm-bundler.js',
   };
 
-  if (isTypescript) {
+  if (useTypescript) {
     extensions.unshift('.ts');
   }
 
@@ -187,9 +187,9 @@ function applyVue(
 function applyCss(
   this: WebpackConfig,
   {
-    isVue,
+    useVue,
     useMiniCssExtractPlugin,
-  }: { isVue: boolean; useMiniCssExtractPlugin: boolean }
+  }: { useVue: boolean; useMiniCssExtractPlugin: boolean }
 ) {
   this.module = {
     ...this.module,
@@ -201,7 +201,7 @@ function applyCss(
 
   let styleLoader = 'style-loader';
 
-  if (isVue) {
+  if (useVue) {
     styleLoader = 'vue-style-loader';
   }
 
@@ -223,9 +223,9 @@ function applyCss(
 function applyCssModule(
   this: WebpackConfig,
   {
-    isVue,
+    useVue,
     useMiniCssExtractPlugin,
-  }: { isVue: boolean; useMiniCssExtractPlugin: boolean }
+  }: { useVue: boolean; useMiniCssExtractPlugin: boolean }
 ) {
   this.module = {
     ...this.module,
@@ -237,7 +237,7 @@ function applyCssModule(
 
   let styleLoader = 'style-loader';
 
-  if (isVue) {
+  if (useVue) {
     styleLoader = 'vue-style-loader';
   }
 
@@ -275,13 +275,13 @@ function applyCssModule(
 function applyLess(
   this: WebpackConfig,
   {
-    isVue,
+    useVue,
     useMiniCssExtractPlugin,
-  }: { isVue: boolean; useMiniCssExtractPlugin: boolean }
+  }: { useVue: boolean; useMiniCssExtractPlugin: boolean }
 ) {
   let styleLoader = 'style-loader';
 
-  if (isVue) {
+  if (useVue) {
     styleLoader = 'vue-style-loader';
   }
 
@@ -306,13 +306,13 @@ function applyLess(
 function applySass(
   this: WebpackConfig,
   {
-    isVue,
+    useVue,
     useMiniCssExtractPlugin,
-  }: { isVue: boolean; useMiniCssExtractPlugin: boolean }
+  }: { useVue: boolean; useMiniCssExtractPlugin: boolean }
 ) {
   let styleLoader = 'style-loader';
 
-  if (isVue) {
+  if (useVue) {
     styleLoader = 'vue-style-loader';
   }
 
@@ -426,53 +426,53 @@ function buildConfig(options?: BuildConfigOptions) {
     const { plugins, lib, transpiler, styling, image, optimization, font } =
       options;
 
-    const isReact = lib === 'react';
-    const isVue = lib === 'vue';
-    const isSvelte = lib === 'svelte';
-    const isBabel = transpiler?.includes('babel') ?? false;
-    const isTypescript = transpiler?.includes('ts') ?? false;
-    const isCss = styling?.includes('css') ?? false;
-    const isCssModule = styling?.includes('css-module') ?? false;
-    const isLess = styling?.includes('less') ?? false;
-    const isSass = styling?.includes('scss') ?? false;
+    const useReact = lib === 'react';
+    const useVue = lib === 'vue';
+    const useSvelte = lib === 'svelte';
+    const useBabel = transpiler?.includes('babel') ?? false;
+    const useTypescript = transpiler?.includes('ts') ?? false;
+    const useCss = styling?.includes('css') ?? false;
+    const useCssModule = styling?.includes('css-module') ?? false;
+    const useLess = styling?.includes('less') ?? false;
+    const useSass = styling?.includes('scss') ?? false;
 
     const useMiniCssExtractPlugin =
       plugins?.includes('mini-css-extract-plugin') ?? false;
 
-    if (isTypescript) {
+    if (useTypescript) {
       config.entry = './src/index.ts';
     }
 
-    if (isReact) {
-      applyReact.call(config, { isBabel, isTypescript });
+    if (useReact) {
+      applyReact.call(config, { useBabel, useTypescript });
     }
 
-    if (isSvelte) {
-      applySvelte.call(config, { isBabel, isTypescript });
+    if (useSvelte) {
+      applySvelte.call(config, { useBabel, useTypescript });
     }
 
-    if (isVue) {
-      applyVue.call(config, { isCss, isTypescript });
+    if (useVue) {
+      applyVue.call(config, { useCss, useTypescript });
     }
 
-    if (isCss) {
+    if (useCss) {
       applyCss.call(config, {
-        isVue,
+        useVue,
         useMiniCssExtractPlugin,
       });
     }
 
-    if (isCssModule) {
-      applyCssModule.call(config, { isVue, useMiniCssExtractPlugin });
+    if (useCssModule) {
+      applyCssModule.call(config, { useVue, useMiniCssExtractPlugin });
     }
 
-    if (isLess) {
-      applyLess.call(config, { isVue, useMiniCssExtractPlugin });
+    if (useLess) {
+      applyLess.call(config, { useVue, useMiniCssExtractPlugin });
     }
 
-    if (isSass) {
+    if (useSass) {
       applySass.call(config, {
-        isVue,
+        useVue,
         useMiniCssExtractPlugin,
       });
     }

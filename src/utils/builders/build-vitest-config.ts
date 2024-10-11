@@ -11,9 +11,9 @@ export type VitestConfig = {
 
 export function buildVitestConfig(options: Options) {
   const { lib } = options;
-  const isReact = lib === 'react';
-  const isSvelte = lib === 'svelte';
-  const isVue = lib === 'vue';
+  const useReact = lib === 'react';
+  const useSvelte = lib === 'svelte';
+  const useVue = lib === 'vue';
 
   const config: VitestConfig = {
     test: {
@@ -24,7 +24,7 @@ export function buildVitestConfig(options: Options) {
   const imports = new Map();
   imports.set('{ defineConfig }', 'vitest/config');
 
-  if (isReact) {
+  if (useReact) {
     imports.set('react', '@vitejs/plugin-react');
 
     const reactEntry = ['[code]react()[/code]'];
@@ -33,7 +33,7 @@ export function buildVitestConfig(options: Options) {
       : reactEntry;
   }
 
-  if (isSvelte) {
+  if (useSvelte) {
     imports.set('{ svelte }', '@sveltejs/vite-plugin-svelte');
 
     const svelteEntry = ['[code]svelte()[/code]'];
@@ -42,7 +42,7 @@ export function buildVitestConfig(options: Options) {
       : svelteEntry;
   }
 
-  if (isVue) {
+  if (useVue) {
     imports.set('vue', '@vitejs/plugin-vue');
 
     const vueEntry = ['[code]vue()[/code]'];

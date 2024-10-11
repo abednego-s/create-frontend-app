@@ -20,8 +20,8 @@ export type TSConfig = {
 
 export function buildTypescriptConfig(options: Options) {
   const { lib } = options;
-  const isReact = lib === 'react';
-  const isSvelte = lib === 'svelte';
+  const useReact = lib === 'react';
+  const useSvelte = lib === 'svelte';
 
   const config: TSConfig = {
     compilerOptions: {
@@ -38,14 +38,14 @@ export function buildTypescriptConfig(options: Options) {
     exclude: ['node_modules'],
   };
 
-  if (isReact) {
+  if (useReact) {
     config.compilerOptions = {
       ...config.compilerOptions,
       jsx: 'react-jsx',
     };
   }
 
-  if (isSvelte) {
+  if (useSvelte) {
     config.compilerOptions = {
       ...config.compilerOptions,
       allowSyntheticDefaultImports: true,

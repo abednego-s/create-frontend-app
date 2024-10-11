@@ -3,10 +3,10 @@ import { Options } from '../../types';
 
 export function buildReactMainApp(options: Options) {
   const { styling } = options;
-  const isCss = styling?.includes('css') ?? false;
+  const useCss = styling?.includes('css') ?? false;
   let cssImport = '';
 
-  if (isCss) {
+  if (useCss) {
     cssImport += "import './styles.css'";
   }
 

@@ -1,19 +1,19 @@
 export function getExtensions({
-  isBabel,
-  isTypescript,
+  useBabel,
+  useTypescript,
 }: {
-  isBabel: boolean;
-  isTypescript: boolean;
+  useBabel: boolean;
+  useTypescript: boolean;
 }) {
   let extensions = ['js'];
 
-  if (isBabel) {
+  if (useBabel) {
     extensions = [...extensions, 'jsx'];
   }
 
-  if (isTypescript) {
+  if (useTypescript) {
     extensions = ['ts'];
-    if (isBabel) {
+    if (useBabel) {
       extensions = [...extensions, 'tsx'];
     }
   }

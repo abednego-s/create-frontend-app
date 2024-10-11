@@ -37,20 +37,20 @@ export async function buildProjectFiles(options: Options) {
     ui,
   } = options;
 
-  const isBabel = transpiler?.includes('babel') ?? false;
-  const isTypescript = transpiler?.includes('ts') ?? false;
-  const isReact = lib === 'react';
-  const isSvelte = lib === 'svelte';
-  const isVue = lib === 'vue';
+  const useBabel = transpiler?.includes('babel') ?? false;
+  const useTypescript = transpiler?.includes('ts') ?? false;
+  const useReact = lib === 'react';
+  const useSvelte = lib === 'svelte';
+  const useVue = lib === 'vue';
   const isParcel = bundler === 'parcel';
   const isWebpack = bundler === 'webpack';
   const isRollup = bundler === 'rollup';
-  const isTailwind = ui?.includes('tailwind') ?? false;
-  const isCss = styling?.includes('css') ?? false;
-  const isJest = testing?.includes('jest') ?? false;
-  const isVitest = testing?.includes('vitest') ?? false;
-  const isEslint = linting?.includes('eslint') ?? false;
-  const isPrettier = linting?.includes('prettier') ?? false;
+  const useTailwind = ui?.includes('tailwind') ?? false;
+  const useCss = styling?.includes('css') ?? false;
+  const useJest = testing?.includes('jest') ?? false;
+  const useVitest = testing?.includes('vitest') ?? false;
+  const useEslint = linting?.includes('eslint') ?? false;
+  const usePrettier = linting?.includes('prettier') ?? false;
 
   const projectFiles = new Map<ProjectFileNames, string>();
 
@@ -73,11 +73,11 @@ export async function buildProjectFiles(options: Options) {
     projectFiles.set('rollup.config.js', buildRollupConfig(options));
   }
 
-  if (isBabel) {
+  if (useBabel) {
     projectFiles.set('.babelrc', buildBabelConfig(options));
   }
 
-  if (isTypescript) {
+  if (useTypescript) {
     projectFiles.delete('src/index.js');
     projectFiles.set('tsconfig.json', buildTypescriptConfig(options));
     projectFiles.set('src/index.ts', buildEntryPoint(options));
@@ -87,49 +87,49 @@ export async function buildProjectFiles(options: Options) {
     }
   }
 
-  if (isReact) {
+  if (useReact) {
     projectFiles.set('src/index.html', buildHtml(options));
 
-    if (isTypescript) {
+    if (useTypescript) {
       projectFiles.set('src/App.tsx', buildReactMainApp(options));
     } else {
       projectFiles.set('src/App.jsx', buildReactMainApp(options));
     }
   }
 
-  if (isSvelte) {
+  if (useSvelte) {
     projectFiles.set('src/index.html', buildHtml(options));
     projectFiles.set('src/App.svelte', buildSvelteMainApp(options));
 
-    if (isTypescript) {
+    if (useTypescript) {
       projectFiles.set('src/index.ts', buildEntryPoint(options));
     } else {
       projectFiles.set('src/index.js', buildEntryPoint(options));
     }
   }
 
-  if (isVue) {
+  if (useVue) {
     projectFiles.set('src/index.html', buildHtml(options));
     projectFiles.set('src/App.vue', buildVueMainApp());
 
-    if (isTypescript) {
+    if (useTypescript) {
       projectFiles.set('src/index.ts', buildEntryPoint(options));
     } else {
       projectFiles.set('src/index.js', buildEntryPoint(options));
     }
   }
 
-  if (isTailwind) {
+  if (useTailwind) {
     projectFiles.set('tailwind.config.js', buildTailwindConfig(options));
     projectFiles.set('postcss.config.js', buildPostCssConfig());
     projectFiles.set('src/styles.css', buildStylesCss(options));
   }
 
-  if (isCss) {
+  if (useCss) {
     projectFiles.set('src/styles.css', buildStylesCss(options));
   }
 
-  if (isJest) {
+  if (useJest) {
     projectFiles.set('jest.config.js', buildJestConfig(options));
     projectFiles.set(
       '__mocks__/fileMock.js',
@@ -137,29 +137,29 @@ export async function buildProjectFiles(options: Options) {
     );
     projectFiles.set('__mocks__/styleMock.js', 'module.exports = {}');
 
-    if (isTypescript) {
+    if (useTypescript) {
       projectFiles.set('__tests__/test.ts', buildJestTest());
     } else {
       projectFiles.set('__tests__/test.js', buildJestTest());
     }
   }
 
-  if (isVitest) {
+  if (useVitest) {
     projectFiles.set('vitest.config.js', buildVitestConfig(options));
 
-    if (isTypescript) {
+    if (useTypescript) {
       projectFiles.set('__tests__/test.ts', buildVitestTest());
     } else {
       projectFiles.set('__tests__/test.js', buildVitestTest());
     }
   }
 
-  if (isEslint) {
+  if (useEslint) {
     projectFiles.set('.eslintignore', buildEslintIgnore());
     projectFiles.set('.eslintrc.json', buildEslintConfig(options));
   }
 
-  if (isPrettier) {
+  if (usePrettier) {
     projectFiles.set('.prettierignore', buildPrettierIgnore());
     projectFiles.set('.prettierrc', buildPrettierConfig());
   }

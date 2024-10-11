@@ -3,21 +3,21 @@ import { Options } from '../../types';
 export function buildBabelConfig(options: Options) {
   const { transpiler, lib } = options;
 
-  const isBabel = transpiler?.includes('babel') ?? false;
-  const isReact = lib === 'react';
-  const isTypescript = transpiler?.includes('ts') ?? false;
+  const useBabel = transpiler?.includes('babel') ?? false;
+  const useReact = lib === 'react';
+  const useTypescript = transpiler?.includes('ts') ?? false;
 
   const presets = [];
 
-  if (isBabel) {
+  if (useBabel) {
     presets.push('@babel/preset-env');
   }
 
-  if (isReact) {
+  if (useReact) {
     presets.push(['@babel/preset-react']);
   }
 
-  if (isTypescript) {
+  if (useTypescript) {
     presets.push('@babel/preset-typescript');
   }
 

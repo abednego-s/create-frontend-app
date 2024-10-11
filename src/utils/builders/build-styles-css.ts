@@ -3,9 +3,9 @@ import { Options } from '../../types';
 
 export function buildStylesCss(options: Options) {
   const { ui } = options;
-  const isTailwind = ui?.includes('tailwind') ?? false;
+  const useTailwind = ui?.includes('tailwind') ?? false;
 
-  if (isTailwind) {
+  if (useTailwind) {
     return stripIndents`
       @import 'tailwindcss/base';
       @import 'tailwindcss/components';

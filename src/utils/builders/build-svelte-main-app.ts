@@ -3,9 +3,9 @@ import { Options } from '../../types';
 
 export function buildSvelteMainApp(options: Options) {
   const { transpiler } = options;
-  const isTypescript = transpiler?.includes('ts') ?? false;
+  const useTypescript = transpiler?.includes('ts') ?? false;
 
-  let scriptTag = isTypescript
+  let scriptTag = useTypescript
     ? `<script lang="ts">\n  let name: string = 'world';`
     : `<script>\n  let name = world;`;
 

@@ -3,7 +3,7 @@ import { Options } from '../../types';
 
 export function buildJestConfig(options: Options) {
   const { styling } = options;
-  const isCssModule = styling?.includes('css-module');
+  const useCssModule = styling?.includes('css-module');
 
   const config: {
     testEnvironment: string;
@@ -19,7 +19,7 @@ export function buildJestConfig(options: Options) {
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   };
 
-  if (isCssModule) {
+  if (useCssModule) {
     config.moduleNameMapper = {
       ...config.moduleNameMapper,
       '\\\\.module\\\\.(css|less|scss)$': 'identity-obj-proxy',

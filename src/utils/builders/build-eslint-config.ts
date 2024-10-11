@@ -110,9 +110,9 @@ function applyPrettierConfig(this: ESLintConfig) {
 
 export function buildEslintConfig(options: Options) {
   const { lib, linting, transpiler } = options;
-  const isReact = lib === 'react';
-  const isSvelte = lib === 'svelte';
-  const isPrettier = linting?.includes('prettier') ?? false;
+  const useReact = lib === 'react';
+  const useSvelte = lib === 'svelte';
+  const usePrettier = linting?.includes('prettier') ?? false;
   const isTypecript = transpiler?.includes('ts') ?? false;
 
   const config: ESLintConfig = {
@@ -131,11 +131,11 @@ export function buildEslintConfig(options: Options) {
     },
   };
 
-  if (isReact) {
+  if (useReact) {
     applyReactConfig.call(config);
   }
 
-  if (isSvelte) {
+  if (useSvelte) {
     applySvelteConfig.call(config);
   }
 
@@ -143,7 +143,7 @@ export function buildEslintConfig(options: Options) {
     applyTypescriptConfig.call(config);
   }
 
-  if (isPrettier) {
+  if (usePrettier) {
     applyPrettierConfig.call(config);
   }
 

@@ -5,13 +5,13 @@ import { Options } from '../../types';
 export function buildRollupConfig(options: Options) {
   const { transpiler, lib, styling, image, font } = options;
 
-  const isBabel = transpiler?.includes('babel') ?? false;
-  const isCss = styling?.includes('css') ?? false;
-  const isSass = styling?.includes('scss') ?? false;
-  const isLess = styling?.includes('less') ?? false;
-  const isSvelte = lib === 'svelte';
-  const isTypescript = transpiler?.includes('ts') ?? false;
-  const isVue = lib === 'vue';
+  const useBabel = transpiler?.includes('babel') ?? false;
+  const useCss = styling?.includes('css') ?? false;
+  const useSass = styling?.includes('scss') ?? false;
+  const useLess = styling?.includes('less') ?? false;
+  const useSvelte = lib === 'svelte';
+  const useTypescript = transpiler?.includes('ts') ?? false;
+  const useVue = lib === 'vue';
 
   const config: {
     input: string;
@@ -19,7 +19,7 @@ export function buildRollupConfig(options: Options) {
     plugins?: string[];
     watch?: unknown;
   } = {
-    input: isTypescript ? 'src/index.ts' : 'src/index.js',
+    input: useTypescript ? 'src/index.ts' : 'src/index.js',
     output: {
       file: 'dist/bundle.js',
       format: 'iife',
@@ -56,7 +56,7 @@ export function buildRollupConfig(options: Options) {
   imports.set('commonjs', '@rollup/plugin-commonjs');
   imports.set('terser', 'rollup-plugin-terser');
 
-  if (isSvelte) {
+  if (useSvelte) {
     resolveParam = {
       browser: true,
       dedupe: ['svelte'],
@@ -68,7 +68,7 @@ export function buildRollupConfig(options: Options) {
     `commonjs()`,
   ];
 
-  if (isBabel) {
+  if (useBabel) {
     config.plugins.push(`babel({
       babelHelpers: 'bundled',
       exclude: 'node_modules/**'
@@ -77,7 +77,7 @@ export function buildRollupConfig(options: Options) {
     imports.set('{ babel }', '@rollup/plugin-babel');
   }
 
-  if (isTypescript) {
+  if (useTypescript) {
     config.plugins.push(`typescript()`);
     imports.set('typescript', '@rollup/plugin-typescript');
   }
@@ -91,7 +91,7 @@ export function buildRollupConfig(options: Options) {
     }
   });
 
-  if (isSass) {
+  if (useSass) {
     const sassEntry = ['sass', { includePaths: ['./src'] }];
     const extensions = ['.css', '.scss', '.sass'];
 
@@ -106,7 +106,7 @@ export function buildRollupConfig(options: Options) {
       : [sassEntry];
   }
 
-  if (isLess) {
+  if (useLess) {
     const lessEntry = ['less', { javascriptEnabled: true }];
     const extensions = ['.css', '.less'];
 
@@ -121,7 +121,7 @@ export function buildRollupConfig(options: Options) {
       : [lessEntry];
   }
 
-  if (isCss) {
+  if (useCss) {
     config.plugins.push(`postcss(${objectLiteralToString(postCssConfig, 2)})`);
   }
 
@@ -131,7 +131,7 @@ export function buildRollupConfig(options: Options) {
     imports.set('url', '@rollup/plugin-url');
   }
 
-  if (isSvelte) {
+  if (useSvelte) {
     config.plugins = [
       ...config.plugins,
       `svelte({
@@ -149,12 +149,12 @@ export function buildRollupConfig(options: Options) {
     imports.set('css', 'rollup-plugin-css-only');
   }
 
-  if (isVue) {
+  if (useVue) {
     config.plugins.push(`vue()`);
     imports.set('vue', 'rollup-plugin-vue');
   }
 
-  if (isCss || isSass || isLess) {
+  if (useCss || useSass || useLess) {
     imports.set('postcss', 'rollup-plugin-postcss');
   }
 
