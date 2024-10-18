@@ -13,15 +13,18 @@ export type TSConfig = {
     jsx?: string;
     allowSyntheticDefaultImports?: boolean;
     types?: string[];
+    plugins?: Record<string, string>[];
   };
   include: string[];
   exclude: string[];
+  extends?: string;
 };
 
 export function buildTypescriptConfig(options: Options) {
-  const { lib } = options;
+  const { lib, styling } = options;
   const useReact = lib === 'react';
   const useSvelte = lib === 'svelte';
+  const useCssModule = styling?.includes('css-module');
 
   const config: TSConfig = {
     compilerOptions: {
@@ -52,6 +55,17 @@ export function buildTypescriptConfig(options: Options) {
       types: ['svelte'],
     };
     config.include = ['src/**/*', 'src/**/*.svelte'];
+    config.extends = '@tsconfig/svelte/tsconfig.json';
+  }
+
+  if (useCssModule) {
+    const cssModuleTsPlugin = [{ name: 'typescript-plugin-css-modules' }];
+    config.compilerOptions = {
+      ...config.compilerOptions,
+      plugins: config.compilerOptions.plugins
+        ? [...config.compilerOptions.plugins, ...cssModuleTsPlugin]
+        : cssModuleTsPlugin,
+    };
   }
 
   return JSON.stringify(config, null, 2);
