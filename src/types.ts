@@ -43,9 +43,11 @@ export type ProjectFileNames =
   | '__mocks__/styleMock.js'
   | '__tests__/test.js'
   | '__tests__/test.ts'
-  | 'jest.config.js'
+  | 'dist/index.html'
+  | 'index.html'
+  | 'jest.config.cjs'
   | 'package.json'
-  | 'postcss.config.js'
+  | 'postcss.config.cjs'
   | 'public/index.html'
   | 'README.md'
   | 'rollup.config.js'
@@ -56,11 +58,14 @@ export type ProjectFileNames =
   | 'src/custom.d.ts'
   | 'src/index.js'
   | 'src/index.ts'
+  | 'src/index.tsx'
   | 'src/index.html'
+  | 'src/main.js'
+  | 'src/main.ts'
   | 'src/styles.css'
-  | 'tailwind.config.js'
+  | 'tailwind.config.cjs'
   | 'tsconfig.json'
   | 'vitest.config.js'
-  | 'webpack.config.js';
+  | 'webpack.config.cjs';
 
 export type ProjectFiles = Record<ProjectFileNames, string>;
