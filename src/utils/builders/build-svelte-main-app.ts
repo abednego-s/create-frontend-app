@@ -7,7 +7,7 @@ export function buildSvelteMainApp(options: Options) {
 
   let scriptTag = useTypescript
     ? `<script lang="ts">\n  let name: string = 'world';`
-    : `<script>\n  let name = world;`;
+    : `<script>\n  let name = 'world';`;
 
   scriptTag += '\n</script>';
 
