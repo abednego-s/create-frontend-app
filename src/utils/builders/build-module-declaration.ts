@@ -20,17 +20,22 @@ function getStaticAssetDeclaration(extension: string) {
 }
 
 export function buildModuleDeclaration(options: Options) {
+  const { styling, image, lib } = options;
+  const useSvelte = lib === 'svelte';
+  const useVue = lib === 'vue';
+  const useCssModule = styling?.includes('css-module');
+
   let template = '';
 
   const styleSheets = new Set<string>();
   const staticAssets = new Set<string>();
 
-  options.styling?.forEach((styleType) => {
+  styling?.forEach((styleType) => {
     const extension = styleType === 'css-module' ? 'css' : styleType;
     styleSheets.add(extension);
   });
 
-  options.image?.forEach((imageType) => {
+  image?.forEach((imageType) => {
     if (imageType === 'jpe?g') {
       staticAssets.add('jpg');
       staticAssets.add('jpeg');
@@ -50,6 +55,29 @@ export function buildModuleDeclaration(options: Options) {
   staticAssets.forEach((fileType) => {
     template += getStaticAssetDeclaration(fileType) + '\n\n';
   });
+
+  if (useSvelte) {
+    template += stripIndent`
+    import type { ComponentType } from 'svelte';
+    const component: ComponentType;
+    export default component;`;
+  }
+
+  if (useVue) {
+    template += stripIndent`
+    declare module "*.vue" {
+      import { DefineComponent } from "vue";
+      const component: DefineComponent<{}, {}, any>;
+      export default component;
+    }
+    `;
+  }
+
+  if (useCssModule) {
+    template += stripIndent`
+      declare module "*.module.css";
+    `;
+  }
 
   return template;
 }
