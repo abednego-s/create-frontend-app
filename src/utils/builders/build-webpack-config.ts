@@ -7,7 +7,7 @@ export type WebpackBuildConfigOptions = Omit<Options, 'name' | 'bundler'>;
 
 export type BuildConfigOptions = Pick<
   Options,
-  'lib' | 'transpiler' | 'styling' | 'image' | 'optimization' | 'font'
+  'lib' | 'transpiler' | 'styling' | 'image' | 'optimization' | 'font' | 'ui'
 >;
 
 function applyReact(
@@ -285,6 +285,29 @@ function applySass(this: WebpackConfig, { useVue }: { useVue: boolean }) {
   });
 }
 
+function applyTailwind(this: WebpackConfig, { useVue }: { useVue: boolean }) {
+  this.module = {
+    ...this.module,
+  };
+
+  if (!this.module.rules) {
+    this.module.rules = [];
+  }
+
+  let styleLoader = 'style-loader';
+
+  if (useVue) {
+    styleLoader = 'vue-style-loader';
+  }
+
+  const use = [styleLoader, 'css-loader', 'postcss-loader'];
+
+  this.module.rules.push({
+    test: /\.css$/,
+    use,
+  });
+}
+
 function applyFileLoader(
   this: WebpackConfig,
   { assets }: { assets: string[] }
@@ -355,10 +378,16 @@ function buildConfig(options?: BuildConfigOptions) {
     plugins: [
       `[code]new HtmlWebpackPlugin({\n\t  template: './src/index.html'\n\t})[/code]` as unknown as WebpackPluginInstance,
     ],
+    devServer: {
+      static: './dist',
+      port: 9000,
+      hot: true,
+      open: true,
+    },
   };
 
   if (options) {
-    const { lib, transpiler, styling, image, optimization, font } = options;
+    const { lib, transpiler, styling, image, optimization, font, ui } = options;
 
     const useReact = lib === 'react';
     const useVue = lib === 'vue';
@@ -369,12 +398,14 @@ function buildConfig(options?: BuildConfigOptions) {
     const useCssModule = styling?.includes('css-module') ?? false;
     const useLess = styling?.includes('less') ?? false;
     const useSass = styling?.includes('scss') ?? false;
+    const useTailwind = ui?.includes('tailwind') ?? false;
 
     if (useTypescript) {
       config.entry = './src/index.ts';
     }
 
     if (useReact) {
+      config.entry = useTypescript ? './src/index.tsx' : './src/index.jsx';
       applyReact.call(config, { useBabel, useTypescript });
     }
 
@@ -406,6 +437,10 @@ function buildConfig(options?: BuildConfigOptions) {
       });
     }
 
+    if (useTailwind) {
+      applyTailwind.call(config, { useVue });
+    }
+
     if (image) {
       applyFileLoader.call(config, { assets: image });
     }
@@ -417,13 +452,6 @@ function buildConfig(options?: BuildConfigOptions) {
     if (optimization?.includes('split-vendors')) {
       optimizer.call(config);
     }
-
-    if (lib) {
-      config.devServer = {
-        port: 3000,
-        open: true,
-      };
-    }
   }
 
   return `const config = ${objectLiteralToString(config)}`;
@@ -432,7 +460,6 @@ function buildConfig(options?: BuildConfigOptions) {
 export function buildWebpackConfig(options?: WebpackBuildConfigOptions) {
   let template = stripIndents`
     const path = require('path');
-    const webpack = require('webpack');
     const HtmlWebpackPlugin = require('html-webpack-plugin');
   `;
 
