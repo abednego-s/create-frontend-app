@@ -10,6 +10,7 @@ export type CodePreviewProps = {
 const extensionLang: Record<string, string> = {
   babelrc: 'json',
   css: 'css',
+  cjs: 'javascript',
   html: 'cshtml',
   md: 'markdown',
   js: 'javascript',
