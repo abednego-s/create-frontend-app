@@ -2,26 +2,33 @@ import { html, stripIndent } from 'common-tags';
 import { Options } from '../../types';
 
 export function buildHtml(options: Options) {
-  const { bundler, transpiler, styling } = options;
+  const { bundler, transpiler, styling, lib } = options;
 
   const useCss = styling?.includes('css') ?? false;
+  const useTypescript = transpiler?.includes('ts') ?? false;
   const isParcel = bundler === 'parcel';
   const isRollup = bundler === 'rollup';
-  const isTypecript = transpiler?.includes('ts') ?? false;
+  const useVue = lib === 'vue';
+  const useReact = lib === 'react';
+  const useSvelte = lib === 'svelte';
 
   let scriptTag = '';
   let linkTag = '';
 
   if (isParcel) {
-    const extension = isTypecript ? 'ts' : 'js';
+    const extension = useTypescript ? (useReact ? 'tsx' : 'ts') : 'js';
     scriptTag = `<script src="./index.${extension}"></script>`;
+
+    if (useReact || useSvelte || useVue) {
+      scriptTag = `<script src="./index.${extension}" type="module"></script>`;
+    }
   }
 
   if (isRollup) {
-    scriptTag = '<script src="./dist/bundle.js"></script>';
+    scriptTag = '<script src="bundle.js"></script>';
 
-    if (useCss) {
-      linkTag = '<link rel="stylesheet" href="/.dist/bundle.css">';
+    if (useCss || useVue) {
+      linkTag = '<link rel="stylesheet" href="bundle.css">';
     }
   }
 
