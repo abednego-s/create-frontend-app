@@ -50,6 +50,7 @@ export function DownloadForm({
         className="w-full px-4 py-2 text-white border-2 rounded-md bg-stone-800 border-stone-800 hover:bg-white hover:text-stone-800 disabled:cursor-not-allowed"
         onClick={handleClickDownload}
         disabled={!files}
+        type="button"
       >
         Download Zip
       </button>
