@@ -15,10 +15,8 @@ export function buildVueMainApp() {
     </script>
 
     <style>
-      #root {
-        font-family: 'Avenir', Helvetica, Arial, sans-serif;
-        text-align: center;
-        color: #2c3e50;
+      h1 {
+        color: #42b983;
       }
     </style>
   `;
