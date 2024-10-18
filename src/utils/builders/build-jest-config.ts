@@ -8,7 +8,6 @@ export function buildJestConfig(options: Options) {
   const config: {
     testEnvironment: string;
     moduleNameMapper: Record<string, string>;
-    setupFilesAfterEnv: string[];
   } = {
     testEnvironment: 'jsdom',
     moduleNameMapper: {
@@ -16,7 +15,6 @@ export function buildJestConfig(options: Options) {
       '\\\\.(jpg|jpeg|png|gif|svg|eot|otf|ttf|woff|woff2)$':
         '<rootDir>/__mocks__/fileMock.js',
     },
-    setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   };
 
   if (useCssModule) {
