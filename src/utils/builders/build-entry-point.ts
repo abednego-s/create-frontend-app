@@ -5,12 +5,12 @@ function vanillaTemplate() {
   return `console.log('hello world!')`;
 }
 
-function svelteTemplate() {
+function svelteTemplate(useTypescript: boolean) {
   return stripIndent`
-    import App from './App.svelte
+    import App from './App.svelte';
 
     const app = new App({
-      target: document.getElementById('root'),
+      target: document.getElementById('root')${useTypescript ? ' as HTMLElement' : ''},
     });
 
     export default app;
@@ -28,8 +28,10 @@ function vueTemplate() {
 
 function reactTemplate(useTypescript: boolean) {
   return stripIndent`
-    import App from './App';
+    import React from 'react';
     import { createRoot } from 'react-dom/client';
+    
+    import App from './App';
 
     const domNode = document.getElementById('root') ${useTypescript ? 'as HTMLElement' : ''};
     const root = createRoot(domNode);
@@ -60,7 +62,7 @@ export function buildEntryPoint(options: Options) {
   }
 
   if (useSvelte) {
-    template = svelteTemplate();
+    template = svelteTemplate(useTypescript);
   }
 
   if (useVue) {
