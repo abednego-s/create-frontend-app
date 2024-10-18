@@ -7,7 +7,7 @@ export function buildReactMainApp(options: Options) {
   let cssImport = '';
 
   if (useCss) {
-    cssImport += "import './styles.css'";
+    cssImport += "import './styles.css';";
   }
 
   const template = stripIndent`
@@ -20,6 +20,8 @@ export function buildReactMainApp(options: Options) {
         </div>
       );
     }
+
+    export default App;
   `;
 
   return cssImport ? cssImport + '\n\n' + template : template;
