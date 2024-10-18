@@ -1,21 +1,6 @@
 import { stripIndents } from 'common-tags';
-import { Options } from '../../types';
 
-export function buildReadme(options: Options) {
-  const { lib } = options;
-
-  let runLocal = '';
-
-  if (lib) {
-    runLocal = `
-      To run locally:
-
-      \`\`\`sh
-      npm run dev
-      \`\`\`
-    `;
-  }
-
+export function buildReadme() {
   return stripIndents`
     # empty-project
   
@@ -28,7 +13,13 @@ export function buildReadme(options: Options) {
     \`\`\`sh
     npm install
     \`\`\`
-    ${runLocal}
+    
+    To run locally:
+
+    \`\`\`sh
+    npm run dev
+    \`\`\`
+
     To create a production build:
 
     \`\`\`sh
