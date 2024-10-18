@@ -1,5 +1,5 @@
-import { objectLiteralToString } from '../object-literal-to-string';
 import { stripIndent, stripIndents } from 'common-tags';
+import { objectLiteralToString } from '../object-literal-to-string';
 import { Options } from '../../types';
 
 export function buildRollupConfig(options: Options) {
@@ -9,8 +9,9 @@ export function buildRollupConfig(options: Options) {
   const useCss = styling?.includes('css') ?? false;
   const useSass = styling?.includes('scss') ?? false;
   const useLess = styling?.includes('less') ?? false;
-  const useSvelte = lib === 'svelte';
   const useTypescript = transpiler?.includes('ts') ?? false;
+  const useSvelte = lib === 'svelte';
+  const useReact = lib === 'react';
   const useVue = lib === 'vue';
 
   const config: {
@@ -19,10 +20,16 @@ export function buildRollupConfig(options: Options) {
     plugins?: string[];
     watch?: unknown;
   } = {
-    input: useTypescript ? 'src/index.ts' : 'src/index.js',
+    input: useTypescript
+      ? useReact
+        ? 'src/index.tsx'
+        : 'src/index.ts'
+      : 'src/index.js',
     output: {
       file: 'dist/bundle.js',
       format: 'iife',
+      sourcemap: true,
+      name: 'MyApp',
     },
   };
 
@@ -39,6 +46,17 @@ export function buildRollupConfig(options: Options) {
   const styleSheetExtensions = new Set<string>();
   const includeExtensions = new Set<string>();
 
+  const staticAssets = [...(image || []), ...(font || [])];
+
+  staticAssets.forEach((extension) => {
+    if (extension === 'jpe?g') {
+      includeExtensions.add('**/*.jpg');
+      includeExtensions.add('**/*.jpeg');
+    } else {
+      includeExtensions.add(`**/*.${extension}`);
+    }
+  });
+
   const pluginUrlConfig = {
     limit: 8192,
     include: Array.from(includeExtensions),
@@ -48,13 +66,11 @@ export function buildRollupConfig(options: Options) {
 
   let resolveParam = null;
 
-  const staticAssets = [...(image || []), ...(font || [])];
-
   const imports = new Map();
 
   imports.set('resolve', '@rollup/plugin-node-resolve');
   imports.set('commonjs', '@rollup/plugin-commonjs');
-  imports.set('terser', 'rollup-plugin-terser');
+  imports.set('terser', '@rollup/plugin-terser');
 
   if (useSvelte) {
     resolveParam = {
@@ -63,33 +79,34 @@ export function buildRollupConfig(options: Options) {
     };
   }
 
+  if (useReact) {
+    resolveParam = {
+      extensions: ['.js', '.jsx'],
+    };
+  }
+
   config.plugins = [
     `resolve(${resolveParam ? objectLiteralToString(resolveParam, 2) : ''})`,
     `commonjs()`,
+    `isProduction && terser()`,
   ];
 
   if (useBabel) {
-    config.plugins.push(`babel({
-      babelHelpers: 'bundled',
-      exclude: 'node_modules/**'
-    })`);
-
     imports.set('{ babel }', '@rollup/plugin-babel');
+
+    const babelConfig = {
+      babelHelpers: 'bundled',
+      exclude: 'node_modules/**',
+      extensions: ['.js', '.jsx'],
+    };
+
+    config.plugins.unshift(`babel(${objectLiteralToString(babelConfig, 2)})`);
   }
 
   if (useTypescript) {
-    config.plugins.push(`typescript()`);
     imports.set('typescript', '@rollup/plugin-typescript');
+    config.plugins.push(`typescript()`);
   }
-
-  staticAssets.forEach((extension) => {
-    if (extension === 'jpe?g') {
-      includeExtensions.add(`**/*.jpg`);
-      includeExtensions.add(`**/*.jpeg`);
-    } else {
-      includeExtensions.add(`**/*.${extension}`);
-    }
-  });
 
   if (useSass) {
     const sassEntry = ['sass', { includePaths: ['./src'] }];
@@ -121,41 +138,73 @@ export function buildRollupConfig(options: Options) {
       : [lessEntry];
   }
 
-  if (useCss) {
-    config.plugins.push(`postcss(${objectLiteralToString(postCssConfig, 2)})`);
-  }
-
   if (image || font) {
-    config.plugins.push(`url(${objectLiteralToString(pluginUrlConfig, 2)})`);
-
     imports.set('url', '@rollup/plugin-url');
+    config.plugins.push(`url(${objectLiteralToString(pluginUrlConfig, 2)})`);
   }
 
   if (useSvelte) {
+    imports.set('svelte', 'rollup-plugin-svelte');
+    imports.set('css', 'rollup-plugin-css-only');
+    imports.set('sveltePreprocess', 'svelte-preprocess');
+
+    const sveltePluginConfig = {
+      preprocess: '[code]sveltePreprocess({ sourceMap: !isProduction })[/code]',
+      include: 'src/**/*.svelte',
+    };
+
     config.plugins = [
       ...config.plugins,
-      `svelte({
-      compilerOptions: {
-        dev: !isProduction
-      }
-    })`,
+      `svelte(${objectLiteralToString(sveltePluginConfig, 2)})`,
       `css({ output: 'bundle.css' })`,
     ];
 
     config.watch = {
       clearScreen: false,
     };
-
-    imports.set('css', 'rollup-plugin-css-only');
   }
 
   if (useVue) {
-    config.plugins.push(`vue()`);
     imports.set('vue', 'rollup-plugin-vue');
+    config.plugins.unshift('vue()');
+    imports.set('postcss', 'rollup-plugin-postcss');
+    config.plugins.push(`postcss(${objectLiteralToString(postCssConfig, 2)})`);
   }
 
-  if (useCss || useSass || useLess) {
+  if ((useCss || useSass || useLess) && !imports.has('postcss')) {
     imports.set('postcss', 'rollup-plugin-postcss');
+    config.plugins.push(`postcss(${objectLiteralToString(postCssConfig, 2)})`);
+  }
+
+  if (useReact || useSvelte || useVue) {
+    const serveConfig = {
+      open: true,
+      contentBase: ['dist'],
+      port: 3000,
+    };
+
+    const liveReloadConfig = {
+      watch: 'dist',
+    };
+
+    const replaceConfig = {
+      'process.env.NODE_ENV': `[code]JSON.stringify(
+        isProduction ? 'production' : 'development'
+      )[/code]`,
+      preventAssignment: true,
+    };
+
+    imports.set('serve', 'rollup-plugin-serve');
+    imports.set('livereload', 'rollup-plugin-livereload');
+    imports.set('replace', '@rollup/plugin-replace');
+
+    config.plugins.push(
+      `!isProduction && serve(${objectLiteralToString(serveConfig, 2)})`
+    );
+    config.plugins.push(
+      `!isProduction && livereload(${objectLiteralToString(liveReloadConfig, 2)})`
+    );
+    config.plugins.push(`replace(${objectLiteralToString(replaceConfig, 2)})`);
   }
 
   let allImports = '';
@@ -164,14 +213,12 @@ export function buildRollupConfig(options: Options) {
     allImports += `import ${key} from '${value}';\n`;
   });
 
-  config.plugins.push(`isProduction && terser()`);
-
   config.plugins = config.plugins.map((plugin) => `[code]${plugin}[/code]`);
 
   return stripIndent`
     ${stripIndents`
       ${allImports}
-      const isProduction = !process.env.ROLLUP_WATCH;
+      const isProduction = process.env.NODE_ENV === 'production';
     `}
     \nexport default ${objectLiteralToString(config)}
   `;
