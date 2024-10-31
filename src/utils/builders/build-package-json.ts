@@ -241,11 +241,9 @@ async function applyVue(
   {
     isWebpack,
     isRollup,
-    useCss,
   }: {
     isWebpack: boolean;
     isRollup: boolean;
-    useCss: boolean;
   }
 ) {
   this.dependencies = {
@@ -263,14 +261,9 @@ async function applyVue(
       'vue-loader': await getLatestVersion('vue-loader'),
       'vue-template-compiler': await getLatestVersion('vue-template-compiler'),
       'webpack-dev-server': await getLatestVersion('webpack-dev-server'),
+      'vue-style-loader': await getLatestVersion('vue-style-loader'),
+      'css-loader': await getLatestVersion('css-loader'),
     };
-
-    if (useCss) {
-      this.devDependencies = {
-        ...this.devDependencies,
-        'vue-style-loader': await getLatestVersion('vue-style-loader'),
-      };
-    }
   }
 
   if (isRollup) {
@@ -683,7 +676,7 @@ export async function buildPackageJson(options: Options) {
   }
 
   if (useVue) {
-    await applyVue.call(packageJson, { isWebpack, isRollup, useCss });
+    await applyVue.call(packageJson, { isWebpack, isRollup });
   }
 
   if (useBabel) {

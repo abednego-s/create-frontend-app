@@ -161,6 +161,11 @@ function applyVue(
     loader: 'vue-loader',
   });
 
+  this.module.rules.push({
+    test: /\.css$/,
+    use: ['vue-style-loader', 'css-loader'],
+  });
+
   if (!this.plugins) {
     this.plugins = [];
   }
@@ -168,7 +173,7 @@ function applyVue(
   this.plugins?.push('[code]new VueLoaderPlugin()[/code]' as '');
 
   this.resolve.alias = {
-    vue$: 'vue/dist/vue.esm-bundler.js',
+    vue: 'vue/dist/vue.esm-bundler.js',
   };
 
   if (useTypescript) {
