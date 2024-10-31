@@ -448,6 +448,7 @@ async function applyJest(
   this.devDependencies = {
     ...this.devDependencies,
     jest: await getLatestVersion('jest'),
+    'jest-environment-jsdom': await getLatestVersion('jest-environment-jsdom'),
   };
 
   if (useBabel) {

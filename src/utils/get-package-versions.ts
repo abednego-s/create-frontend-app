@@ -36,6 +36,7 @@ export const packages = [
   'html-webpack-plugin',
   'identity-obj-proxy',
   'jest',
+  'jest-environment-jsdom',
   'jsdom',
   'less',
   'less-loader',
