@@ -214,7 +214,7 @@ async function applyReact(
 
 async function applySvelte(
   this: PackageConfig,
-  { isWebpack }: { isWebpack: boolean; isParcel: boolean }
+  { isWebpack, isParcel }: { isWebpack: boolean; isParcel: boolean }
 ) {
   if (isWebpack) {
     this.scripts = {
@@ -230,9 +230,21 @@ async function applySvelte(
     };
   }
 
+  if (isParcel) {
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+    const { parcel, ...rest } = this.devDependencies as Record<string, string>;
+
+    this.devDependencies = {
+      ...rest,
+      'parcel-bundler': await getLatestVersion('parcel-bundler'),
+      'parcel-plugin-svelte': await getLatestVersion('parcel-plugin-svelte'),
+    };
+  }
+
   this.devDependencies = {
     ...this.devDependencies,
-    svelte: await getLatestVersion('svelte'),
+    // svelte: await getLatestVersion('svelte'),
+    svelte: '^3.59.2',
   };
 }
 

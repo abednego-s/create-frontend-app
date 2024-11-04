@@ -41,6 +41,8 @@ export const packages = [
   'less',
   'less-loader',
   'parcel',
+  'parcel-bundler',
+  'parcel-plugin-svelte',
   'postcss',
   'postcss-loader',
   'prettier',

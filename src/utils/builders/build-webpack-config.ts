@@ -131,7 +131,7 @@ function applySvelte(
     ...this.resolve,
     alias: {
       ...this.resolve.alias,
-      svelte: "[code]path.resolve('node_modules', 'svelte')[/code]",
+      svelte: "[code]path.resolve('node_modules', 'svelte/src/runtime')[/code]",
     },
     extensions,
     mainFields: ['svelte', 'browser', 'module', 'main'],
