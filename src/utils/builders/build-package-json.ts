@@ -179,11 +179,6 @@ async function applyReact(
   }
 ) {
   if (isWebpack) {
-    this.scripts = {
-      ...this.scripts,
-      dev: 'webpack serve --mode development',
-    };
-
     this.devDependencies = {
       ...this.devDependencies,
       'webpack-dev-server': await getLatestVersion('webpack-dev-server'),
@@ -217,11 +212,6 @@ async function applySvelte(
   { isWebpack, isParcel }: { isWebpack: boolean; isParcel: boolean }
 ) {
   if (isWebpack) {
-    this.scripts = {
-      ...this.scripts,
-      dev: 'webpack serve --mode development',
-    };
-
     this.devDependencies = {
       ...this.devDependencies,
       'svelte-loader': await getLatestVersion('svelte-loader'),
@@ -264,10 +254,6 @@ async function applyVue(
   };
 
   if (isWebpack) {
-    this.scripts = {
-      ...this.scripts,
-      dev: 'webpack serve --mode development',
-    };
     this.devDependencies = {
       ...this.devDependencies,
       'vue-loader': await getLatestVersion('vue-loader'),
