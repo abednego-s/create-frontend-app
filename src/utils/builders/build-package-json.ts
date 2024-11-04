@@ -220,6 +220,12 @@ async function applySvelte(
     };
   }
 
+  // Parcel v2 doesn't seem to work with Svelte.
+  // Parcel documentation shows that when working with Svelte,
+  // 'parcel-bundler' is used instead of 'parcel'
+  // Sources:
+  // - https://en.parceljs.org/recipes.html
+  // - https://dev.to/alexparra/basic-svelte-app-with-parcel-30i5
   if (isParcel) {
     // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     const { parcel, ...rest } = this.devDependencies as Record<string, string>;
@@ -233,7 +239,8 @@ async function applySvelte(
 
   this.devDependencies = {
     ...this.devDependencies,
-    // svelte: await getLatestVersion('svelte'),
+    // Svelte v5 doesn't seem to work with Parcel or Webpack,
+    // need to downgrade it to version 3
     svelte: '^3.59.2',
   };
 }
