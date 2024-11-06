@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { NavItem } from '../components/NavItem';
+import githubLogo from '../../assets/github.svg';
 import webpackLogo from '../../assets/webpack.svg';
 import parcelLogo from '../../assets/parcel.svg';
 import rollupLogo from '../../assets/rollup.svg';
@@ -7,10 +8,20 @@ import rollupLogo from '../../assets/rollup.svg';
 export default function Root() {
   return (
     <>
-      <header>
-        <h1 className="mt-4 mb-10 text-4xl font-bold text-center">
+      <header className="relative">
+        <h1 className="pt-4 pb-10 text-4xl font-bold text-center">
           Front-end Project Boilerplate Generator
         </h1>
+        <div className="absolute top-[-50px] right-[-50px] w-[100px] h-[100px] bg-gray-300 rotate-45">
+          <a href="https://github.com/abednego-s/create-frontend-app">
+            <img
+              src={githubLogo}
+              width={30}
+              height={30}
+              className="absolute bottom-0 left-[33px]"
+            />
+          </a>
+        </div>
       </header>
       <main className="max-w-screen-lg mx-auto">
         <nav className="flex justify-center mb-10">
