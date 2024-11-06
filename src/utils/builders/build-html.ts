@@ -16,7 +16,14 @@ export function buildHtml(options: Options) {
   let linkTag = '';
 
   if (isParcel) {
-    const extension = useTypescript ? (useReact ? 'tsx' : 'ts') : 'js';
+    const extension = useTypescript
+      ? useReact
+        ? 'tsx'
+        : 'ts'
+      : useReact
+        ? 'jsx'
+        : 'js';
+
     scriptTag = `<script src="./index.${extension}"></script>`;
 
     if (useReact || useSvelte || useVue) {
